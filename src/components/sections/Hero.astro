@@ -1,0 +1,74 @@
+---
+import Button from '@/components/ui/Button.astro';
+import { t, localePath, type Locale } from '@/lib/i18n';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const d = t(locale).home.hero;
+const dict = t(locale);
+---
+
+<section class="hero theme-dark" data-bg="dark" data-scene="hero" id="hero" aria-labelledby="hero-title">
+  <div class="container-x hero__inner">
+    <p class="hero__eyebrow t-caps" data-reveal data-reveal-delay="0.2">{d.eyebrow}</p>
+    <h1 id="hero-title" class="hero__title t-hero" data-split="words">{d.titleLine1}<br />{d.titleLine2}</h1>
+    <p class="hero__sub t-lead measure-narrow" data-reveal data-reveal-delay="0.5">{d.subtitle}</p>
+    <div class="hero__cta" data-reveal data-reveal-delay="0.65">
+      <Button onDark data-open-booking>{d.ctaPrimary}</Button>
+      <Button variant="secondary" onDark href="#how">{d.ctaSecondary}
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M4 9l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+      </Button>
+    </div>
+  </div>
+
+  <div class="container-x hero__foot" data-reveal data-reveal-delay="0.9" data-reveal-start="top 100%">
+    <a href={localePath(locale, '/legal/license')} class="hero__license t-caption" data-cursor="link">
+      <span class="hero__license-dot" aria-hidden="true"></span>
+      {dict.common.licenseLine}
+    </a>
+    <p class="hero__scroll t-caption" aria-hidden="true">
+      <span class="hero__scroll-line"><span></span></span>
+      {d.scroll}
+    </p>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 100svh;
+    padding-top: 7rem;
+  }
+  .hero__inner { padding-bottom: clamp(1.5rem, 1rem + 2vw, 3rem); }
+  .hero__eyebrow { margin-bottom: clamp(1.25rem, 1rem + 1vw, 2rem); color: var(--c-text-muted-on-dark); }
+  /* Ширина не в ch (зависит от шрифта → сдвиг при swap); строки задаёт <br>, hero — full-bleed */
+  .hero__title { max-width: 100%; margin-bottom: clamp(1.25rem, 1rem + 1.2vw, 2rem); color: var(--c-bone); }
+  .hero__inner, .hero__foot { max-width: none; }
+  .hero__sub { color: var(--c-text-muted-on-dark); margin-bottom: clamp(1.25rem, 1rem + 1vw, 2rem); }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  .hero__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: clamp(1.25rem, 1rem + 1vw, 2rem);
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--c-line-on-dark);
+    color: var(--c-text-muted-on-dark);
+  }
+  .hero__license { display: inline-flex; align-items: center; gap: 0.6rem; min-height: 44px; letter-spacing: 0.02em; transition: color var(--d-fast) var(--e-out); }
+  .hero__license:hover { color: var(--c-bone); }
+  .hero__license-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c-gold); }
+  .hero__scroll { display: none; align-items: center; gap: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .hero__scroll-line { position: relative; width: 48px; height: 1px; background: var(--c-line-on-dark); overflow: hidden; }
+  .hero__scroll-line span { position: absolute; inset: 0; background: var(--c-bone); transform-origin: left; animation: scrollhint 2.4s var(--e-inout) infinite; }
+  @keyframes scrollhint { 0% { transform: scaleX(0); transform-origin: left; } 45% { transform: scaleX(1); transform-origin: left; } 55% { transform: scaleX(1); transform-origin: right; } 100% { transform: scaleX(0); transform-origin: right; } }
+  @media (min-width: 768px) { .hero__scroll { display: inline-flex; } }
+  @media (min-width: 1024px) {
+    .hero { padding-top: 7rem; }
+    .hero__sub, .hero__cta { max-width: 52ch; }
+  }
+  @media (prefers-reduced-motion: reduce) { .hero__scroll-line span { animation: none; transform: none; } }
+</style>

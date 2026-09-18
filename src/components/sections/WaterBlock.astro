@@ -1,0 +1,115 @@
+---
+/** Ключевой блок «Вода»: две ступени подготовки + показатели (scrub-счётчики). Сцена уходит в aqua. */
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import Button from '@/components/ui/Button.astro';
+import Picture from '@/components/ui/Picture.astro';
+import Placeholder from '@/components/ui/Placeholder.astro';
+import water from '@content/config/water.json';
+import { t, localePath, type Locale } from '@/lib/i18n';
+import { isPlaceholder } from '@/lib/utils/placeholders';
+
+interface Props { locale: Locale; compact?: boolean }
+const { locale, compact = false } = Astro.props;
+const d = t(locale).home.water;
+---
+
+<section class="water theme-light" data-bg="porcelain" data-scene="water" id="water" aria-labelledby="water-title">
+  <div class="water__pin" data-water-pin>
+    <div class="container-x water__inner">
+      <div class="water__text">
+        <Eyebrow>{d.eyebrow}</Eyebrow>
+        <h2 id="water-title" class="t-d2 water__title" data-split="words">{d.title}</h2>
+        <p class="t-lead muted water__lead" data-reveal>{d.lead}</p>
+
+        <ol class="water__stages" data-reveal-group data-reveal-stagger="0.15">
+          {d.stages.map((s, i) => (
+            <li class="water__stage" data-reveal>
+              <span class="water__stage-num tnum" aria-hidden="true">0{i + 1}</span>
+              <div>
+                <p class="t-caps water__stage-label">{s.label}</p>
+                <h3 class="t-d3 water__stage-brand">{s.brand}</h3>
+                <p class="muted t-small water__stage-text">{s.text}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+
+        <ul class="water__claims" data-reveal-group>
+          {d.claims.map((c) => (
+            <li class="water__claim t-small" data-reveal>
+              <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2.5 7.5l3 3 6-6" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>
+              {c}
+            </li>
+          ))}
+        </ul>
+        {!compact && <div data-reveal><Button variant="secondary" href={localePath(locale, '/water')}>{d.ctaMore}</Button></div>}
+      </div>
+
+      <div class="water__side">
+        <div class="water__metrics" data-counter-scope data-reveal="clip">
+          <p class="t-caps water__metrics-title">{d.metricsTitle}</p>
+          <dl class="water__grid">
+            {water.metrics.map((m) => (
+              <div class="water__metric">
+                <dt class="t-caption water__metric-label">{m.label[locale]}</dt>
+                <dd class="water__metric-value">
+                  {isPlaceholder(m.value)
+                    ? <Placeholder value={m.value} />
+                    : <span class="t-num" data-counter={m.value.replace(',', '.')} data-decimals={m.value.includes('.') || m.value.includes(',') ? 1 : 0} data-counter-start="top 75%" data-counter-end="top 30%">{m.value}</span>}
+                  {m.unit && <span class="water__metric-unit">{m.unit}</span>}
+                </dd>
+                <dd class="t-caption water__metric-note">{m.note[locale]}</dd>
+              </div>
+            ))}
+          </dl>
+          <p class="t-caption water__metrics-note">{d.metricsNote}</p>
+        </div>
+        <div class="water__photos" data-reveal-group data-reveal-stagger="0.15">
+          <div data-reveal data-parallax="0.05"><Picture id="water-system-voko" locale={locale} sizes="(min-width: 1024px) 22vw, 45vw" /></div>
+          <div data-reveal data-parallax="-0.05"><Picture id="water-system-tyent" locale={locale} sizes="(min-width: 1024px) 22vw, 45vw" /></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .water { position: relative; }
+  .water__pin { padding-block: clamp(4rem, 3rem + 4vw, 7rem); }
+  .water__inner { display: grid; grid-template-columns: 1fr; gap: 3rem; }
+  .water__title { max-width: 14ch; margin-bottom: 1.25rem; }
+  .water__lead { margin-bottom: 2.5rem; max-width: 46ch; }
+  .water__stages { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem; }
+  .water__stage { display: grid; grid-template-columns: auto 1fr; gap: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--c-line-on-light); }
+  .water__stage-num { font-family: var(--font-display); font-weight: 300; font-size: 2rem; line-height: 1; color: var(--c-aqua-text); letter-spacing: -0.02em; }
+  .water__stage-label { color: var(--c-aqua-text); margin-bottom: 0.4rem; }
+  .water__stage-brand { margin-bottom: 0.4rem; }
+  .water__stage-text { max-width: 44ch; }
+  .water__claims { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 2rem; }
+  .water__claim { display: flex; align-items: flex-start; gap: 0.6rem; color: var(--c-text-on-light); }
+  .water__claim svg { flex: none; margin-top: 0.35em; color: var(--c-aqua-600); }
+  .water__side { display: flex; flex-direction: column; gap: 1.5rem; }
+  .water__metrics {
+    padding: clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
+    border-radius: var(--r-card);
+    background: linear-gradient(160deg, rgba(255, 252, 250, 0.85), rgba(246, 241, 238, 0.7));
+    border: 1px solid rgba(78, 140, 156, 0.25);
+    box-shadow: var(--sh-card), 0 0 0 6px rgba(143, 194, 206, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .water__metrics-title { color: var(--c-aqua-text); margin-bottom: 1.5rem; }
+  .water__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.75rem 1.5rem; }
+  .water__metric { display: flex; flex-direction: column; gap: 0.3rem; }
+  .water__metric-label { color: var(--c-text-muted-on-light); }
+  .water__metric-value { display: flex; align-items: baseline; gap: 0.35rem; color: var(--c-ink); }
+  .water__metric-unit { font-size: 0.9rem; color: var(--c-aqua-text); font-weight: 500; }
+  .water__metric-note { color: var(--c-text-muted-on-light); }
+  .water__metrics-note { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--c-line-on-light); color: var(--c-text-muted-on-light); }
+  .water__photos { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (min-width: 1024px) {
+    .water__inner { grid-template-columns: 6fr 6fr; column-gap: 4rem; align-items: start; }
+    html.js:not(.rm) .water.is-pinned .water__pin { min-height: 100svh; display: flex; align-items: center; }
+    .water__photos { margin-top: 0.5rem; }
+  }
+</style>

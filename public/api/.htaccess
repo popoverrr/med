@@ -1,0 +1,10 @@
+# Каталог форм: только эндпоинты booking.php / contact.php доступны снаружи.
+<FilesMatch "^(config\.php|config\.example\.php|_bootstrap\.php)$">
+  Require all denied
+</FilesMatch>
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # Закрываем библиотеку и служебные данные
+  RewriteRule ^(lib|_data)(/|$) - [F,L]
+</IfModule>
+Options -Indexes

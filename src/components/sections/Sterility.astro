@@ -1,0 +1,52 @@
+---
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import Picture from '@/components/ui/Picture.astro';
+import { t, type Locale } from '@/lib/i18n';
+interface Props { locale: Locale; static?: boolean }
+const { locale, static: isStatic = false } = Astro.props;
+const d = t(locale).home.sterility;
+---
+
+<section class="ster theme-light" data-bg="porcelain" data-scene={isStatic ? undefined : 'equipment'} id="sterility" aria-labelledby="ster-title">
+  <div class="container-x ster__inner">
+    <div class="ster__text">
+      <Eyebrow>{d.eyebrow}</Eyebrow>
+      <h2 id="ster-title" class="t-d2 ster__title" data-split="words">{d.title}</h2>
+      <ul class="ster__points" data-reveal-group data-reveal-stagger="0.1">
+        {d.points.map((p, i) => (
+          <li class="ster__point" data-reveal>
+            <span class="ster__num tnum" aria-hidden="true">0{i + 1}</span>
+            <div>
+              <h3 class="t-h4 ster__point-title">{p.title}</h3>
+              <p class="muted t-small">{p.text}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div class="ster__media" data-parallax-scope>
+      <div class="ster__media-main" data-reveal="clip"><Picture id="room-interior-01" locale={locale} sizes="(min-width: 1024px) 40vw, 100vw" /></div>
+      <div class="ster__media-b" data-reveal="clip" data-parallax="0.06"><Picture id="disposable-kit-macro" locale={locale} sizes="(min-width: 1024px) 22vw, 50vw" /></div>
+      <div class="ster__media-c" data-reveal="clip" data-parallax="-0.04"><Picture id="room-interior-02" locale={locale} sizes="(min-width: 1024px) 16vw, 40vw" /></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ster { position: relative; padding-block: var(--section-y); }
+  .ster__inner { display: grid; grid-template-columns: 1fr; gap: 3rem; }
+  .ster__title { margin-bottom: 2rem; max-width: 14ch; }
+  .ster__points { display: flex; flex-direction: column; }
+  .ster__point { display: grid; grid-template-columns: auto 1fr; gap: 1.25rem; padding: 1.25rem 0; border-top: 1px solid var(--c-line-on-light); }
+  .ster__num { font-family: var(--font-display); font-weight: 300; font-size: 1.5rem; color: var(--c-burgundy-600); line-height: 1.3; }
+  .ster__point-title { margin-bottom: 0.35rem; }
+  .ster__media { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 1rem; }
+  .ster__media-main { grid-column: 1 / -1; }
+  @media (min-width: 1024px) {
+    .ster__inner { grid-template-columns: 5fr 7fr; column-gap: 5rem; align-items: start; }
+    .ster__media { grid-template-columns: 3fr 2fr; grid-template-rows: auto auto; align-items: start; }
+    .ster__media-main { grid-column: 1; grid-row: 1 / span 2; }
+    .ster__media-b { grid-column: 2; grid-row: 1; margin-top: 3rem; }
+    .ster__media-c { grid-column: 2; grid-row: 2; width: 75%; }
+  }
+</style>

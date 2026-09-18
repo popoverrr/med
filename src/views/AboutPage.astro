@@ -1,0 +1,92 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/ui/PageHero.astro';
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import Button from '@/components/ui/Button.astro';
+import Picture from '@/components/ui/Picture.astro';
+import Specialist from '@/components/sections/Specialist.astro';
+import LicenseBlock from '@/components/sections/LicenseBlock.astro';
+import Sterility from '@/components/sections/Sterility.astro';
+import company from '@content/config/company.json';
+import { t, type Locale } from '@/lib/i18n';
+import { breadcrumbLd } from '@/lib/seo';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const dict = t(locale);
+const p = dict.pages.about;
+---
+
+<BaseLayout locale={locale} path="/about" title={dict.seo.about.title} description={dict.seo.about.description} page="about" jsonLd={[breadcrumbLd(locale, [{ name: dict.nav.about, path: '/about' }])]}>
+  <PageHero locale={locale} title={p.h1} lead={p.lead} eyebrow={dict.nav.about} crumbs={[{ name: dict.nav.about, path: '/about' }]} />
+
+  <section class="ab theme-light" data-bg="porcelain" aria-labelledby="ab-principles">
+    <div class="container-x">
+      <h2 id="ab-principles" class="t-d2 ab__title" data-split="words">{p.principles.title}</h2>
+      <ol class="ab__principles" data-reveal-group data-reveal-stagger="0.12">
+        {p.principles.items.map((it, i) => (
+          <li class="ab__principle card" data-reveal>
+            <span class="ab__num tnum" aria-hidden="true">0{i + 1}</span>
+            <h3 class="t-d3">{it.title}</h3>
+            <p class="muted">{it.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <Specialist locale={locale} static />
+  <LicenseBlock locale={locale} />
+
+  <section class="ab theme-light" data-bg="porcelain" aria-labelledby="ab-eq">
+    <div class="container-x">
+      <Eyebrow>{p.equipmentTitle}</Eyebrow>
+      <h2 id="ab-eq" class="t-d2 ab__title" data-split="words">{p.equipmentTitle}</h2>
+      <ul class="ab__equipment" data-reveal-group data-reveal-stagger="0.12">
+        {p.equipment.map((e) => (
+          <li class="ab__eq" data-reveal>
+            <Picture id={e.slot} locale={locale} sizes="(min-width: 1024px) 30vw, 100vw" />
+            <h3 class="t-h4 ab__eq-title">{e.title}</h3>
+            <p class="muted t-small">{e.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <Sterility locale={locale} static />
+
+  <section class="ab theme-dark bg-dark-solid" data-bg="dark" aria-labelledby="ab-req">
+    <div class="container-x ab__req">
+      <div>
+        <Eyebrow>{p.requisitesTitle}</Eyebrow>
+        <h2 id="ab-req" class="t-d2 ab__title ab__title--light" data-split="words">{p.requisitesTitle}</h2>
+      </div>
+      <dl class="ab__req-list" data-reveal-group data-reveal-stagger="0.06">
+        <div data-reveal><dt class="t-caption muted-dark">{dict.home.license.fields.licensee}</dt><dd>{company.legalName[locale]}</dd></div>
+        <div data-reveal><dt class="t-caption muted-dark">{dict.home.license.fields.bin}</dt><dd class="tnum">{company.bin}</dd></div>
+        <div data-reveal><dt class="t-caption muted-dark">{dict.home.contacts.addressLabel}</dt><dd>{company.address.full[locale]}</dd></div>
+        <div data-reveal><dt class="t-caption muted-dark">{dict.footer.licenseTitle}</dt><dd>{dict.common.licenseLineFull}</dd></div>
+      </dl>
+      <div class="ab__req-cta" data-reveal><Button onDark data-open-booking>{p.cta}</Button></div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .ab { position: relative; padding-block: var(--section-y); }
+  .ab__title { margin-bottom: 2.5rem; max-width: 16ch; }
+  .ab__title--light { color: var(--c-bone); }
+  .ab__principles { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+  .ab__principle { padding: clamp(1.5rem, 1rem + 1.5vw, 2.25rem); }
+  .ab__principle h3 { margin: 1.5rem 0 0.75rem; }
+  .ab__num { font-family: var(--font-display); font-weight: 300; font-size: 1.75rem; color: var(--c-burgundy-600); }
+  .ab__equipment { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+  .ab__eq-title { margin: 1rem 0 0.35rem; }
+  .ab__req { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
+  .ab__req-list { display: flex; flex-direction: column; gap: 1rem; }
+  .ab__req-list > div { padding-top: 0.9rem; border-top: 1px solid var(--c-line-on-dark); }
+  .ab__req-list dt { margin-bottom: 0.25rem; }
+  @media (min-width: 768px) { .ab__principles, .ab__equipment { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 1024px) { .ab__req { grid-template-columns: 4fr 6fr 2fr; column-gap: 4rem; align-items: start; } .ab__req-cta { justify-self: end; } }
+</style>

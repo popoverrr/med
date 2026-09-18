@@ -1,0 +1,9 @@
+{
+  "_comment": "Цены и состав курсов предоставляет заказчик (CONTENT-TODO.md).",
+  "currency": "₸",
+  "items": [
+    { "id": "single", "price": "{{PRICE_SINGLE}}", "sessions": "1" },
+    { "id": "course", "price": "{{PRICE_COURSE}}", "sessions": "{{COURSE_SESSIONS}}" },
+    { "id": "course-plus", "price": "{{PRICE_COURSE_PLUS}}", "sessions": "{{COURSE_PLUS_SESSIONS}}" }
+  ]
+}

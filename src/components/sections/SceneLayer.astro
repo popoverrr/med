@@ -1,0 +1,52 @@
+---
+/**
+ * Фиксированный слой сцены главной: WebGL-канвас (монтируется динамически при выполнении условий §4.3)
+ * поверх CSS-постера (градиент + медленно дрейфующая «капля» — деградация без WebGL).
+ */
+import { t, type Locale } from '@/lib/i18n';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const dict = t(locale);
+---
+
+<div class="scene-layer" aria-hidden="true">
+  <div class="scene-poster" data-scene-poster>
+    <div class="scene-poster__drop"></div>
+    <div class="scene-poster__drop scene-poster__drop--b"></div>
+  </div>
+  <div id="scene-root" class="scene-root" data-state="" role="img" aria-label={dict.a11y.sceneDescription}></div>
+</div>
+
+<style>
+  .scene-layer { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+  .scene-poster { position: absolute; inset: 0; background: var(--bg-current); }
+  .scene-poster__drop {
+    position: absolute;
+    top: 18%;
+    right: 8%;
+    width: min(46vw, 640px);
+    aspect-ratio: 1;
+    border-radius: 48% 52% 55% 45% / 50% 46% 54% 50%;
+    background: radial-gradient(60% 60% at 40% 35%, rgba(196, 86, 110, 0.55), rgba(107, 23, 48, 0.18) 55%, transparent 72%);
+    filter: blur(28px);
+    animation: drift 18s var(--e-inout) infinite alternate;
+    will-change: transform;
+  }
+  .scene-poster__drop--b {
+    top: 30%;
+    right: 16%;
+    width: min(28vw, 380px);
+    background: radial-gradient(60% 60% at 60% 60%, rgba(143, 194, 206, 0.28), transparent 70%);
+    animation-duration: 24s;
+    animation-direction: alternate-reverse;
+  }
+  .scene-root { position: absolute; inset: 0; opacity: 1; }
+  .scene-root:not([data-state='active']) { visibility: hidden; }
+  @keyframes drift {
+    0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+    50% { transform: translate3d(-4%, 5%, 0) rotate(8deg) scale(1.06); }
+    100% { transform: translate3d(3%, -3%, 0) rotate(-6deg) scale(0.96); }
+  }
+  @media (prefers-reduced-motion: reduce) { .scene-poster__drop { animation: none; } }
+  @media (max-width: 1023px) { .scene-poster__drop { top: 6%; right: -10%; width: 80vw; } }
+</style>

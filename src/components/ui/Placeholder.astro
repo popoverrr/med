@@ -1,0 +1,9 @@
+---
+/** Визуальная метка для данных, которых ещё нет: {{TOKEN}} -> ⟨TOKEN⟩ (см. CONTENT-TODO.md) */
+import { isPlaceholder, placeholderName } from '@/lib/utils/placeholders';
+
+interface Props { value: string; class?: string }
+const { value, class: className = '' } = Astro.props;
+const ph = isPlaceholder(value);
+---
+{ph ? <span class:list={['ph-token', className]} data-placeholder={placeholderName(value)}>{placeholderName(value)}</span> : <span class={className}>{value}</span>}

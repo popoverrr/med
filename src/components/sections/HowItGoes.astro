@@ -1,0 +1,104 @@
+---
+/**
+ * Pinned-секция «Как проходит процедура»: image-sequence на canvas (кадр = прогресс скролла)
+ * + горизонтальный таймлайн на 5 шагов. Мобайл/reduced-motion: постер + вертикальный список.
+ */
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import Picture from '@/components/ui/Picture.astro';
+import { t, type Locale } from '@/lib/i18n';
+import { sequenceAvailable } from '@/lib/media';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const dict = t(locale);
+const d = dict.home.how;
+const hasSequence = sequenceAvailable('procedure-seq');
+---
+
+<section class="how theme-dark" data-bg="dark" data-scene="how" id="how" aria-labelledby="how-title">
+  <div class="how__pin" data-how-pin>
+    <div class="container-x how__inner">
+      <header class="how__head">
+        <Eyebrow>{d.eyebrow}</Eyebrow>
+        <h2 id="how-title" class="t-d2 how__title" data-split="words">{d.title}</h2>
+        <p class="how__intro t-lead muted-dark" data-reveal>{d.intro}</p>
+      </header>
+
+      <div class="how__media" data-reveal="clip">
+        <div
+          class="how__canvas-wrap"
+          data-sequence
+          data-sequence-base="/media/sequence/procedure-seq-"
+          data-sequence-frames="90"
+          data-sequence-available={hasSequence ? '1' : '0'}
+        >
+          <canvas class="how__canvas" width="1280" height="720" aria-label={d.sequenceAlt} role="img"></canvas>
+          <div class="how__poster" data-sequence-poster>
+            <Picture id="procedure-poster" locale={locale} sizes="(min-width: 1024px) 58vw, 100vw" tone="dark" />
+          </div>
+          <p class="how__frame t-caption tnum" aria-hidden="true"><span data-sequence-label>001</span> / 090</p>
+        </div>
+      </div>
+
+      <div class="how__steps">
+        <ol class="how__track" data-how-track aria-label={dict.a11y.stepList}>
+          {d.steps.map((step, i) => (
+            <li class:list={['how__step', { 'is-current': i === 0 }]} data-how-step={i}>
+              <div class="how__step-top">
+                <span class="how__num tnum" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                <span class="how__dur t-caption tnum">{step.duration}</span>
+              </div>
+              <h3 class="how__step-title t-d3">{step.title}</h3>
+              <p class="how__step-text muted-dark">{step.text}</p>
+            </li>
+          ))}
+        </ol>
+        <div class="how__bar" aria-hidden="true"><span class="how__bar-fill" data-how-bar></span></div>
+        <p class="how__count t-caption tnum" aria-live="polite"><span data-how-current>1</span> / {d.steps.length}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .how { position: relative; }
+  .how__pin { padding-block: clamp(4rem, 3rem + 4vw, 7rem); }
+  .how__inner { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
+  .how__title { color: var(--c-bone); }
+  .how__intro { margin-top: 1rem; max-width: 40ch; }
+  .how__canvas-wrap { position: relative; aspect-ratio: 16 / 9; border-radius: var(--r-media); overflow: hidden; background: var(--c-burgundy-800); box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35); }
+  .how__canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity var(--d-base) var(--e-out); }
+  .how__canvas-wrap.is-ready .how__canvas { opacity: 1; }
+  .how__poster { position: absolute; inset: 0; }
+  .how__poster :global(.picture), .how__poster :global(.mph) { height: 100%; border-radius: 0; }
+  .how__poster :global(.picture__img) { height: 100%; }
+  .how__canvas-wrap.is-ready .how__poster { opacity: 0; transition: opacity var(--d-base) var(--e-out); }
+  .how__frame { position: absolute; right: 1rem; bottom: 0.75rem; color: rgba(255, 252, 250, 0.7); letter-spacing: 0.1em; opacity: 0; transition: opacity var(--d-base) var(--e-out); }
+  .how__canvas-wrap.is-ready .how__frame { opacity: 1; }
+  .how__track { display: flex; flex-direction: column; gap: 1.25rem; }
+  .how__step { padding: 1.5rem; border-radius: var(--r-card); background: rgba(255, 252, 250, 0.05); border: 1px solid var(--c-line-on-dark); color: var(--c-bone); }
+  .how__step-title { color: var(--c-bone); }
+  .how__step-top { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1rem; }
+  .how__num { font-family: var(--font-display); font-weight: 300; font-size: 2rem; letter-spacing: -0.02em; color: var(--c-wine-text); line-height: 1; }
+  .how__dur { color: var(--c-text-muted-on-dark); letter-spacing: 0.06em; text-transform: uppercase; }
+  .how__step-title { margin-bottom: 0.6rem; }
+  .how__step-text { max-width: 40ch; }
+  .how__bar, .how__count { display: none; }
+
+  /* Pinned-режим (десктоп + motion) */
+  @media (min-width: 1024px) {
+    .how__inner { grid-template-columns: 7fr 5fr; grid-template-rows: auto 1fr; column-gap: 3rem; row-gap: 2rem; align-items: start; }
+    .how__head { grid-column: 1 / -1; display: grid; grid-template-columns: 7fr 5fr; column-gap: 3rem; align-items: end; }
+    .how__head :global(.eyebrow), .how__head h2 { grid-column: 1; }
+    .how__intro { grid-column: 2; margin-top: 0; }
+    .how__steps { position: relative; }
+    html.js:not(.rm) .how.is-pinned .how__pin { min-height: 100svh; display: flex; align-items: center; padding-block: 5rem; }
+    html.js:not(.rm) .how.is-pinned .how__steps { overflow: hidden; }
+    html.js:not(.rm) .how.is-pinned .how__track { flex-direction: row; gap: 1.5rem; will-change: transform; }
+    html.js:not(.rm) .how.is-pinned .how__step { flex: 0 0 100%; min-height: 20rem; opacity: 0.4; transition: opacity var(--d-base) var(--e-out); }
+    html.js:not(.rm) .how.is-pinned .how__step.is-current { opacity: 1; }
+    html.js:not(.rm) .how.is-pinned .how__bar { display: block; height: 2px; margin-top: 1.5rem; background: var(--c-line-on-dark); border-radius: 1px; overflow: hidden; }
+    html.js:not(.rm) .how.is-pinned .how__bar-fill { display: block; height: 100%; width: 100%; background: var(--c-wine-glow); transform: scaleX(0.2); transform-origin: left; }
+    html.js:not(.rm) .how.is-pinned .how__count { display: block; margin-top: 0.6rem; color: var(--c-text-muted-on-dark); letter-spacing: 0.1em; }
+  }
+</style>

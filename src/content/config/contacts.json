@@ -1,0 +1,23 @@
+{
+  "_comment": "Плейсхолдеры {{TOKEN}} заменяются фактическими данными заказчика. Полный список — CONTENT-TODO.md",
+  "phone": "{{CONTACT_PHONE}}",
+  "phoneDisplay": "{{CONTACT_PHONE_DISPLAY}}",
+  "whatsapp": "{{CONTACT_WHATSAPP}}",
+  "telegram": "{{CONTACT_TELEGRAM}}",
+  "email": "{{CONTACT_EMAIL}}",
+  "instagram": "{{CONTACT_INSTAGRAM}}",
+  "hours": {
+    "ru": "{{HOURS_RU}}",
+    "kk": "{{HOURS_KK}}"
+  },
+  "openingHoursSpec": "{{OPENING_HOURS_SCHEMA}}",
+  "geo": {
+    "lat": "{{GEO_LAT}}",
+    "lng": "{{GEO_LNG}}"
+  },
+  "map": {
+    "provider": "2gis",
+    "embedUrl": "{{MAP_EMBED_URL}}",
+    "linkUrl": "{{MAP_LINK_URL}}"
+  }
+}

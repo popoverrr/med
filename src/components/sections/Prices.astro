@@ -1,0 +1,64 @@
+---
+/** Цены: 3 карточки (разовая / курс / курс с сопровождением). Ховер — мягкий подъём и подсветка кромки. */
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import Placeholder from '@/components/ui/Placeholder.astro';
+import prices from '@content/config/prices.json';
+import { t, type Locale } from '@/lib/i18n';
+import { isPlaceholder } from '@/lib/utils/placeholders';
+import { formatNumber } from '@/lib/utils/format';
+
+interface Props { locale: Locale; heading?: 'h1' | 'h2'; showIntro?: boolean }
+const { locale, heading = 'h2', showIntro = true } = Astro.props;
+const d = t(locale).home.prices;
+const byId = Object.fromEntries(prices.items.map((p) => [p.id, p]));
+const Heading = heading;
+---
+
+<section class="prices theme-light" data-bg="porcelain" id="prices" aria-labelledby="prices-title">
+  <div class="container-x">
+    <div class="prices__head">
+      <Eyebrow>{d.eyebrow}</Eyebrow>
+      {heading === 'h2' && <Heading id="prices-title" class="t-d2" data-split="words">{d.title}</Heading>}
+      {showIntro && <p class="t-lead muted prices__intro" data-reveal>{d.intro}</p>}
+    </div>
+    <ul class="prices__grid" data-reveal-group data-reveal-stagger="0.12">
+      {d.items.map((item, i) => {
+        const cfg = byId[item.id]!;
+        return (
+          <li class:list={['prices__card card card-hover', { 'prices__card--accent': i === 1 }]} data-reveal>
+            <p class="t-caps prices__kind">{item.title}</p>
+            <p class="prices__price">
+              {isPlaceholder(cfg.price)
+                ? <Placeholder value={cfg.price} />
+                : <><span class="t-num prices__amount">{formatNumber(cfg.price, locale)}</span><span class="prices__currency">{prices.currency}</span></>}
+            </p>
+            <p class="t-caption muted prices__unit">
+              {item.unit}{!isPlaceholder(cfg.sessions) && cfg.sessions !== '1' ? ` · ${cfg.sessions} ${d.sessions}` : ''}
+              {isPlaceholder(cfg.sessions) && <> · <Placeholder value={cfg.sessions} /> {d.sessions}</>}
+            </p>
+            <p class="muted prices__text">{item.text}</p>
+            <button type="button" class:list={['btn', i === 1 ? 'btn-primary' : 'btn-secondary', 'prices__cta']} data-open-booking data-magnetic>{d.cta}</button>
+          </li>
+        );
+      })}
+    </ul>
+    <p class="t-small muted prices__note" data-reveal>{d.note}</p>
+  </div>
+</section>
+
+<style>
+  .prices { position: relative; padding-block: var(--section-y); }
+  .prices__head { margin-bottom: 2.5rem; }
+  .prices__intro { margin-top: 1rem; max-width: 52ch; }
+  .prices__grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+  .prices__card { display: flex; flex-direction: column; padding: clamp(1.5rem, 1rem + 1.5vw, 2.25rem); min-height: 22rem; }
+  .prices__card--accent { border-color: rgba(107, 23, 48, 0.25); box-shadow: var(--sh-card), 0 0 0 4px rgba(107, 23, 48, 0.05); }
+  .prices__kind { color: var(--c-burgundy-600); margin-bottom: 1.5rem; }
+  .prices__price { display: flex; align-items: baseline; gap: 0.4rem; margin-bottom: 0.4rem; min-height: 2.6em; }
+  .prices__currency { font-family: var(--font-display); font-size: 1.5rem; font-weight: 300; color: var(--c-text-muted-on-light); }
+  .prices__unit { margin-bottom: 1.25rem; }
+  .prices__text { margin-bottom: 2rem; max-width: 34ch; }
+  .prices__cta { margin-top: auto; align-self: flex-start; }
+  .prices__note { margin-top: 2rem; max-width: 60ch; }
+  @media (min-width: 768px) { .prices__grid { grid-template-columns: repeat(3, 1fr); } }
+</style>

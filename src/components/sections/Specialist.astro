@@ -1,0 +1,65 @@
+---
+/** Специалист: карточка с портретом + сертификат (FLIP → lightbox со сканом). Сцена гаснет. */
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import Picture from '@/components/ui/Picture.astro';
+import DocumentThumb from '@/components/ui/DocumentThumb.astro';
+import company from '@content/config/company.json';
+import { t, type Locale } from '@/lib/i18n';
+interface Props { locale: Locale; static?: boolean }
+const { locale, static: isStatic = false } = Astro.props;
+const d = t(locale).home.specialist;
+const sp = company.specialist;
+---
+
+<section class="spec theme-light" data-bg="porcelain" data-scene={isStatic ? undefined : 'fade'} id="specialist" aria-labelledby="spec-title">
+  <div class="container-x spec__inner">
+    <div class="spec__portrait" data-reveal="clip">
+      <Picture id="specialist-portrait" locale={locale} sizes="(min-width: 1024px) 36vw, 100vw" />
+    </div>
+    <div class="spec__text">
+      <Eyebrow>{d.eyebrow}</Eyebrow>
+      <h2 id="spec-title" class="t-d2 spec__title" data-split="words">{d.title}</h2>
+      <p class="spec__name t-d3" data-reveal>{sp.name[locale]}</p>
+      <p class="spec__role t-caps" data-reveal>{sp.role[locale]}</p>
+      <p class="muted spec__body" data-reveal>{d.text}</p>
+
+      <div class="spec__cert" data-reveal>
+        <DocumentThumb
+          id={sp.certificate.document}
+          alt={d.certAlt}
+          caption={`${d.certTitle} — ${sp.name[locale]}`}
+          group="specialist"
+          locale={locale}
+          aspect="3 / 2"
+          class="spec__cert-thumb"
+          label={d.ctaCert}
+        />
+        <dl class="spec__facts">
+          {d.certFacts.map((f) => (
+            <div class="spec__fact">
+              <dt class="t-caption muted">{f.label}</dt>
+              <dd class="t-small">{f.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .spec { position: relative; padding-block: var(--section-y); }
+  .spec__inner { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
+  .spec__title { margin-bottom: 2rem; max-width: 14ch; }
+  .spec__name { margin-bottom: 0.35rem; }
+  .spec__role { color: var(--c-burgundy-600); margin-bottom: 1.5rem; }
+  .spec__body { max-width: 56ch; margin-bottom: 2.5rem; }
+  .spec__cert { display: grid; grid-template-columns: 1fr; gap: 1.5rem; padding-top: 2rem; border-top: 1px solid var(--c-line-on-light); }
+  .spec__facts { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.5rem; align-content: start; }
+  .spec__fact dt { margin-bottom: 0.2rem; }
+  @media (min-width: 640px) { .spec__cert { grid-template-columns: 2fr 3fr; } }
+  @media (min-width: 1024px) {
+    .spec__inner { grid-template-columns: 5fr 7fr; column-gap: 5rem; align-items: start; }
+    .spec__portrait { position: sticky; top: 7rem; }
+  }
+</style>

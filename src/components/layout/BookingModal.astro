@@ -1,0 +1,72 @@
+---
+/** Модалка записи (доступна с любой страницы): <dialog> + React-остров формы, focus trap, Esc, возврат фокуса. */
+import { t, type Locale } from '@/lib/i18n';
+import BookingForm from '@/components/forms/BookingForm';
+import { formStrings } from '@/components/forms/strings';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const dict = t(locale);
+---
+
+<dialog class="modal" data-booking-dialog aria-labelledby="booking-dialog-title">
+  <div class="modal__panel theme-dark" data-modal-panel>
+    <button type="button" class="modal__close" data-modal-close aria-label={dict.common.closeModal}>
+      <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M4 4l12 12M16 4L4 16" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+    </button>
+    <p class="t-caps modal__eyebrow">{dict.home.booking.eyebrow}</p>
+    <h2 id="booking-dialog-title" class="t-d3 modal__title">{dict.home.booking.title}</h2>
+    <p class="t-small muted-dark modal__note">{dict.home.booking.note}</p>
+    <div class="modal__form">
+      <BookingForm client:visible strings={formStrings(locale)} locale={locale} compact />
+    </div>
+  </div>
+</dialog>
+
+<style is:global>
+  .modal {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    width: min(100%, 640px);
+    max-width: calc(100vw - 2rem);
+    max-height: calc(100dvh - 2rem);
+    margin: auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    overflow: visible;
+  }
+  .modal::backdrop { background: rgba(18, 8, 11, 0.55); backdrop-filter: blur(6px); }
+  .modal[open] { display: block; }
+  .modal__panel {
+    position: relative;
+    max-height: calc(100dvh - 2rem);
+    overflow-y: auto;
+    padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    border-radius: var(--r-card);
+    background: var(--c-burgundy-900);
+    color: var(--c-bone);
+    box-shadow: var(--sh-modal);
+    transform-origin: center;
+  }
+  .modal__close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--c-bone);
+    opacity: 0.8;
+    transition: opacity var(--d-fast) var(--e-out), background-color var(--d-fast) var(--e-out);
+  }
+  .modal__close:hover { opacity: 1; background: rgba(255, 252, 250, 0.08); }
+  .modal__eyebrow { opacity: 0.7; margin-bottom: 0.75rem; }
+  .modal__title { margin-bottom: 0.5rem; padding-right: 2.5rem; }
+  .modal__note { margin-bottom: 1.5rem; }
+</style>

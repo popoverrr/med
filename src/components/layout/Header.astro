@@ -1,0 +1,217 @@
+---
+import Logo from '@/components/ui/Logo.astro';
+import { t, localePath, otherLocale, stripLocale, type Locale } from '@/lib/i18n';
+
+interface Props {
+  locale: Locale;
+  /** Тон стартового состояния (над тёмным hero — light). */
+  tone?: 'light' | 'dark';
+}
+
+const { locale, tone = 'dark' } = Astro.props;
+const dict = t(locale);
+const current = stripLocale(Astro.url.pathname);
+const other = otherLocale(locale);
+
+const nav = [
+  { href: '/procedure', label: dict.nav.procedure },
+  { href: '/water', label: dict.nav.water },
+  { href: '/prices', label: dict.nav.prices },
+  { href: '/about', label: dict.nav.about },
+  { href: '/contacts', label: dict.nav.contacts },
+];
+const isActive = (href: string) => current === href;
+---
+
+<header class:list={['site-header', `site-header--${tone}`]} data-header data-tone={tone}>
+  <div class="container-x site-header__inner">
+    <a href={localePath(locale, '/')} class="site-header__logo" aria-label={`Hydromed — ${dict.nav.home}`} data-magnetic>
+      <Logo />
+    </a>
+
+    <nav class="site-nav" aria-label={dict.a11y.menuDialog}>
+      <ul class="site-nav__list">
+        {nav.map((item) => (
+          <li>
+            <a
+              href={localePath(locale, item.href)}
+              class:list={['site-nav__link', { 'is-active': isActive(item.href) }]}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+              data-cursor="link"
+            >{item.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="site-header__actions">
+      <div class="lang-switch" role="group" aria-label={dict.nav.langLabel}>
+        <span class="lang-switch__cur" aria-current="true">{dict.nav.langCurrent}</span>
+        <span class="lang-switch__sep" aria-hidden="true">/</span>
+        <a href={localePath(other, current)} class="lang-switch__other" lang={other} hreflang={other} aria-label={`${dict.nav.langOther} — ${dict.nav.langOtherFull}`} data-cursor="link">{dict.nav.langOther}</a>
+      </div>
+      <button type="button" class="btn btn-primary site-header__cta" data-open-booking data-magnetic>
+        {dict.nav.book}
+      </button>
+      <button
+        type="button"
+        class="burger"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label={dict.nav.menu}
+        data-menu-toggle
+      >
+        <span class="burger__line" aria-hidden="true"></span>
+        <span class="burger__line" aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="mobile-menu" hidden data-mobile-menu aria-label={dict.a11y.menuDialog} role="dialog" aria-modal="true">
+    <div class="mobile-menu__inner container-x">
+      <ul class="mobile-menu__list">
+        {nav.map((item, i) => (
+          <li style={`--i:${i}`}>
+            <a href={localePath(locale, item.href)} class="mobile-menu__link" aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>
+          </li>
+        ))}
+        <li style={`--i:${nav.length}`}>
+          <a href={localePath(locale, '/booking')} class="mobile-menu__link mobile-menu__link--accent">{dict.nav.book}</a>
+        </li>
+      </ul>
+      <div class="mobile-menu__foot">
+        <a href={localePath(other, current)} class="mobile-menu__lang" lang={other} hreflang={other}>{dict.nav.langOtherFull}</a>
+        <a href={localePath(locale, '/legal/license')} class="mobile-menu__license">{dict.common.licenseLine}</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-header);
+    color: var(--c-text-on-light);
+    transition: color var(--d-base) var(--e-out), background-color var(--d-base) var(--e-out), box-shadow var(--d-base) var(--e-out), transform var(--d-base) var(--e-out);
+    --header-h: 72px;
+  }
+  .site-header--dark { color: var(--c-bone); }
+  .site-header.is-on-dark { color: var(--c-bone); }
+  .site-header.is-on-light { color: var(--c-text-on-light); }
+  .site-header.is-scrolled {
+    background: color-mix(in srgb, var(--bg-current) 78%, transparent);
+    backdrop-filter: blur(14px) saturate(1.2);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    box-shadow: 0 1px 0 rgba(53, 10, 22, 0.06);
+  }
+  .site-header.is-on-dark.is-scrolled { box-shadow: 0 1px 0 rgba(255, 252, 250, 0.08); }
+  .site-header.is-hidden { transform: translateY(-100%); }
+  :global(html.menu-open) .site-header { color: var(--c-bone); background: transparent; backdrop-filter: none; box-shadow: none; transform: none; }
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    height: var(--header-h);
+  }
+  .site-header__logo { display: inline-flex; align-items: center; min-height: 44px; }
+  .site-nav { display: none; }
+  .site-nav__list { display: flex; gap: clamp(1rem, 0.5rem + 1.2vw, 2rem); }
+  .site-nav__link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: 0.005em;
+    opacity: 0.82;
+    transition: opacity var(--d-fast) var(--e-out);
+  }
+  .site-nav__link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 8px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--d-base) var(--e-out);
+  }
+  .site-nav__link:hover, .site-nav__link.is-active { opacity: 1; }
+  .site-nav__link:hover::after, .site-nav__link.is-active::after { transform: scaleX(1); }
+
+  .site-header__actions { display: flex; align-items: center; gap: 0.75rem; }
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    min-height: 44px;
+    padding: 0 0.4rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+  }
+  .lang-switch__cur { opacity: 1; }
+  .lang-switch__sep { opacity: 0.5; }
+  .lang-switch__other { display: inline-flex; align-items: center; min-height: 44px; padding: 0 0.3rem; opacity: 0.72; transition: opacity var(--d-fast) var(--e-out); }
+  .lang-switch__other:hover { opacity: 1; }
+  .site-header__cta { display: none; }
+  .site-header--dark .site-header__cta, .site-header.is-on-dark .site-header__cta { background: var(--c-bone); color: var(--c-burgundy-900); }
+  .site-header--dark .site-header__cta:hover, .site-header.is-on-dark .site-header__cta:hover { background: #fff; }
+  .site-header.is-on-light .site-header__cta { background: var(--c-burgundy-700); color: var(--c-bone); }
+
+  .burger {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .burger__line { width: 22px; height: 1.5px; background: currentColor; transition: transform var(--d-base) var(--e-out); }
+  .burger[aria-expanded='true'] .burger__line:first-child { transform: translateY(3.75px) rotate(45deg); }
+  .burger[aria-expanded='true'] .burger__line:last-child { transform: translateY(-3.75px) rotate(-45deg); }
+
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: var(--c-burgundy-900);
+    color: var(--c-bone);
+    padding-top: var(--header-h);
+    overflow-y: auto;
+  }
+  .mobile-menu__inner { display: flex; flex-direction: column; justify-content: space-between; min-height: calc(100dvh - var(--header-h)); padding-block: 2rem 2.5rem; }
+  .mobile-menu__list { display: flex; flex-direction: column; gap: 0.25rem; }
+  .mobile-menu__link {
+    display: block;
+    padding: 0.55rem 0;
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(2rem, 1.2rem + 4vw, 3rem);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity var(--d-base) var(--e-out), transform var(--d-base) var(--e-out);
+    transition-delay: calc(var(--i) * 50ms);
+  }
+  .mobile-menu.is-open .mobile-menu__link { opacity: 1; transform: none; }
+  .mobile-menu__link--accent { color: var(--c-wine-text); }
+  .mobile-menu__foot { display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.875rem; opacity: 0.75; padding-top: 2rem; }
+
+  @media (min-width: 1024px) {
+    .site-nav { display: block; }
+    .site-header__cta { display: inline-flex; }
+    .burger { display: none; }
+    .site-header { --header-h: 84px; }
+  }
+</style>

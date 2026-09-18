@@ -1,0 +1,26 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Button from '@/components/ui/Button.astro';
+import { t, localePath, type Locale } from '@/lib/i18n';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const dict = t(locale);
+const p = dict.pages.notFound;
+---
+<BaseLayout locale={locale} path="/404" title={dict.seo.notFound.title} description={dict.seo.notFound.description} page="404" headerTone="dark" bg="dark" noindex>
+  <section class="nf theme-dark" data-bg="dark">
+    <div class="container-x nf__inner">
+      <p class="nf__code t-num" data-reveal>404</p>
+      <h1 class="t-d2 nf__title" data-split="words">{p.h1}</h1>
+      <p class="t-lead muted-dark nf__text" data-reveal>{p.text}</p>
+      <div data-reveal><Button onDark href={localePath(locale, '/')}>{p.cta}</Button></div>
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  .nf { min-height: 100svh; display: flex; align-items: center; padding-block: 8rem 4rem; }
+  .nf__inner { display: flex; flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+  .nf__code { color: var(--c-wine-text); }
+  .nf__title { color: var(--c-bone); }
+  .nf__text { max-width: 40ch; }
+</style>

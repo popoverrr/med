@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+*.log
+npm-debug.log*
+# Секреты форм — только на сервере
+public/api/config.php
+public/api/_data/
+# Отчёты
+reports/*.tmp
+# Локальные настройки IDE/агента
+.claude/
+# Отчёты QA — тяжёлые скриншоты и HTML Lighthouse не коммитим, кроме сводки
+reports/shots/
+reports/lighthouse/*.report.html
+reports/lighthouse/*.report.json

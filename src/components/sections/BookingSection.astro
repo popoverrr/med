@@ -1,0 +1,50 @@
+---
+/** Запись: форма на тёмном бургунди-фоне (React-остров, грузится при появлении). */
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import BookingForm from '@/components/forms/BookingForm';
+import { formStrings } from '@/components/forms/strings';
+import contacts from '@content/config/contacts.json';
+import Placeholder from '@/components/ui/Placeholder.astro';
+import { t, type Locale } from '@/lib/i18n';
+import { real } from '@/lib/utils/placeholders';
+import { telHref, waHref } from '@/lib/utils/format';
+
+interface Props { locale: Locale; heading?: 'h1' | 'h2'; title?: string; text?: string }
+const { locale, heading = 'h2', title, text } = Astro.props;
+const dict = t(locale);
+const d = dict.home.booking;
+const phone = real(contacts.phone);
+const wa = real(contacts.whatsapp);
+const Heading = heading;
+---
+
+<section class="book theme-dark bg-dark-solid" data-bg="dark" id="booking" aria-labelledby="book-title">
+  <div class="container-x book__inner">
+    <div class="book__text">
+      <Eyebrow>{d.eyebrow}</Eyebrow>
+      <Heading id="book-title" class="t-d2 book__title" data-split="words">{title ?? d.title}</Heading>
+      <p class="t-lead book__lead" data-reveal>{text ?? d.text}</p>
+      <p class="t-small muted-dark book__note" data-reveal>{d.note}</p>
+      <div class="book__alt" data-reveal>
+        <p class="t-caps muted-dark">{dict.home.contacts.phoneLabel}</p>
+        <p class="book__phone t-d3">{phone ? <a href={telHref(phone)}>{real(contacts.phoneDisplay) ?? phone}</a> : <Placeholder value={contacts.phone} />}</p>
+        {wa ? <a class="btn btn-secondary-on-dark" href={waHref(wa)} target="_blank" rel="noopener">WhatsApp</a> : <p class="t-caption muted-dark">WhatsApp: <Placeholder value={contacts.whatsapp} /></p>}
+      </div>
+    </div>
+    <div class="book__form" data-reveal="clip">
+      <BookingForm client:visible strings={formStrings(locale)} locale={locale} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .book { position: relative; padding-block: var(--section-y); }
+  .book__inner { display: grid; grid-template-columns: 1fr; gap: 3rem; }
+  .book__title { color: var(--c-bone); margin-bottom: 1.25rem; max-width: 16ch; }
+  .book__lead { color: var(--c-text-muted-on-dark); max-width: 40ch; margin-bottom: 1rem; }
+  .book__note { max-width: 40ch; margin-bottom: 2.5rem; }
+  .book__alt { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; padding-top: 1.5rem; border-top: 1px solid var(--c-line-on-dark); }
+  .book__phone { color: var(--c-bone); margin-bottom: 0.5rem; }
+  .book__form { padding: clamp(1.5rem, 1rem + 2vw, 2.75rem); border-radius: var(--r-card); background: rgba(255, 252, 250, 0.04); border: 1px solid var(--c-line-on-dark); }
+  @media (min-width: 1024px) { .book__inner { grid-template-columns: 5fr 7fr; column-gap: 5rem; align-items: start; } }
+</style>

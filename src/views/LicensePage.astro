@@ -1,0 +1,83 @@
+---
+/** /legal/license — лицензия и разрешительные документы: реквизиты, сканы в lightbox, проверка в реестре. */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/ui/PageHero.astro';
+import DocumentThumb from '@/components/ui/DocumentThumb.astro';
+import LicenseBlock from '@/components/sections/LicenseBlock.astro';
+import company from '@content/config/company.json';
+import { t, localePath, type Locale } from '@/lib/i18n';
+import { breadcrumbLd } from '@/lib/seo';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const dict = t(locale);
+const d = dict.legal.license;
+const index = dict.pages.legalIndex;
+const alts: Record<string, string> = {
+  'license-01-main': dict.home.license.mainAlt,
+  'license-02-appendix': dict.home.license.appendixAlt,
+  'certificate-hydrocolon-rahpatova': dict.home.specialist.certAlt,
+};
+const others = (Object.keys(index.items) as Array<keyof typeof index.items>).filter((k) => k !== 'license').map((k) => ({
+  href: localePath(locale, k === 'patientRights' ? '/legal/patient-rights' : `/legal/${k}`),
+  label: index.items[k],
+}));
+---
+
+<BaseLayout locale={locale} path="/legal/license" title={dict.seo.license.title} description={dict.seo.license.description} page="legal" jsonLd={[breadcrumbLd(locale, [{ name: index.title, path: '/legal/license' }, { name: d.h1, path: '/legal/license' }])]}>
+  <PageHero locale={locale} title={d.h1} lead={d.subtitle} eyebrow={index.title} crumbs={[{ name: index.title, path: '/legal/license' }, { name: d.h1, path: '/legal/license' }]} />
+
+  <section class="lp theme-light" data-bg="porcelain">
+    <div class="container-x">
+      <p class="t-lead muted lp__intro" data-reveal>{d.intro}</p>
+      <h2 class="t-d3 lp__title" data-reveal>{d.docsTitle}</h2>
+      <ul class="lp__docs" data-reveal-group data-reveal-stagger="0.12">
+        {d.docs.map((doc) => (
+          <li class="lp__doc" data-reveal>
+            <DocumentThumb id={doc.id} alt={alts[doc.id] ?? doc.title} caption={`${doc.title} — ${doc.caption}`} locale={locale} group="legal-docs" aspect={doc.id.startsWith('certificate') ? '3 / 2' : '3 / 4'} label={dict.common.viewDocument} />
+            <h3 class="t-h4 lp__doc-title">{doc.title}</h3>
+            <p class="t-small muted">{doc.caption}</p>
+            <a class="t-small link-u" href={`/documents/${doc.id}.pdf`} download>{dict.common.downloadPdf}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <LicenseBlock locale={locale} full />
+
+  <section class="lp theme-light" data-bg="bone">
+    <div class="container-x lp__grid">
+      <div data-reveal-group>
+        <h2 class="t-d3 lp__title" data-reveal>{d.verifyTitle}</h2>
+        <ol class="lp__steps">
+          {d.verifySteps.map((s, i) => <li data-reveal><span class="lp__num tnum">{i + 1}</span><span>{s}</span></li>)}
+        </ol>
+        <a class="btn btn-primary lp__registry" href={company.license.registryUrl} target="_blank" rel="noopener noreferrer" data-reveal data-magnetic>{dict.common.openRegistry}
+          <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13l10-10M6 3h7v7" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>
+        </a>
+      </div>
+      <nav aria-label={index.title} data-reveal>
+        <p class="t-caps muted lp__nav-title">{index.title}</p>
+        <ul class="lp__nav">{others.map((o) => <li><a href={o.href} class="link-u">{o.label}</a></li>)}</ul>
+      </nav>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .lp { position: relative; padding-block: 0 var(--section-y); }
+  .lp__intro { max-width: 60ch; margin-bottom: 3rem; }
+  .lp__title { margin-bottom: 1.5rem; }
+  .lp__docs { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+  .lp__doc { display: flex; flex-direction: column; gap: 0.4rem; }
+  .lp__doc-title { margin-top: 1rem; }
+  .lp__grid { display: grid; grid-template-columns: 1fr; gap: 3rem; padding-top: var(--section-y); }
+  .lp__steps { display: flex; flex-direction: column; gap: 0.9rem; margin-bottom: 2rem; }
+  .lp__steps li { display: flex; gap: 1rem; align-items: flex-start; max-width: 56ch; }
+  .lp__num { flex: none; width: 1.75rem; height: 1.75rem; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--c-line-on-light); border-radius: 50%; font-size: 0.8rem; color: var(--c-burgundy-700); }
+  .lp__nav-title { margin-bottom: 0.75rem; }
+  .lp__nav { display: flex; flex-direction: column; gap: 0.5rem; }
+  @media (min-width: 640px) { .lp__docs { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 1024px) { .lp__grid { grid-template-columns: 7fr 5fr; column-gap: 5rem; } }
+</style>

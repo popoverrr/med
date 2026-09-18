@@ -1,0 +1,39 @@
+/* Формы (React-острова BookingForm / ContactForm). Тёмный контекст по умолчанию (бургунди-фон). */
+.bf { position: relative; }
+.bf__form { display: flex; flex-direction: column; gap: 1.1rem; }
+.bf__row { display: grid; grid-template-columns: 1fr; gap: 1.1rem; }
+.bf__field { display: flex; flex-direction: column; gap: 0.4rem; min-width: 0; }
+.bf__label { font-size: 0.875rem; font-weight: 500; letter-spacing: 0.01em; opacity: 0.9; }
+.bf__hint { font-size: 0.8125rem; opacity: 0.6; }
+.bf__error { font-size: 0.8125rem; color: #f2a3b3; }
+.bf__hp { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+.bf__consent { display: flex; align-items: flex-start; gap: 0.75rem; margin-top: 0.25rem; font-size: 0.9rem; line-height: 1.45; }
+.bf__checkbox { flex: none; width: 20px; height: 20px; margin-top: 0.15rem; accent-color: var(--c-wine-glow); cursor: pointer; }
+.bf__consent-label { cursor: pointer; opacity: 0.9; }
+.bf__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-top: 0.5rem; }
+.bf__submit { min-width: 12rem; }
+.bf__submit:disabled { opacity: 0.6; cursor: wait; }
+.bf__status { font-size: 0.875rem; color: #f2a3b3; min-height: 1.3em; }
+.bf__success { display: flex; flex-direction: column; align-items: flex-start; gap: 0.75rem; padding: 1rem 0; }
+.bf__check { color: var(--c-wine-glow); margin-bottom: 0.5rem; }
+.bf__success-title { font-family: var(--font-display); font-size: var(--fs-d3); font-weight: 400; letter-spacing: var(--track-h); }
+.bf__success-text { opacity: 0.85; max-width: 44ch; }
+.bf__again { margin-top: 0.5rem; }
+select.field { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23fffcfa' stroke-width='1.5'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.9rem center; padding-right: 2.5rem; }
+select.field option { color: var(--c-ink); background: var(--c-bone); }
+input[type='date'].field::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.7; cursor: pointer; }
+textarea.field { resize: vertical; min-height: 6rem; }
+
+/* Светлый контекст (страница /contacts) */
+.bf--light .field { background: #fff; border-color: rgba(53, 10, 22, 0.16); color: var(--c-ink); }
+.bf--light .field::placeholder { color: rgba(18, 8, 11, 0.45); }
+.bf--light .field:focus { border-color: var(--c-burgundy-600); }
+.bf--light .bf__error, .bf--light .bf__status { color: #b3213f; }
+.bf--light .bf__checkbox { accent-color: var(--c-burgundy-700); }
+.bf--light select.field { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%2312080b' stroke-width='1.5'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E"); }
+.bf--light .bf__check { color: var(--c-burgundy-700); }
+
+@media (min-width: 640px) {
+  .bf__row { grid-template-columns: 1fr 1fr; }
+  .bf__row:has(.bf__field--half) { grid-template-columns: 2fr 1fr 1fr; }
+}

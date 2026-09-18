@@ -1,0 +1,52 @@
+---
+/** Шапка внутренней страницы: хлебные крошки, h1 (кинетический), лид. */
+import { t, localePath, type Locale } from '@/lib/i18n';
+interface Props {
+  locale: Locale;
+  title: string;
+  lead?: string;
+  eyebrow?: string;
+  crumbs?: Array<{ name: string; path: string }>;
+  tone?: 'light' | 'dark';
+}
+const { locale, title, lead, eyebrow, crumbs = [], tone = 'light' } = Astro.props;
+const dict = t(locale);
+---
+
+<header class:list={['page-hero', `page-hero--${tone}`, tone === 'dark' ? 'theme-dark' : 'theme-light']} data-bg={tone === 'dark' ? 'dark' : 'porcelain'}>
+  <div class="container-x">
+    {crumbs.length > 0 && (
+      <nav class="crumbs t-caption" aria-label="Breadcrumb">
+        <ol class="crumbs__list">
+          <li><a href={localePath(locale, '/')}>{dict.common.breadcrumbHome}</a></li>
+          {crumbs.map((c, i) => (
+            <li>
+              <span class="crumbs__sep" aria-hidden="true">/</span>
+              {i === crumbs.length - 1 ? <span aria-current="page">{c.name}</span> : <a href={localePath(locale, c.path)}>{c.name}</a>}
+            </li>
+          ))}
+        </ol>
+      </nav>
+    )}
+    {eyebrow && <p class="t-caps page-hero__eyebrow" data-reveal>{eyebrow}</p>}
+    <h1 class="t-hero page-hero__title" data-split="words">{title}</h1>
+    {lead && <p class="t-lead page-hero__lead" data-reveal data-reveal-delay="0.3">{lead}</p>}
+    <slot />
+  </div>
+</header>
+
+<style>
+  .page-hero { padding-top: clamp(7rem, 5rem + 6vw, 11rem); padding-bottom: clamp(2.5rem, 2rem + 3vw, 5rem); }
+  .page-hero--dark { color: var(--c-bone); }
+  .crumbs { margin-bottom: 2rem; color: var(--c-text-muted-on-light); }
+  .page-hero--dark .crumbs { color: var(--c-text-muted-on-dark); }
+  .crumbs__list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .crumbs__list li { display: inline-flex; gap: 0.5rem; }
+  .crumbs__list a:hover { color: var(--c-burgundy-700); }
+  .page-hero--dark .crumbs__list a:hover { color: var(--c-bone); }
+  .page-hero__eyebrow { margin-bottom: 1.25rem; color: var(--c-burgundy-600); }
+  .page-hero--dark .page-hero__eyebrow { color: var(--c-wine-text); }
+  .page-hero__title { max-width: 14ch; font-size: clamp(2.5rem, 1rem + 5.5vw, 6.5rem); margin-bottom: 1.5rem; }
+  .page-hero__lead { max-width: 56ch; color: var(--c-text-muted-on-light); }
+  .page-hero--dark .page-hero__lead { color: var(--c-text-muted-on-dark); }
+</style>

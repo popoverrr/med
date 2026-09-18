@@ -1,0 +1,104 @@
+---
+/**
+ * Аккуратный плейсхолдер медиа-слота (ТЗ §9.1): правильное соотношение сторон,
+ * мягкий бургунди-градиент, шум-текстура, по центру — ID слота, размеры и описание кадра.
+ */
+import { getSlot, parseAspect } from '@/lib/media';
+import type { Locale } from '@/lib/i18n';
+
+interface Props {
+  id: string;
+  locale?: Locale;
+  class?: string;
+  /** Переопределить соотношение сторон (например для обрезки в макете). */
+  aspect?: string;
+  /** Тёмный вариант — для тёмных секций. */
+  tone?: 'light' | 'dark';
+  /** Скрыть подпись (для декоративных фонов). */
+  quiet?: boolean;
+}
+
+const { id, locale = 'ru', class: className = '', aspect, tone = 'light', quiet = false } = Astro.props;
+const slot = getSlot(id);
+const { w, h } = parseAspect(aspect ?? slot.aspect);
+const sizes = slot.type === 'sequence'
+  ? `${slot.frames} × ${slot.sizes[0]}px`
+  : slot.sizes.map((s) => `${s}`).join(' / ') + ' px';
+const typeLabel = slot.type === 'video' ? 'VIDEO' : slot.type === 'sequence' ? 'SEQUENCE' : 'IMAGE';
+---
+
+<div
+  class:list={['mph', `mph--${tone}`, className]}
+  style={`aspect-ratio: ${w} / ${h};`}
+  role="img"
+  aria-label={slot.alt[locale]}
+  data-media-slot={id}
+>
+  <div class="mph__noise" aria-hidden="true"></div>
+  <div class="mph__glow" aria-hidden="true"></div>
+  {!quiet && (
+    <div class="mph__label" aria-hidden="true">
+      <span class="mph__type">{typeLabel} · {slot.aspect}</span>
+      <span class="mph__id">{id}</span>
+      <span class="mph__sizes">{sizes}</span>
+      <span class="mph__desc">{slot.description}</span>
+    </div>
+  )}
+  <svg class="mph__corner" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 8V2h6M16 2h6v6M22 16v6h-6M8 22H2v-6" fill="none" stroke="currentColor" stroke-width="1"/></svg>
+</div>
+
+<style>
+  .mph {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: var(--r-media);
+    background:
+      radial-gradient(120% 90% at 20% 10%, rgba(196, 86, 110, 0.22), transparent 60%),
+      radial-gradient(90% 80% at 85% 90%, rgba(143, 194, 206, 0.12), transparent 55%),
+      linear-gradient(160deg, var(--c-burgundy-800), var(--c-burgundy-900) 55%, var(--c-ink));
+    color: rgba(255, 252, 250, 0.82);
+    isolation: isolate;
+  }
+  .mph--light {
+    background:
+      radial-gradient(120% 90% at 20% 10%, rgba(196, 86, 110, 0.18), transparent 60%),
+      radial-gradient(90% 80% at 85% 90%, rgba(143, 194, 206, 0.16), transparent 55%),
+      linear-gradient(160deg, #efe3e0, var(--c-porcelain) 50%, #e9dcd8);
+    color: rgba(53, 10, 22, 0.78);
+  }
+  .mph__noise {
+    position: absolute;
+    inset: 0;
+    opacity: 0.35;
+    mix-blend-mode: soft-light;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.9'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+  }
+  .mph__glow {
+    position: absolute;
+    inset: -20%;
+    background: radial-gradient(40% 40% at 50% 50%, rgba(255, 252, 250, 0.08), transparent 70%);
+    pointer-events: none;
+  }
+  .mph__label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.35rem;
+    padding: clamp(1rem, 4%, 2rem);
+    font-family: var(--font-text);
+  }
+  .mph__type { font-size: 0.6875rem; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.6; }
+  .mph__id { font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace; font-size: clamp(0.8rem, 0.6rem + 0.6vw, 1rem); letter-spacing: 0.02em; }
+  .mph__sizes { font-size: 0.75rem; opacity: 0.6; font-variant-numeric: tabular-nums; }
+  .mph__desc { max-width: 34ch; font-size: 0.78rem; line-height: 1.4; opacity: 0.72; margin-top: 0.4rem; }
+  .mph__corner { position: absolute; right: 14px; bottom: 14px; width: 18px; height: 18px; opacity: 0.45; }
+  @container (max-width: 320px) {
+    .mph__desc { display: none; }
+  }
+</style>

@@ -1,0 +1,65 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/ui/PageHero.astro';
+import Placeholder from '@/components/ui/Placeholder.astro';
+import BookingForm from '@/components/forms/BookingForm';
+import { formStrings } from '@/components/forms/strings';
+import contacts from '@content/config/contacts.json';
+import { t, type Locale } from '@/lib/i18n';
+import { real } from '@/lib/utils/placeholders';
+import { telHref, waHref, tgHref } from '@/lib/utils/format';
+import { breadcrumbLd } from '@/lib/seo';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const dict = t(locale);
+const p = dict.pages.booking;
+const phone = real(contacts.phone);
+const wa = real(contacts.whatsapp);
+const tg = real(contacts.telegram);
+---
+
+<BaseLayout locale={locale} path="/booking" title={dict.seo.booking.title} description={dict.seo.booking.description} page="booking" headerTone="dark" bg="dark" jsonLd={[breadcrumbLd(locale, [{ name: dict.nav.book, path: '/booking' }])]}>
+  <PageHero locale={locale} title={p.h1} lead={p.lead} eyebrow={dict.home.booking.eyebrow} tone="dark" crumbs={[{ name: dict.nav.book, path: '/booking' }]} />
+
+  <section class="bp theme-dark" data-bg="dark">
+    <div class="container-x bp__grid">
+      <div class="bp__form" data-reveal="clip">
+        <BookingForm client:load strings={formStrings(locale)} locale={locale} />
+      </div>
+      <aside class="bp__aside">
+        <div data-reveal-group>
+          <h2 class="t-d3 bp__title" data-reveal>{p.stepsTitle}</h2>
+          <ol class="bp__steps">
+            {p.steps.map((s, i) => <li data-reveal><span class="bp__num tnum">{i + 1}</span><span class="muted-dark">{s}</span></li>)}
+          </ol>
+        </div>
+        <div class="bp__alt" data-reveal-group>
+          <h2 class="t-d3 bp__title" data-reveal>{p.altTitle}</h2>
+          <p class="muted-dark" data-reveal>{p.altText}</p>
+          <p class="bp__phone t-d3" data-reveal>{phone ? <a href={telHref(phone)}>{real(contacts.phoneDisplay) ?? phone}</a> : <Placeholder value={contacts.phone} />}</p>
+          <div class="bp__msgs" data-reveal>
+            {wa ? <a class="btn btn-secondary-on-dark" href={waHref(wa)} target="_blank" rel="noopener">WhatsApp</a> : <span class="t-caption">WhatsApp: <Placeholder value={contacts.whatsapp} /></span>}
+            {tg ? <a class="btn btn-secondary-on-dark" href={tgHref(tg)} target="_blank" rel="noopener">Telegram</a> : <span class="t-caption">Telegram: <Placeholder value={contacts.telegram} /></span>}
+          </div>
+        </div>
+        <p class="t-small muted-dark" data-reveal>{dict.home.booking.note}</p>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .bp { position: relative; padding-block: 0 var(--section-y); }
+  .bp__grid { display: grid; grid-template-columns: 1fr; gap: 3rem; }
+  .bp__form { padding: clamp(1.5rem, 1rem + 2vw, 2.75rem); border-radius: var(--r-card); background: rgba(255, 252, 250, 0.04); border: 1px solid var(--c-line-on-dark); }
+  .bp__aside { display: flex; flex-direction: column; gap: 2.5rem; }
+  .bp__title { color: var(--c-bone); margin-bottom: 1.25rem; }
+  .bp__steps { display: flex; flex-direction: column; gap: 1rem; }
+  .bp__steps li { display: flex; gap: 1rem; align-items: flex-start; }
+  .bp__num { flex: none; width: 1.75rem; height: 1.75rem; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--c-line-on-dark); border-radius: 50%; font-size: 0.8rem; color: var(--c-wine-text); }
+  .bp__alt { padding-top: 2rem; border-top: 1px solid var(--c-line-on-dark); }
+  .bp__phone { color: var(--c-bone); margin: 1rem 0; }
+  .bp__msgs { display: flex; flex-wrap: wrap; gap: 0.5rem; color: var(--c-text-muted-on-dark); }
+  @media (min-width: 1024px) { .bp__grid { grid-template-columns: 7fr 5fr; column-gap: 5rem; align-items: start; } }
+</style>

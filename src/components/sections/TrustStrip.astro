@@ -1,0 +1,43 @@
+---
+import { t, type Locale } from '@/lib/i18n';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const items = t(locale).home.trust.items;
+const icons = [
+  '<path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/>',
+  '<circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/>',
+  '<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 10h16M9 5v14"/>',
+  '<path d="M12 3s-6 7-6 11a6 6 0 0 0 12 0c0-4-6-11-6-11z"/><path d="M12 9s-3 3.5-3 5.5a3 3 0 0 0 6 0C15 12.5 12 9 12 9z"/>',
+];
+---
+
+<section class="trust theme-dark" data-bg="dark" aria-label="Ключевые факты">
+  <div class="container-x">
+    <ul class="trust__list" data-reveal-group data-reveal-stagger="0.12">
+      {items.map((item, i) => (
+        <li class="trust__item" data-reveal>
+          <span class="trust__divider" data-line aria-hidden="true"></span>
+          <svg class="trust__icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={icons[i]} />
+          <p class="trust__title t-h4">{item.title}</p>
+          <p class="trust__text t-small">{item.text}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .trust { position: relative; padding-block: clamp(2rem, 1rem + 3vw, 4rem) clamp(3rem, 2rem + 4vw, 6rem); }
+  .trust__list { display: grid; grid-template-columns: 1fr; gap: 0; }
+  .trust__item { position: relative; padding: 1.5rem 0 1.5rem 0; }
+  .trust__divider { position: absolute; left: 0; top: 0; width: 100%; height: 1px; background: var(--c-line-on-dark); }
+  .trust__icon { color: var(--c-wine-glow); margin-bottom: 1rem; }
+  .trust__title { margin-bottom: 0.35rem; color: var(--c-bone); }
+  .trust__text { color: var(--c-text-muted-on-dark); max-width: 30ch; }
+  @media (min-width: 640px) { .trust__list { grid-template-columns: 1fr 1fr; gap: 0 2rem; } }
+  @media (min-width: 1024px) {
+    .trust__list { grid-template-columns: repeat(4, 1fr); gap: 0; }
+    .trust__item { padding: 0.5rem 1.75rem 0.5rem 1.5rem; }
+    .trust__divider { width: 1px; height: 100%; }
+  }
+</style>

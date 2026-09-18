@@ -1,0 +1,88 @@
+---
+/**
+ * Юридический документ. Каждый документ — ПРОЕКТ: требует проверки юристом РК перед публикацией
+ * (маркер ниже в разметке + заметный баннер).
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/ui/PageHero.astro';
+import { t, localePath, type Locale } from '@/lib/i18n';
+import { breadcrumbLd } from '@/lib/seo';
+
+type DocKey = 'privacy' | 'consent' | 'offer' | 'patientRights';
+interface Props { locale: Locale; doc: DocKey; path: string }
+const { locale, doc, path } = Astro.props;
+const dict = t(locale);
+const d = dict.legal[doc];
+const seo = dict.seo[doc];
+const common = dict.legal.common;
+const index = dict.pages.legalIndex;
+const others = (Object.keys(index.items) as Array<keyof typeof index.items>).map((k) => ({
+  key: k,
+  href: localePath(locale, k === 'patientRights' ? '/legal/patient-rights' : `/legal/${k}`),
+  label: index.items[k],
+}));
+---
+
+<!-- ТРЕБУЕТ ПРОВЕРКИ ЮРИСТОМ РК ПЕРЕД ПУБЛИКАЦИЕЙ -->
+<BaseLayout locale={locale} path={path} title={seo.title} description={seo.description} page="legal" jsonLd={[breadcrumbLd(locale, [{ name: index.title, path: '/legal/license' }, { name: d.h1, path }])]}>
+  <PageHero locale={locale} title={d.h1} lead={d.subtitle} eyebrow={index.title} crumbs={[{ name: index.title, path: '/legal/license' }, { name: d.h1, path }]} />
+
+  <section class="legal theme-light" data-bg="porcelain">
+    <div class="container-x legal__grid">
+      <aside class="legal__aside">
+        <p class="legal__draft t-small" role="note">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 9v4M12 17h.01M10.3 3.9L2.6 17.2A2 2 0 0 0 4.3 20h15.4a2 2 0 0 0 1.7-2.8L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+          {common.draftNotice}
+        </p>
+        <p class="t-caption muted legal__meta">{common.lastUpdated}</p>
+        <nav class="legal__toc" aria-label={dict.common.toc}>
+          <p class="t-caps muted legal__toc-title">{dict.common.toc}</p>
+          <ol class="legal__toc-list">
+            {d.sections.map((s, i) => <li><a href={`#s-${i + 1}`} class="legal__toc-link">{s.title}</a></li>)}
+          </ol>
+        </nav>
+        <nav class="legal__others" aria-label={index.title}>
+          <p class="t-caps muted legal__toc-title">{index.title}</p>
+          <ul class="legal__toc-list">
+            {others.map((o) => <li><a href={o.href} class:list={['legal__toc-link', { 'is-active': o.key === doc }]} aria-current={o.key === doc ? 'page' : undefined}>{o.label}</a></li>)}
+          </ul>
+        </nav>
+        <button type="button" class="btn btn-secondary legal__print no-print" data-print>{dict.common.print}</button>
+      </aside>
+
+      <article class="legal__doc prose-x">
+        <p class="legal__operator t-small muted">{common.operator}</p>
+        {d.sections.map((s, i) => (
+          <section id={`s-${i + 1}`} class="legal__section">
+            <h2 class="t-d3">{s.title}</h2>
+            {s.paragraphs.map((par) => <p>{par}</p>)}
+          </section>
+        ))}
+      </article>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .legal { position: relative; padding-block: 0 var(--section-y); }
+  .legal__grid { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
+  .legal__draft { display: flex; gap: 0.6rem; align-items: flex-start; padding: 0.9rem 1rem; border-radius: var(--r-control); background: rgba(194, 163, 107, 0.14); border: 1px solid rgba(194, 163, 107, 0.5); color: #6b5322; }
+  .legal__draft svg { flex: none; margin-top: 0.1em; }
+  .legal__meta { margin: 1rem 0 2rem; }
+  .legal__toc, .legal__others { margin-bottom: 2rem; }
+  .legal__toc-title { margin-bottom: 0.75rem; }
+  .legal__toc-list { display: flex; flex-direction: column; gap: 0.4rem; }
+  .legal__toc-link { display: inline-block; font-size: 0.9rem; line-height: 1.4; color: var(--c-text-muted-on-light); transition: color var(--d-fast) var(--e-out); }
+  .legal__toc-link:hover, .legal__toc-link.is-active { color: var(--c-burgundy-700); }
+  .legal__doc { max-width: 72ch; }
+  .legal__operator { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--c-line-on-light); }
+  .legal__section { scroll-margin-top: 6rem; }
+  .legal__section h2 { margin: 2.2em 0 0.7em; }
+  .legal__section:first-of-type h2 { margin-top: 0; }
+  .legal__section p { max-width: 72ch; }
+  @media (min-width: 1024px) {
+    .legal__grid { grid-template-columns: 3.5fr 8.5fr; column-gap: 5rem; align-items: start; }
+    .legal__aside { position: sticky; top: 7rem; }
+  }
+  @media print { .legal__aside { display: none; } .legal__grid { display: block; } }
+</style>

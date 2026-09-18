@@ -1,0 +1,98 @@
+---
+/**
+ * Декоративное луп-видео: muted, playsinline, preload=metadata, poster, webm(VP9)+mp4(H.264),
+ * обязательная кнопка паузы (ТЗ §9.4). Автозапуск — только для декоративных лупов.
+ * Файлы: public/media/<id>.webm, <id>.mp4, <id>-poster.webp. Если их нет — MediaPlaceholder.
+ */
+import { getSlot, parseAspect, videoExists } from '@/lib/media';
+import MediaPlaceholder from './MediaPlaceholder.astro';
+import { t, type Locale } from '@/lib/i18n';
+
+interface Props {
+  id: string;
+  locale: Locale;
+  class?: string;
+  tone?: 'light' | 'dark';
+  autoplay?: boolean;
+  aspect?: string;
+}
+
+const { id, locale, class: className = '', tone = 'dark', autoplay = true, aspect } = Astro.props;
+const slot = getSlot(id);
+const ready = videoExists(id);
+const { w, h } = parseAspect(aspect ?? slot.aspect);
+const dict = t(locale);
+---
+
+{ready ? (
+  <div class:list={['video', className]} style={`aspect-ratio: ${w} / ${h};`} data-video-wrap>
+    <video
+      class="video__el"
+      muted
+      playsinline
+      loop
+      preload="metadata"
+      autoplay={autoplay}
+      poster={`/media/${id}-poster.webp`}
+      aria-label={slot.alt[locale]}
+      width={slot.sizes[0]}
+      height={Math.round((slot.sizes[0]! * h) / w)}
+    >
+      <source src={`/media/${id}.webm`} type="video/webm" />
+      <source src={`/media/${id}.mp4`} type="video/mp4" />
+    </video>
+    <button type="button" class="video__toggle" data-video-toggle aria-pressed="false" aria-label={dict.common.pause}>
+      <svg class="video__icon video__icon--pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 3h3v10H4zM9 3h3v10H9z" fill="currentColor"/></svg>
+      <svg class="video__icon video__icon--play" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3l8 5-8 5z" fill="currentColor"/></svg>
+      <span class="video__label" data-label-pause>{dict.common.pause}</span>
+      <span class="video__label" data-label-play hidden>{dict.common.play}</span>
+    </button>
+  </div>
+) : (
+  <MediaPlaceholder id={id} locale={locale} class={className} tone={tone} aspect={aspect} />
+)}
+
+<style>
+  .video { position: relative; width: 100%; overflow: hidden; border-radius: var(--r-media); background: var(--c-burgundy-900); }
+  .video__el { width: 100%; height: 100%; object-fit: cover; }
+  .video__toggle {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 0.9rem;
+    border-radius: var(--r-control);
+    background: rgba(18, 8, 11, 0.55);
+    color: var(--c-bone);
+    backdrop-filter: blur(8px);
+    font-size: 0.8125rem;
+    transition: background-color var(--d-fast) var(--e-out);
+  }
+  .video__toggle:hover { background: rgba(18, 8, 11, 0.75); }
+  .video__icon { width: 14px; height: 14px; }
+  .video__icon--play { display: none; }
+  .video__toggle[aria-pressed='true'] .video__icon--play { display: block; }
+  .video__toggle[aria-pressed='true'] .video__icon--pause { display: none; }
+</style>
+
+<script>
+  // Кнопка паузы для всех декоративных видео на странице (делегирование, переживает View Transitions)
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-video-toggle]');
+    if (!btn) return;
+    const wrap = btn.closest('[data-video-wrap]');
+    const video = wrap?.querySelector('video');
+    if (!video) return;
+    const paused = video.paused;
+    if (paused) video.play().catch(() => {});
+    else video.pause();
+    btn.setAttribute('aria-pressed', paused ? 'false' : 'true');
+    btn.setAttribute('aria-label', paused ? btn.querySelector('[data-label-pause]')!.textContent! : btn.querySelector('[data-label-play]')!.textContent!);
+    btn.querySelector<HTMLElement>('[data-label-pause]')!.hidden = !paused;
+    btn.querySelector<HTMLElement>('[data-label-play]')!.hidden = paused;
+  });
+</script>

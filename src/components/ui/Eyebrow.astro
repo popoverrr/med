@@ -1,0 +1,10 @@
+---
+interface Props { class?: string; muted?: boolean }
+const { class: className = '', muted = true } = Astro.props;
+---
+<p class:list={['eyebrow t-caps', { 'eyebrow--muted': muted }, className]} data-reveal><span class="eyebrow__dot" aria-hidden="true"></span><slot /></p>
+<style>
+  .eyebrow { display: inline-flex; align-items: center; gap: 0.6rem; margin-bottom: 1.25rem; }
+  .eyebrow--muted { opacity: 0.75; }
+  .eyebrow__dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.7; }
+</style>

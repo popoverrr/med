@@ -1,0 +1,69 @@
+---
+/**
+ * <picture> с AVIF/WebP/JPEG, srcset/sizes, явными width/height (CLS = 0).
+ * Файлы: public/media/<id>-<width>.{avif,webp,jpg}. Если файлов нет — рендерит MediaPlaceholder.
+ */
+import { getSlot, parseAspect, availableFormats, imageExists } from '@/lib/media';
+import MediaPlaceholder from './MediaPlaceholder.astro';
+import type { Locale } from '@/lib/i18n';
+
+interface Props {
+  id: string;
+  locale: Locale;
+  sizes?: string;
+  loading?: 'lazy' | 'eager';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  class?: string;
+  imgClass?: string;
+  tone?: 'light' | 'dark';
+  aspect?: string;
+}
+
+const {
+  id,
+  locale,
+  sizes = '(min-width: 1024px) 50vw, 100vw',
+  loading = 'lazy',
+  fetchpriority = 'auto',
+  class: className = '',
+  imgClass = '',
+  tone = 'light',
+  aspect,
+} = Astro.props;
+
+const slot = getSlot(id);
+const widths = [...slot.sizes].sort((a, b) => a - b);
+const largest = widths[widths.length - 1]!;
+const ready = imageExists(id, largest, 'webp') || imageExists(id, largest, 'jpg');
+const { w, h } = parseAspect(aspect ?? slot.aspect);
+const height = Math.round((largest * h) / w);
+const formats = ready ? availableFormats(id, largest) : [];
+const fallbackExt = formats.includes('jpg') ? 'jpg' : 'webp';
+const srcset = (ext: string) => widths.filter((wd) => imageExists(id, wd, ext)).map((wd) => `/media/${id}-${wd}.${ext} ${wd}w`).join(', ');
+---
+
+{ready ? (
+  <picture class:list={['picture', className]}>
+    {formats.includes('avif') && <source type="image/avif" srcset={srcset('avif')} sizes={sizes} />}
+    {formats.includes('webp') && fallbackExt !== 'webp' && <source type="image/webp" srcset={srcset('webp')} sizes={sizes} />}
+    <img
+      src={`/media/${id}-${largest}.${fallbackExt}`}
+      srcset={srcset(fallbackExt)}
+      sizes={sizes}
+      width={largest}
+      height={height}
+      alt={slot.alt[locale]}
+      loading={loading}
+      decoding={loading === 'eager' ? 'sync' : 'async'}
+      fetchpriority={fetchpriority}
+      class:list={['picture__img', imgClass]}
+    />
+  </picture>
+) : (
+  <MediaPlaceholder id={id} locale={locale} class={className} tone={tone} aspect={aspect} />
+)}
+
+<style>
+  .picture { display: block; width: 100%; overflow: hidden; border-radius: var(--r-media); }
+  .picture__img { width: 100%; height: auto; object-fit: cover; }
+</style>

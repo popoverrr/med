@@ -1,0 +1,102 @@
+/* ============================================================
+   Hydromed — дизайн-токены (ТЗ §3). Единственный источник цветов,
+   типографической шкалы, скруглений, теней и motion-параметров.
+   ============================================================ */
+:root {
+  /* --- Палитра: бургунди --- */
+  --c-ink: #12080b;
+  --c-burgundy-900: #350a16;
+  --c-burgundy-800: #4e0f21;
+  --c-burgundy-700: #6b1730; /* основной бренд-цвет */
+  --c-burgundy-600: #8a2040;
+  --c-burgundy-500: #a82c4f;
+  --c-wine-glow: #c4566e;
+  --c-wine-text: #e39aab; /* текстовый акцент на тёмном: ≥ 4.5:1 на burgundy-900 (wine-glow — только линии/свечение) */
+
+  /* --- Нейтральные: «фарфор» --- */
+  --c-bone: #fffcfa;
+  --c-porcelain: #f6f1ee;
+  --c-ash: #d9cfcb;
+  --c-slate: #6e5f60;
+
+  /* --- Вода: только в блоках о воде, 3D и индикаторах чистоты --- */
+  --c-aqua-400: #8fc2ce;
+  --c-aqua-600: #4e8c9c;
+  --c-aqua-text: #2b6675; /* текстовый aqua: 5.6:1 на porcelain (aqua-600 — только линии/иконки) */
+
+  /* --- Регалии / документы --- */
+  --c-gold: #c2a36b;
+
+  /* --- Производные (контраст проверен: scripts/check-contrast.mjs) --- */
+  --c-text-on-light: var(--c-ink);
+  --c-text-muted-on-light: #5c4d4f; /* 7.1:1 на porcelain */
+  --c-text-on-dark: var(--c-bone);
+  --c-text-muted-on-dark: #d9c7cb; /* 10.6:1 на burgundy-900 */
+  --c-line-on-light: rgba(53, 10, 22, 0.14);
+  --c-line-on-dark: rgba(255, 252, 250, 0.16);
+  --c-focus: var(--c-burgundy-600);
+
+  /* Текущий фон документа — интерполируется скриптом по скроллу (§4.2.8) */
+  --bg-current: var(--c-porcelain);
+
+  /* --- Типографика --- */
+  --font-display: 'Onest', 'Onest Fallback', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-text: 'Inter Tight', 'Inter Tight Fallback', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Модульная шкала на clamp(): 320 → 1920 без брейкпоинтов */
+  --fs-hero: clamp(2.75rem, -0.75rem + 8.125vw, 8rem);        /* 44 → 92 (1280) → 128 (1920) */
+  --fs-d2: clamp(2rem, 1rem + 3.2vw, 4.5rem);                  /* 32 → 72 */
+  --fs-d3: clamp(1.5rem, 1.1rem + 1.25vw, 2.375rem);           /* 24 → 38 */
+  --fs-h4: clamp(1.1875rem, 1.05rem + 0.5vw, 1.5rem);          /* 19 → 24 */
+  --fs-lead: clamp(1.1875rem, 1.05rem + 0.45vw, 1.5rem);       /* 19 → 24 */
+  --fs-body: clamp(1.0625rem, 1rem + 0.2vw, 1.1875rem);        /* 17 → 19 */
+  --fs-small: 0.9375rem;
+  --fs-caption: 0.8125rem;
+  --fs-num: clamp(2.5rem, 1.5rem + 3.5vw, 5.5rem);             /* показатели */
+
+  --lh-tight: 1.02;
+  --lh-snug: 1.15;
+  --lh-body: 1.6;
+  --track-display: -0.03em;
+  --track-h: -0.02em;
+  --track-caps: 0.12em;
+  --measure: 68ch;
+
+  /* --- Сетка --- */
+  --container: 1320px;
+  --gutter: clamp(1.5rem, 0.5rem + 3.4vw, 4rem); /* 24 → 64 */
+  --section-y: clamp(4.5rem, 2.5rem + 7vw, 8.5rem);
+
+  /* --- Скругления: 2 / 20 / 32. Никаких «пилюль». --- */
+  --r-control: 2px;
+  --r-card: 20px;
+  --r-media: 32px;
+
+  /* --- Тени: мягкие, многослойные, с бургунди-подтоном --- */
+  --sh-card:
+    0 1px 2px rgba(53, 10, 22, 0.04),
+    0 6px 16px rgba(53, 10, 22, 0.06),
+    0 24px 48px rgba(53, 10, 22, 0.08);
+  --sh-card-hover:
+    0 2px 4px rgba(53, 10, 22, 0.05),
+    0 12px 28px rgba(53, 10, 22, 0.08),
+    0 40px 80px rgba(53, 10, 22, 0.12);
+  --sh-modal:
+    0 8px 24px rgba(53, 10, 22, 0.12),
+    0 48px 120px rgba(53, 10, 22, 0.28);
+
+  /* --- Motion --- */
+  --e-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --e-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --d-fast: 240ms;
+  --d-base: 560ms;
+  --d-slow: 1100ms;
+
+  /* --- Слои --- */
+  --z-scene: 0;
+  --z-content: 1;
+  --z-header: 40;
+  --z-modal: 60;
+  --z-curtain: 80;
+  --z-cursor: 90;
+}

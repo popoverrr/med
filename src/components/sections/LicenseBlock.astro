@@ -1,0 +1,77 @@
+---
+/** Лицензия: номер, дата, орган, подвиды, документ (lightbox), ссылка на реестр (elicense.kz). */
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import Button from '@/components/ui/Button.astro';
+import DocumentThumb from '@/components/ui/DocumentThumb.astro';
+import company from '@content/config/company.json';
+import { t, localePath, type Locale } from '@/lib/i18n';
+interface Props { locale: Locale; full?: boolean }
+const { locale, full = false } = Astro.props;
+const dict = t(locale);
+const d = dict.home.license;
+const lic = company.license;
+---
+
+<section class="lic theme-light" data-bg="bone" id="license" aria-labelledby="lic-title">
+  <div class="container-x lic__inner">
+    <div class="lic__text">
+      <Eyebrow>{d.eyebrow}</Eyebrow>
+      <h2 id="lic-title" class="t-d2 lic__title" data-split="words">{d.title}</h2>
+      <p class="muted lic__intro" data-reveal>{d.text}</p>
+
+      <dl class="lic__facts" data-reveal-group data-reveal-stagger="0.05">
+        <div class="lic__fact" data-reveal><dt class="t-caption muted">{d.fields.number}</dt><dd class="lic__num tnum">{lic.number}</dd></div>
+        <div class="lic__fact" data-reveal><dt class="t-caption muted">{d.fields.issued}</dt><dd class="tnum">{lic.issuedDisplay}</dd></div>
+        <div class="lic__fact" data-reveal><dt class="t-caption muted">{d.fields.activity}</dt><dd>{lic.activity[locale]}</dd></div>
+        <div class="lic__fact" data-reveal><dt class="t-caption muted">{d.fields.note}</dt><dd>{lic.note[locale]}</dd></div>
+        <div class="lic__fact lic__fact--wide" data-reveal>
+          <dt class="t-caption muted">{d.fields.subtypes}</dt>
+          <dd><ul class="lic__subtypes">{lic.subtypes[locale].map((s) => <li>{s}</li>)}</ul></dd>
+        </div>
+        <div class="lic__fact lic__fact--wide" data-reveal><dt class="t-caption muted">{d.fields.licensor}</dt><dd class="t-small">{lic.licensor[locale]}</dd></div>
+        {full && (
+          <>
+            <div class="lic__fact lic__fact--wide" data-reveal><dt class="t-caption muted">{d.fields.licensee}</dt><dd class="t-small">{company.legalName[locale]}, {d.fields.bin} {company.bin}</dd></div>
+            <div class="lic__fact lic__fact--wide" data-reveal><dt class="t-caption muted">{d.fields.base}</dt><dd class="t-small">{lic.productionBase[locale]}</dd></div>
+            <div class="lic__fact" data-reveal><dt class="t-caption muted">{d.fields.signedBy}</dt><dd class="t-small">{lic.signedBy[locale]}</dd></div>
+            <div class="lic__fact" data-reveal><dt class="t-caption muted">{d.fields.place}</dt><dd class="t-small">{lic.placeOfIssue[locale]}</dd></div>
+          </>
+        )}
+      </dl>
+
+      <div class="lic__actions" data-reveal>
+        {!full && <Button variant="secondary" href={localePath(locale, '/legal/license')}>{d.ctaDoc}</Button>}
+        <a class="btn btn-ghost lic__registry" href={lic.registryUrl} target="_blank" rel="noopener noreferrer" data-cursor="link">
+          {d.ctaRegistry}
+          <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13l10-10M6 3h7v7" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>
+          <span class="sr-only">({dict.a11y.openInNewTab})</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="lic__docs" data-reveal-group data-reveal-stagger="0.12">
+      <div data-reveal><DocumentThumb id={lic.documents.main} alt={d.mainAlt} caption={`${d.title} № ${lic.number}`} locale={locale} group="license" label={`${d.fields.number} ${lic.number}`} /></div>
+      <div data-reveal><DocumentThumb id={lic.documents.appendix} alt={d.appendixAlt} caption={`${d.title} № ${lic.number} — 2`} locale={locale} group="license" label={d.fields.subtypes} /></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .lic { position: relative; padding-block: var(--section-y); }
+  .lic__inner { display: grid; grid-template-columns: 1fr; gap: 3rem; }
+  .lic__title { margin-bottom: 1.25rem; max-width: 16ch; }
+  .lic__intro { max-width: 52ch; margin-bottom: 2rem; }
+  .lic__facts { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem 1.5rem; margin-bottom: 2rem; }
+  .lic__fact { padding-top: 0.9rem; border-top: 1px solid var(--c-line-on-light); }
+  .lic__fact--wide { grid-column: 1 / -1; }
+  .lic__fact dt { margin-bottom: 0.3rem; }
+  .lic__num { font-family: var(--font-display); font-size: 1.75rem; font-weight: 300; letter-spacing: -0.01em; line-height: 1.1; }
+  .lic__subtypes { display: flex; flex-direction: column; gap: 0.3rem; }
+  .lic__subtypes li { padding-left: 1rem; position: relative; }
+  .lic__subtypes li::before { content: ''; position: absolute; left: 0; top: 0.7em; width: 5px; height: 5px; border-radius: 50%; background: var(--c-gold); }
+  .lic__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; }
+  .lic__registry { color: var(--c-burgundy-700); }
+  .lic__docs { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; align-content: start; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  @media (min-width: 1024px) { .lic__inner { grid-template-columns: 7fr 5fr; column-gap: 5rem; align-items: start; } .lic__docs { position: sticky; top: 7rem; } }
+</style>

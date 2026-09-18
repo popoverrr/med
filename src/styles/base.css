@@ -1,0 +1,398 @@
+@import './tokens.css';
+@import './fonts.css';
+@import './forms.css';
+@import 'tailwindcss';
+
+/* Токены → утилиты Tailwind (bg-burgundy-700, text-porcelain, rounded-card, ease-out-x …) */
+@theme inline {
+  --color-ink: var(--c-ink);
+  --color-burgundy-900: var(--c-burgundy-900);
+  --color-burgundy-800: var(--c-burgundy-800);
+  --color-burgundy-700: var(--c-burgundy-700);
+  --color-burgundy-600: var(--c-burgundy-600);
+  --color-burgundy-500: var(--c-burgundy-500);
+  --color-wine: var(--c-wine-glow);
+  --color-bone: var(--c-bone);
+  --color-porcelain: var(--c-porcelain);
+  --color-ash: var(--c-ash);
+  --color-slate: var(--c-slate);
+  --color-aqua-400: var(--c-aqua-400);
+  --color-aqua-600: var(--c-aqua-600);
+  --color-gold: var(--c-gold);
+
+  --font-display: var(--font-display);
+  --font-text: var(--font-text);
+
+  --radius-control: var(--r-control);
+  --radius-card: var(--r-card);
+  --radius-media: var(--r-media);
+
+  --shadow-card: var(--sh-card);
+  --shadow-card-hover: var(--sh-card-hover);
+  --shadow-modal: var(--sh-modal);
+
+  --ease-out-x: var(--e-out);
+  --ease-inout-x: var(--e-inout);
+  --breakpoint-3xl: 1600px;
+}
+
+/* ------------------------------------------------------------------
+   База
+------------------------------------------------------------------- */
+@layer base {
+  html {
+    color-scheme: light;
+    scroll-behavior: auto; /* инерцию даёт Lenis; нативный smooth конфликтует */
+    -webkit-text-size-adjust: 100%;
+    background: var(--bg-current);
+  }
+  body {
+    margin: 0;
+    font-family: var(--font-text);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--c-text-on-light);
+    background: var(--bg-current);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+    overflow-x: clip;
+  }
+  /* Тёмная/светлая тема задаётся классом на секции, а не media query:
+     светлые и тёмные секции чередуются внутри одной страницы */
+  .theme-dark { color: var(--c-text-on-dark); }
+  .theme-light { color: var(--c-text-on-light); }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: var(--track-h);
+    line-height: var(--lh-snug);
+    text-wrap: balance;
+    margin: 0;
+  }
+  p { margin: 0; }
+  a { color: inherit; text-decoration: none; }
+  ul, ol { margin: 0; padding: 0; list-style: none; }
+  img, video, canvas, svg { display: block; max-width: 100%; }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  input, textarea, select { font: inherit; color: inherit; }
+  strong, b { font-weight: 600; }
+  [hidden] { display: none !important; }
+
+  /* Видимый focus-ring: бургунди, 2px, offset 3px (ТЗ §11) */
+  :focus-visible {
+    outline: 2px solid var(--c-focus);
+    outline-offset: 3px;
+    border-radius: var(--r-control);
+  }
+  .theme-dark :focus-visible { outline-color: var(--c-wine-glow); }
+  ::selection { background: var(--c-burgundy-600); color: var(--c-bone); }
+
+  /* Табличные цифры для цен и показателей */
+  .tnum { font-variant-numeric: tabular-nums lining-nums; }
+}
+
+/* ------------------------------------------------------------------
+   Типографика (классы, а не теги — размер не привязан к уровню заголовка)
+------------------------------------------------------------------- */
+@utility t-hero {
+  font-family: var(--font-display);
+  font-size: var(--fs-hero);
+  font-weight: 300;
+  letter-spacing: var(--track-display);
+  line-height: var(--lh-tight);
+}
+@utility t-d2 {
+  font-family: var(--font-display);
+  font-size: var(--fs-d2);
+  font-weight: 300;
+  letter-spacing: var(--track-display);
+  line-height: 1.06;
+}
+@utility t-d3 {
+  font-family: var(--font-display);
+  font-size: var(--fs-d3);
+  font-weight: 400;
+  letter-spacing: var(--track-h);
+  line-height: 1.15;
+}
+@utility t-h4 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h4);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+@utility t-lead {
+  font-size: var(--fs-lead);
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: -0.005em;
+}
+@utility t-body { font-size: var(--fs-body); line-height: var(--lh-body); }
+@utility t-small { font-size: var(--fs-small); line-height: 1.5; }
+@utility t-caption { font-size: var(--fs-caption); line-height: 1.45; }
+@utility t-caps {
+  font-family: var(--font-text);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+}
+@utility t-num {
+  font-family: var(--font-display);
+  font-size: var(--fs-num);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+@utility measure { max-width: var(--measure); }
+@utility measure-narrow { max-width: 52ch; }
+@utility prose-x {
+  & p + p { margin-top: 1em; }
+  & h2 { margin-top: 2.2em; margin-bottom: 0.6em; }
+  & h3 { margin-top: 1.6em; margin-bottom: 0.5em; }
+  & ul { margin: 0.8em 0 0.8em 1.2em; list-style: disc; }
+  & ol { margin: 0.8em 0 0.8em 1.4em; list-style: decimal; }
+  & li + li { margin-top: 0.35em; }
+  & a { text-decoration: underline; text-underline-offset: 0.2em; text-decoration-color: rgba(107, 23, 48, 0.4); }
+  & a:hover { text-decoration-color: currentColor; }
+}
+
+/* ------------------------------------------------------------------
+   Сетка / секции
+------------------------------------------------------------------- */
+@utility container-x {
+  width: 100%;
+  max-width: calc(var(--container) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+@utility grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(1rem, 0.5rem + 1.5vw, 2rem);
+}
+@utility section-y { padding-block: var(--section-y); }
+
+/* Непрозрачные темы секций. */
+@utility bg-dark-solid { background-color: var(--c-burgundy-900); color: var(--c-text-on-dark); }
+@utility bg-ink-solid { background-color: var(--c-ink); color: var(--c-text-on-dark); }
+@utility bg-light-solid { background-color: var(--c-porcelain); color: var(--c-text-on-light); }
+
+/* Секции с data-bg: пока сквозная WebGL-сцена не активна (мобайл, reduced-motion, без JS),
+   они непрозрачны — контраст текста не зависит от скролла и скриптов; между тёмным и светлым —
+   мягкая градиентная кромка. При активной сцене (html.scene-on) секции прозрачны, а фон документа
+   интерполируется по скроллу (lib/motion/background.ts). */
+html:not(.scene-on) [data-bg='porcelain'] { background-color: var(--c-porcelain); }
+html:not(.scene-on) [data-bg='bone'] { background-color: var(--c-bone); }
+html:not(.scene-on) [data-bg='dark']:not(.hero):not(.trust) { background-color: var(--c-burgundy-900); } /* hero/trust — прозрачны ради CSS-постера */
+html:not(.scene-on) [data-bg='ink'] { background-color: var(--c-ink); }
+html:not(.scene-on) [data-bg='dark'] + [data-bg='porcelain'],
+html:not(.scene-on) [data-bg='dark'] + [data-bg='bone'] { background-image: linear-gradient(to bottom, var(--c-burgundy-900), transparent 4rem); }
+html:not(.scene-on) [data-bg='porcelain'] + [data-bg='dark'],
+html:not(.scene-on) [data-bg='bone'] + [data-bg='dark'] { background-image: linear-gradient(to bottom, var(--c-porcelain), transparent 4rem); }
+
+/* ------------------------------------------------------------------
+   Компоненты
+------------------------------------------------------------------- */
+@utility btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6em;
+  min-height: 3rem;
+  padding: 0.85em 1.6em;
+  border-radius: var(--r-control);
+  font-family: var(--font-text);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    background-color var(--d-fast) var(--e-out),
+    color var(--d-fast) var(--e-out),
+    border-color var(--d-fast) var(--e-out),
+    box-shadow var(--d-base) var(--e-out);
+}
+@utility btn-primary {
+  background: var(--c-burgundy-700);
+  color: var(--c-bone);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 8px 24px rgba(53, 10, 22, 0.18);
+  &:hover { background: var(--c-burgundy-600); box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 12px 32px rgba(53, 10, 22, 0.26); }
+  &:active { background: var(--c-burgundy-800); }
+}
+@utility btn-primary-on-dark {
+  background: var(--c-bone);
+  color: var(--c-burgundy-900);
+  &:hover { background: #ffffff; }
+}
+@utility btn-secondary {
+  background: transparent;
+  color: currentColor;
+  border: 1px solid var(--c-line-on-light);
+  &:hover { border-color: var(--c-burgundy-600); color: var(--c-burgundy-700); }
+}
+@utility btn-secondary-on-dark {
+  background: transparent;
+  color: var(--c-bone);
+  border: 1px solid var(--c-line-on-dark);
+  &:hover { border-color: var(--c-wine-glow); }
+}
+@utility btn-ghost {
+  padding-inline: 0.6em;
+  color: currentColor;
+  &:hover { color: var(--c-burgundy-600); }
+}
+
+@utility card {
+  position: relative;
+  background: var(--c-bone);
+  color: var(--c-text-on-light);
+  border-radius: var(--r-card);
+  border: 1px solid rgba(53, 10, 22, 0.06);
+  box-shadow: var(--sh-card);
+  transition: transform var(--d-base) var(--e-out), box-shadow var(--d-base) var(--e-out), border-color var(--d-base) var(--e-out);
+}
+@utility card-hover {
+  &:hover { transform: translateY(-6px); box-shadow: var(--sh-card-hover); border-color: rgba(196, 86, 110, 0.35); }
+}
+@utility card-dark {
+  background: rgba(255, 252, 250, 0.04);
+  color: var(--c-text-on-dark);
+  border: 1px solid var(--c-line-on-dark);
+  border-radius: var(--r-card);
+}
+@utility hairline { border-top: 1px solid var(--c-line-on-light); }
+@utility hairline-dark { border-top: 1px solid var(--c-line-on-dark); }
+@utility muted { color: var(--c-text-muted-on-light); }
+@utility muted-dark { color: var(--c-text-muted-on-dark); }
+@utility link-u {
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: 1px;
+  text-decoration-color: rgba(107, 23, 48, 0.35);
+  transition: text-decoration-color var(--d-fast) var(--e-out);
+  &:hover { text-decoration-color: currentColor; }
+  :where(.theme-dark) & { text-decoration-color: rgba(255, 252, 250, 0.5); }
+}
+
+/* Метка-плейсхолдер для данных, которых ещё нет (токены из конфигов) */
+@utility ph-token {
+  display: inline-block;
+  padding: 0.1em 0.5em;
+  border: 1px dashed currentColor;
+  border-radius: var(--r-control);
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  font-size: 0.8em;
+  letter-spacing: 0.02em;
+  opacity: 0.92;
+  vertical-align: baseline;
+}
+
+/* Поля форм */
+@utility field {
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0.9rem 1rem;
+  border-radius: var(--r-control);
+  background: rgba(255, 252, 250, 0.06);
+  border: 1px solid var(--c-line-on-dark);
+  color: var(--c-bone);
+  transition: border-color var(--d-fast) var(--e-out), background-color var(--d-fast) var(--e-out);
+  &::placeholder { color: rgba(255, 252, 250, 0.45); }
+  &:focus { outline: none; border-color: var(--c-wine-glow); background: rgba(255, 252, 250, 0.09); }
+  &[aria-invalid='true'] { border-color: #f2a3b3; }
+}
+@utility field-light {
+  background: #ffffff;
+  border: 1px solid rgba(53, 10, 22, 0.16);
+  color: var(--c-ink);
+  &::placeholder { color: rgba(18, 8, 11, 0.45); }
+  &:focus { border-color: var(--c-burgundy-600); background: #ffffff; }
+  &[aria-invalid='true'] { border-color: #b3213f; }
+}
+
+/* ------------------------------------------------------------------
+   Анимационные примитивы. Стартовые состояния — в CSS, чтобы не было
+   вспышки контента до GSAP; при reduced-motion и без JS — снимаются.
+------------------------------------------------------------------- */
+html.js [data-reveal] { opacity: 0; }
+html.js [data-split] .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+html.js [data-split] .w > .c { display: inline-block; }
+/* До разбиения и установки стартовых позиций — скрыто (без вспышки); GSAP снимает через .is-split.
+   Только десктоп: на мобильных заголовки видны сразу (LCP не ждёт JS), кинетика — десктопный приём. */
+@media (min-width: 1024px) {
+  html.js:not(.rm) [data-split]:not(.is-split) { visibility: hidden; }
+}
+html.js.rm [data-reveal] { opacity: 1; transition: opacity 200ms ease-out; }
+
+/* Кастомный курсор — только для точного указателя (ТЗ §4.2.7) */
+.cursor-ring { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  html.cursor-on .cursor-ring {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 28px;
+    height: 28px;
+    margin: -14px 0 0 -14px;
+    border: 1.5px solid var(--c-burgundy-600);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: var(--z-cursor);
+    opacity: 0;
+    will-change: transform;
+  }
+  html.cursor-on .cursor-ring.is-dark { border-color: var(--c-wine-glow); }
+}
+
+/* Занавес page-transition */
+.curtain {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-curtain);
+  background: var(--c-burgundy-800);
+  /* Стартовое положение задаёт GSAP (yPercent), CSS-transform здесь недопустим — конфликт кэша процентов */
+  visibility: hidden;
+  pointer-events: none;
+}
+.curtain.is-armed { visibility: visible; }
+
+/* Скроллбар — деликатный */
+@media (pointer: fine) {
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(107, 23, 48, 0.35); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
+}
+
+/* Lenis */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* ------------------------------------------------------------------
+   Reduced motion: всё сводится к fade 200ms (ТЗ §4.3); pin отключается в JS
+------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 200ms !important;
+    scroll-behavior: auto !important;
+  }
+  html.js [data-reveal] { opacity: 1; }
+  html.js [data-split] { visibility: visible; }
+}
+
+@media print {
+  .no-print, .cursor-ring, .curtain, #scene-root { display: none !important; }
+  body { background: #fff; color: #000; }
+}

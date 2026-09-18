@@ -1,0 +1,5 @@
+/                perf 99  a11y 100  bp 100  seo 100   LCP 0.8 s  CLS 0.053  TBT 40 ms  FCP 0.4 s
+/procedure       perf 100  a11y 100  bp 100  seo 100   LCP 0.6 s  CLS 0  TBT 30 ms  FCP 0.4 s
+/kk              perf 99  a11y 100  bp 100  seo 100   LCP 0.8 s  CLS 0.05  TBT 50 ms  FCP 0.5 s
+
+Отчёты: reports/lighthouse/*.report.html

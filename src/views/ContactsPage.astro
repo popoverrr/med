@@ -1,0 +1,55 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/ui/PageHero.astro';
+import Picture from '@/components/ui/Picture.astro';
+import Placeholder from '@/components/ui/Placeholder.astro';
+import ContactsSection from '@/components/sections/ContactsSection.astro';
+import ContactForm from '@/components/forms/ContactForm';
+import { contactStrings } from '@/components/forms/strings';
+import { t, type Locale } from '@/lib/i18n';
+import { breadcrumbLd } from '@/lib/seo';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const dict = t(locale);
+const p = dict.pages.contacts;
+---
+
+<BaseLayout locale={locale} path="/contacts" title={dict.seo.contacts.title} description={dict.seo.contacts.description} page="contacts" jsonLd={[breadcrumbLd(locale, [{ name: dict.nav.contacts, path: '/contacts' }])]}>
+  <PageHero locale={locale} title={p.h1} lead={p.lead} eyebrow={dict.nav.contacts} crumbs={[{ name: dict.nav.contacts, path: '/contacts' }]} />
+  <ContactsSection locale={locale} heading="h2" title={dict.home.contacts.title} />
+
+  <section class="cp theme-light" data-bg="bone">
+    <div class="container-x cp__grid">
+      <div class="cp__route" data-reveal-group>
+        <h2 class="t-d3" data-reveal>{p.routeTitle}</h2>
+        <p class="muted" data-reveal><Placeholder value={p.routeText} /></p>
+        <h3 class="t-h4 cp__sub" data-reveal>{p.parkingTitle}</h3>
+        <p class="muted" data-reveal><Placeholder value={p.parkingText} /></p>
+      </div>
+      <div data-reveal="clip"><Picture id="center-entrance" locale={locale} sizes="(min-width: 1024px) 50vw, 100vw" /></div>
+    </div>
+  </section>
+
+  <section class="cp theme-light" data-bg="porcelain" aria-labelledby="cp-form">
+    <div class="container-x cp__grid">
+      <div>
+        <h2 id="cp-form" class="t-d2 cp__form-title" data-split="words">{p.formTitle}</h2>
+        <p class="t-lead muted" data-reveal>{p.formText}</p>
+      </div>
+      <div class="cp__form card" data-reveal="clip">
+        <ContactForm client:visible strings={contactStrings(locale)} locale={locale} />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cp { position: relative; padding-block: var(--section-y); }
+  .cp__grid { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
+  .cp__route h2 { margin-bottom: 1rem; }
+  .cp__sub { margin: 2rem 0 0.75rem; }
+  .cp__form-title { margin-bottom: 1rem; max-width: 14ch; }
+  .cp__form { padding: clamp(1.5rem, 1rem + 2vw, 2.75rem); }
+  @media (min-width: 1024px) { .cp__grid { grid-template-columns: 5fr 7fr; column-gap: 5rem; align-items: start; } }
+</style>

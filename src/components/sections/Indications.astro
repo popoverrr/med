@@ -1,0 +1,56 @@
+---
+/** «Кому подходит»: горизонтально-скроллящаяся лента карточек внутри вертикального скролла (pinned). */
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import { t, type Locale } from '@/lib/i18n';
+interface Props { locale: Locale; static?: boolean }
+const { locale, static: isStatic = false } = Astro.props;
+const dict = t(locale);
+const d = dict.home.indications;
+---
+
+<section class:list={['ind theme-light', { 'ind--static': isStatic }]} data-bg="bone" data-scene={isStatic ? undefined : 'equipment'} id="indications" aria-labelledby="ind-title">
+  <div class="ind__pin" data-ind-pin>
+    <div class="container-x ind__head">
+      <Eyebrow>{d.eyebrow}</Eyebrow>
+      <h2 id="ind-title" class="t-d2" data-split="words">{d.title}</h2>
+      <p class="t-lead muted ind__intro" data-reveal>{d.intro}</p>
+    </div>
+    <div class="ind__viewport">
+      <ul class="ind__track container-x" data-ind-track aria-label={dict.a11y.indicationsList}>
+        {d.cards.map((c, i) => (
+          <li class="ind__card card" data-ind-card>
+            <span class="ind__num tnum" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="t-d3 ind__card-title">{c.title}</h3>
+            <p class="muted ind__card-text">{c.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div class="container-x">
+      <p class="ind__foot t-small muted" data-reveal>{d.footnote}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ind { position: relative; }
+  .ind__pin { padding-block: clamp(4rem, 3rem + 4vw, 7rem); }
+  .ind__head { margin-bottom: 2.5rem; }
+  .ind__intro { margin-top: 1rem; max-width: 52ch; }
+  .ind__track { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+  .ind__card { padding: clamp(1.5rem, 1rem + 1.5vw, 2.25rem); min-height: 16rem; display: flex; flex-direction: column; }
+  .ind__num { font-family: var(--font-display); font-weight: 300; font-size: 1.75rem; color: var(--c-burgundy-600); margin-bottom: auto; padding-bottom: 2rem; }
+  .ind__card-title { margin-bottom: 0.75rem; }
+  .ind__card-text { max-width: 36ch; }
+  .ind__foot { margin-top: 2.5rem; max-width: 60ch; padding-top: 1.25rem; border-top: 1px solid var(--c-line-on-light); }
+  @media (min-width: 640px) { .ind__track { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1024px) {
+    .ind__track { grid-template-columns: repeat(3, 1fr); }
+    html.js:not(.rm) .ind.is-pinned .ind__pin { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding-block: 5.5rem 2.5rem; }
+    html.js:not(.rm) .ind.is-pinned .ind__viewport { overflow: hidden; }
+    html.js:not(.rm) .ind.is-pinned .ind__track { display: flex; gap: 1.5rem; width: max-content; will-change: transform; padding-right: var(--gutter); }
+    html.js:not(.rm) .ind.is-pinned .ind__card { flex: 0 0 clamp(19rem, 24vw, 24rem); min-height: 16rem; }
+    html.js:not(.rm) .ind.is-pinned .ind__head { margin-bottom: 1.75rem; }
+    html.js:not(.rm) .ind.is-pinned .ind__foot { margin-top: 1.75rem; }
+  }
+</style>

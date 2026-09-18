@@ -1,0 +1,25 @@
+---
+/** Кнопка/ссылка в дизайн-системе. variant: primary | secondary | ghost; onDark — инверсия для тёмных секций. */
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary' | 'ghost';
+  onDark?: boolean;
+  class?: string;
+  magnetic?: boolean;
+  type?: 'button' | 'submit';
+  [key: string]: unknown;
+}
+const { href, variant = 'primary', onDark = false, class: className = '', magnetic = true, type = 'button', ...rest } = Astro.props;
+const cls = [
+  'btn',
+  variant === 'primary' && (onDark ? 'btn-primary-on-dark' : 'btn-primary'),
+  variant === 'secondary' && (onDark ? 'btn-secondary-on-dark' : 'btn-secondary'),
+  variant === 'ghost' && 'btn-ghost',
+  className,
+];
+---
+{href ? (
+  <a href={href} class:list={cls} data-magnetic={magnetic ? '' : undefined} data-cursor="button" {...rest}><slot /></a>
+) : (
+  <button type={type} class:list={cls} data-magnetic={magnetic ? '' : undefined} data-cursor="button" {...rest}><slot /></button>
+)}

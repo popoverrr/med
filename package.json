@@ -1,0 +1,53 @@
+{
+  "name": "hydromed",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Hydromed — сайт медицинского центра гидроколонотерапии (Алматы). Статическая сборка Astro для Plesk.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && node scripts/postbuild-csp.mjs",
+    "preview": "astro preview",
+    "check": "astro check",
+    "fonts:check": "node scripts/check-fonts.mjs",
+    "fonts:copy": "node scripts/copy-fonts.mjs",
+    "media:placeholders": "node scripts/gen-placeholders.mjs",
+    "docs:process": "node scripts/process-documents.mjs",
+    "verify:runtime": "node scripts/verify-static.mjs",
+    "contrast": "node scripts/check-contrast.mjs"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.8",
+    "@react-three/fiber": "^9.7.0",
+    "@react-three/postprocessing": "^3.1.1",
+    "gsap": "^3.15.0",
+    "lenis": "^1.3.26",
+    "motion": "^12.43.0",
+    "n8ao": "^2.0.1",
+    "postprocessing": "^6.39.5",
+    "react": "~19.2.0",
+    "react-dom": "~19.2.0",
+    "three": "^0.186.0",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@astrojs/react": "^4.4.2",
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/inter-tight": "^5.3.0",
+    "@fontsource-variable/onest": "^5.3.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "~19.2.0",
+    "@types/react-dom": "~19.2.0",
+    "@types/three": "^0.186.0",
+    "astro": "^5.18.2",
+    "fontkit": "^2.0.4",
+    "lighthouse": "^13.5.0",
+    "sharp": "^0.35.4",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

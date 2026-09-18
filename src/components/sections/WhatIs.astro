@@ -1,0 +1,60 @@
+---
+/** Pinned-секция «Что такое гидроколонотерапия»: текст сменяет текст по скроллу (scrub). */
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import { t, type Locale } from '@/lib/i18n';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const d = t(locale).home.what;
+---
+
+<section class="what theme-dark" data-bg="dark" data-scene="what" id="what" aria-labelledby="what-title">
+  <div class="what__pin" data-what-pin>
+    <div class="container-x what__inner">
+      <div class="what__head">
+        <Eyebrow>{d.eyebrow}</Eyebrow>
+        <h2 id="what-title" class="t-d2 what__title" data-split="words">{d.title}</h2>
+        <p class="what__counter" data-counter-scope>
+          <span class="t-num" data-what-counter>{d.counterValue}</span>
+          <span class="what__counter-label t-caption">{d.counterUnit}<br />{d.counterLabel}</span>
+        </p>
+      </div>
+      <div class="what__stage" data-what-slides>
+        {d.slides.map((text, i) => (
+          <p class:list={['what__slide t-lead', { 'is-current': i === 0 }]} data-what-slide={i} aria-hidden={i === 0 ? undefined : 'true'}>{text}</p>
+        ))}
+      </div>
+      <div class="what__meta">
+        <ol class="what__dots" aria-hidden="true">
+          {d.slides.map((_, i) => <li class:list={['what__dot', { 'is-current': i === 0 }]} data-what-dot={i}><span></span></li>)}
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .what { position: relative; }
+  .what__pin { min-height: 100svh; display: flex; align-items: center; padding-block: 6rem; }
+  .what__inner { display: grid; grid-template-columns: 1fr; gap: 2.5rem; width: 100%; }
+  .what__title { color: var(--c-bone); max-width: 14ch; }
+  .what__stage { position: relative; min-height: 12em; }
+  .what__slide { color: var(--c-bone); max-width: 30ch; margin-bottom: 1.25rem; }
+  .what__meta { display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; }
+  .what__dots { display: flex; gap: 0.5rem; }
+  .what__dot { width: 32px; height: 2px; background: var(--c-line-on-dark); overflow: hidden; border-radius: 1px; }
+  .what__dot span { display: block; height: 100%; width: 100%; background: var(--c-wine-glow); transform: scaleX(0); transform-origin: left; }
+  .what__dot.is-current span { transform: scaleX(1); }
+  .what__counter { display: flex; align-items: baseline; gap: 0.75rem; color: var(--c-bone); margin-top: 2.5rem; }
+  .what__counter-label { color: var(--c-text-muted-on-dark); }
+
+  /* Pinned-режим (десктоп + motion): слайды наложены друг на друга и переключаются скриптом */
+  html.js:not(.rm) .what.is-pinned .what__slide { position: absolute; inset: 0; margin: 0; opacity: 0; }
+  html.js:not(.rm) .what.is-pinned .what__slide.is-current { opacity: 1; }
+
+  @media (min-width: 1024px) {
+    .what__inner { grid-template-columns: 5fr 7fr; grid-template-rows: auto auto; column-gap: 4rem; align-items: start; }
+    .what__head { grid-row: 1 / span 2; }
+    .what__stage { min-height: 9em; }
+    .what__slide { max-width: 30ch; }
+  }
+</style>

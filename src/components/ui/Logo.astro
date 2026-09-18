@@ -1,0 +1,28 @@
+---
+/** Логотип: капля (два контура = две ступени воды) + словесный знак. */
+interface Props {
+  class?: string;
+  compact?: boolean;
+}
+const { class: className = '', compact = false } = Astro.props;
+---
+
+<span class:list={['logo', className]}>
+  <svg class="logo__mark" viewBox="0 0 32 40" width="26" height="32" aria-hidden="true">
+    <path d="M16 2.5C16 2.5 4 16.2 4 25a12 12 0 0 0 24 0c0-8.8-12-22.5-12-22.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M16 12.5c0 0-6.2 7.6-6.2 12.4a6.2 6.2 0 0 0 12.4 0c0-4.8-6.2-12.4-6.2-12.4Z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" opacity="0.7"/>
+  </svg>
+  {!compact && <span class="logo__word">Hydromed</span>}
+</span>
+
+<style>
+  .logo { display: inline-flex; align-items: center; gap: 0.6rem; color: currentColor; }
+  .logo__mark { flex: none; }
+  .logo__word {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+</style>

@@ -1,0 +1,91 @@
+---
+/**
+ * Lightbox для сканов документов: зум (колесо/кнопки/двойной клик), скачивание PDF,
+ * навигация по галерее, focus trap, Esc, возврат фокуса. Открывается по [data-lightbox].
+ */
+import { t, type Locale } from '@/lib/i18n';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const dict = t(locale);
+---
+
+<dialog class="lightbox" data-lightbox-dialog aria-label={dict.a11y.lightbox}>
+  <div class="lightbox__bar">
+    <p class="lightbox__caption t-small" data-lightbox-caption></p>
+    <div class="lightbox__tools">
+      <button type="button" class="lightbox__btn" data-lightbox-zoom="out" aria-label={dict.common.zoomOut}>−</button>
+      <span class="lightbox__zoom t-caption tnum" data-lightbox-zoom-label>100%</span>
+      <button type="button" class="lightbox__btn" data-lightbox-zoom="in" aria-label={dict.common.zoomIn}>+</button>
+      <a class="lightbox__btn lightbox__btn--text" data-lightbox-pdf href="#" download>{dict.common.downloadPdf}</a>
+      <button type="button" class="lightbox__btn" data-lightbox-close aria-label={dict.common.closeModal}>
+        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M4 4l12 12M16 4L4 16" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="lightbox__stage" data-lightbox-stage>
+    <img class="lightbox__img" data-lightbox-img alt="" draggable="false" />
+  </div>
+  <button type="button" class="lightbox__nav lightbox__nav--prev" data-lightbox-nav="-1" aria-label={dict.common.prev} hidden>‹</button>
+  <button type="button" class="lightbox__nav lightbox__nav--next" data-lightbox-nav="1" aria-label={dict.common.next} hidden>›</button>
+</dialog>
+
+<style is:global>
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: rgba(18, 8, 11, 0.94);
+    color: var(--c-bone);
+  }
+  .lightbox::backdrop { background: transparent; }
+  .lightbox[open] { display: flex; flex-direction: column; }
+  .lightbox__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem var(--gutter);
+    border-bottom: 1px solid rgba(255, 252, 250, 0.1);
+  }
+  .lightbox__caption { opacity: 0.85; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lightbox__tools { display: flex; align-items: center; gap: 0.25rem; flex: none; }
+  .lightbox__btn {
+    min-width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.6rem;
+    border-radius: var(--r-control);
+    font-size: 1.1rem;
+    color: var(--c-bone);
+    transition: background-color var(--d-fast) var(--e-out);
+  }
+  .lightbox__btn:hover { background: rgba(255, 252, 250, 0.1); }
+  .lightbox__btn--text { font-size: 0.8125rem; letter-spacing: 0.02em; }
+  .lightbox__zoom { min-width: 3.5em; text-align: center; opacity: 0.7; }
+  .lightbox__stage { flex: 1; min-height: 0; overflow: auto; display: flex; align-items: center; justify-content: center; padding: 1rem; cursor: zoom-in; overscroll-behavior: contain; }
+  .lightbox__stage.is-zoomed { cursor: grab; align-items: flex-start; justify-content: flex-start; }
+  .lightbox__img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; flex: none; transition: width var(--d-fast) var(--e-out); user-select: none; border-radius: 4px; box-shadow: 0 30px 80px rgba(0,0,0,.4); }
+  .lightbox__nav {
+    position: absolute;
+    top: 50%;
+    width: 48px;
+    height: 48px;
+    margin-top: -24px;
+    border-radius: 50%;
+    background: rgba(255, 252, 250, 0.1);
+    color: var(--c-bone);
+    font-size: 1.75rem;
+    line-height: 1;
+  }
+  .lightbox__nav--prev { left: 12px; }
+  .lightbox__nav--next { right: 12px; }
+</style>

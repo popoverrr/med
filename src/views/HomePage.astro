@@ -1,0 +1,60 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SceneLayer from '@/components/sections/SceneLayer.astro';
+import WaterThread from '@/components/sections/WaterThread.astro';
+import Hero from '@/components/sections/Hero.astro';
+import TrustStrip from '@/components/sections/TrustStrip.astro';
+import WhatIs from '@/components/sections/WhatIs.astro';
+import HowItGoes from '@/components/sections/HowItGoes.astro';
+import WaterBlock from '@/components/sections/WaterBlock.astro';
+import Indications from '@/components/sections/Indications.astro';
+import Contraindications from '@/components/sections/Contraindications.astro';
+import Sterility from '@/components/sections/Sterility.astro';
+import Specialist from '@/components/sections/Specialist.astro';
+import LicenseBlock from '@/components/sections/LicenseBlock.astro';
+import Prices from '@/components/sections/Prices.astro';
+import Faq from '@/components/sections/Faq.astro';
+import BookingSection from '@/components/sections/BookingSection.astro';
+import ContactsSection from '@/components/sections/ContactsSection.astro';
+import { t, type Locale } from '@/lib/i18n';
+import { procedureLd, faqLd } from '@/lib/seo';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const dict = t(locale);
+---
+
+<BaseLayout
+  locale={locale}
+  path="/"
+  title={dict.seo.home.title}
+  description={dict.seo.home.description}
+  page="home"
+  headerTone="dark"
+  bg="dark"
+  bare
+  jsonLd={[procedureLd(locale), faqLd(locale)]}
+>
+  <SceneLayer locale={locale} />
+  <div class="scene-range" data-scene-range>
+    <WaterThread />
+    <Hero locale={locale} />
+    <TrustStrip locale={locale} />
+    <WhatIs locale={locale} />
+    <HowItGoes locale={locale} />
+    <WaterBlock locale={locale} />
+    <Indications locale={locale} />
+    <Contraindications locale={locale} />
+    <Sterility locale={locale} />
+    <Specialist locale={locale} />
+  </div>
+  <LicenseBlock locale={locale} />
+  <Prices locale={locale} />
+  <Faq locale={locale} />
+  <BookingSection locale={locale} />
+  <ContactsSection locale={locale} />
+</BaseLayout>
+
+<style>
+  .scene-range { position: relative; }
+</style>

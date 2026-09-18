@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /404
+Disallow: /kk/404
+
+Sitemap: https://hydromed.kz/sitemap-index.xml

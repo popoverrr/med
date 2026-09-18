@@ -1,0 +1,103 @@
+---
+import '@/styles/base.css';
+import { ClientRouter } from 'astro:transitions';
+import Seo from '@/components/seo/Seo.astro';
+import Header from '@/components/layout/Header.astro';
+import Footer from '@/components/layout/Footer.astro';
+import CookieBanner from '@/components/layout/CookieBanner.astro';
+import BookingModal from '@/components/layout/BookingModal.astro';
+import Lightbox from '@/components/layout/Lightbox.astro';
+import { t, type Locale } from '@/lib/i18n';
+
+interface Props {
+  locale: Locale;
+  path: string;
+  title: string;
+  description: string;
+  page?: string;
+  headerTone?: 'light' | 'dark';
+  /** Стартовый фон документа для этой страницы */
+  bg?: 'porcelain' | 'dark';
+  jsonLd?: Array<Record<string, unknown>>;
+  noindex?: boolean;
+  bare?: boolean;
+  ogImage?: string;
+}
+
+const {
+  locale,
+  path,
+  title,
+  description,
+  page = 'default',
+  headerTone = 'light',
+  bg = 'porcelain',
+  jsonLd,
+  noindex,
+  bare,
+  ogImage,
+} = Astro.props;
+const dict = t(locale);
+const startBg = bg === 'dark' ? 'var(--c-burgundy-900)' : 'var(--c-porcelain)';
+---
+
+<!doctype html>
+<html lang={locale} data-locale={locale} data-page={page} style={`--bg-current:${startBg}`}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <Seo locale={locale} path={path} title={title} description={description} jsonLd={jsonLd} noindex={noindex} bare={bare} ogImage={ogImage} />
+    <meta name="theme-color" content={bg === 'dark' ? '#350a16' : '#f6f1ee'} />
+    <meta name="color-scheme" content="light" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preload" href="/fonts/onest-cyrillic-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-tight-cyrillic-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+    {locale === 'kk' && <link rel="preload" href="/fonts/onest-cyrillic-ext-wght-normal.woff2" as="font" type="font/woff2" crossorigin />}
+    {locale === 'kk' && <link rel="preload" href="/fonts/inter-tight-cyrillic-ext-wght-normal.woff2" as="font" type="font/woff2" crossorigin />}
+    <script is:inline src="/scripts/early.js"></script>
+    <ClientRouter fallback="swap" />
+  </head>
+  <body class:list={[bg === 'dark' ? 'theme-dark' : 'theme-light']}>
+    <a href="#main" class="skip-link">{dict.nav.skip}</a>
+    <div class="curtain" data-curtain aria-hidden="true" transition:persist="curtain"></div>
+    <div class="cursor-ring" data-cursor-ring aria-hidden="true" transition:persist="cursor"></div>
+
+    <Header locale={locale} tone={headerTone} />
+
+    <main id="main" class="site-main" aria-label={dict.a11y.mainLandmark} tabindex="-1">
+      <slot />
+    </main>
+
+    <Footer locale={locale} />
+    <BookingModal locale={locale} />
+    <Lightbox locale={locale} />
+    <CookieBanner locale={locale} />
+
+    <script>
+      import '@/lib/app';
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  .skip-link {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    z-index: 100;
+    padding: 0.75rem 1rem;
+    border-radius: var(--r-control);
+    background: var(--c-burgundy-700);
+    color: var(--c-bone);
+    font-weight: 500;
+    transform: translateY(-200%);
+    transition: transform var(--d-fast) var(--e-out);
+  }
+  .skip-link:focus { transform: none; }
+  .site-main { position: relative; z-index: var(--z-content); outline: none; }
+</style>

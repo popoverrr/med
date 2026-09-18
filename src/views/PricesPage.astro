@@ -1,0 +1,48 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/ui/PageHero.astro';
+import Prices from '@/components/sections/Prices.astro';
+import BookingSection from '@/components/sections/BookingSection.astro';
+import { t, localePath, type Locale } from '@/lib/i18n';
+import { breadcrumbLd } from '@/lib/seo';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const dict = t(locale);
+const p = dict.pages.prices;
+---
+
+<BaseLayout locale={locale} path="/prices" title={dict.seo.prices.title} description={dict.seo.prices.description} page="prices" jsonLd={[breadcrumbLd(locale, [{ name: dict.nav.prices, path: '/prices' }])]}>
+  <PageHero locale={locale} title={p.h1} lead={p.lead} eyebrow={dict.home.prices.eyebrow} crumbs={[{ name: dict.nav.prices, path: '/prices' }]} />
+  <Prices locale={locale} heading="h1" showIntro={false} />
+
+  <section class="pr theme-light" data-bg="bone">
+    <div class="container-x pr__grid">
+      <div class="pr__box" data-reveal-group>
+        <h2 class="t-d3 pr__title" data-reveal>{p.included.title}</h2>
+        <ul class="pr__list">
+          {p.included.items.map((it) => <li data-reveal><svg width="16" height="16" viewBox="0 0 14 14" aria-hidden="true"><path d="M2.5 7.5l3 3 6-6" fill="none" stroke="currentColor" stroke-width="1.3"/></svg><span>{it}</span></li>)}
+        </ul>
+      </div>
+      <div class="pr__box" data-reveal-group>
+        <h2 class="t-d3 pr__title" data-reveal>{p.notes.title}</h2>
+        <ul class="pr__list pr__list--notes">
+          {p.notes.items.map((it, i) => <li data-reveal><span class="pr__dot" aria-hidden="true"></span><span>{it}{i === p.notes.items.length - 1 && <> <a href={localePath(locale, '/legal/offer')} class="link-u">{dict.pages.legalIndex.items.offer}</a>.</>}</span></li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+  <BookingSection locale={locale} />
+</BaseLayout>
+
+<style>
+  .pr { position: relative; padding-block: var(--section-y); }
+  .pr__grid { display: grid; grid-template-columns: 1fr; gap: 3rem; }
+  .pr__box { padding-top: 1.5rem; border-top: 1px solid var(--c-line-on-light); }
+  .pr__title { margin-bottom: 1.5rem; }
+  .pr__list { display: flex; flex-direction: column; gap: 0.9rem; }
+  .pr__list li { display: flex; gap: 0.75rem; align-items: flex-start; max-width: 56ch; }
+  .pr__list svg { flex: none; margin-top: 0.35em; color: var(--c-burgundy-600); }
+  .pr__dot { flex: none; width: 6px; height: 6px; margin-top: 0.7em; border-radius: 50%; background: var(--c-burgundy-600); }
+  @media (min-width: 768px) { .pr__grid { grid-template-columns: 1fr 1fr; column-gap: 4rem; } }
+</style>

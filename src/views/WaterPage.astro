@@ -1,0 +1,122 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/ui/PageHero.astro';
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import Button from '@/components/ui/Button.astro';
+import Picture from '@/components/ui/Picture.astro';
+import Video from '@/components/ui/Video.astro';
+import Placeholder from '@/components/ui/Placeholder.astro';
+import water from '@content/config/water.json';
+import { t, type Locale } from '@/lib/i18n';
+import { isPlaceholder } from '@/lib/utils/placeholders';
+import { breadcrumbLd } from '@/lib/seo';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const dict = t(locale);
+const p = dict.pages.water;
+const w = dict.home.water;
+---
+
+<BaseLayout locale={locale} path="/water" title={dict.seo.water.title} description={dict.seo.water.description} page="water" headerTone="dark" bg="dark" jsonLd={[breadcrumbLd(locale, [{ name: dict.nav.water, path: '/water' }])]}>
+  <PageHero locale={locale} title={p.h1} lead={p.lead} eyebrow={w.eyebrow} tone="dark" crumbs={[{ name: dict.nav.water, path: '/water' }]}>
+    <div class="wp__hero-media" data-reveal="clip" data-reveal-delay="0.4"><Video id="water-macro-loop" locale={locale} /></div>
+  </PageHero>
+
+  <section class="wp theme-light" data-bg="porcelain" aria-labelledby="wp-why">
+    <div class="container-x">
+      <Eyebrow>{p.why.title}</Eyebrow>
+      <h2 id="wp-why" class="t-d2 wp__title" data-split="words">{p.why.title}</h2>
+      <ul class="wp__why" data-reveal-group data-reveal-stagger="0.12">
+        {p.why.items.map((it, i) => (
+          <li class="wp__why-item" data-reveal>
+            <span class="wp__num tnum" aria-hidden="true">0{i + 1}</span>
+            <h3 class="t-d3">{it.title}</h3>
+            <p class="muted">{it.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="wp theme-light" data-bg="bone" aria-labelledby="wp-stages">
+    <div class="container-x">
+      <Eyebrow>{p.stagesTitle}</Eyebrow>
+      <h2 id="wp-stages" class="t-d2 wp__title" data-split="words">{p.stagesTitle}</h2>
+      <ol class="wp__stages">
+        {w.stages.map((s, i) => (
+          <li class="wp__stage" data-reveal-group>
+            <div class="wp__stage-media" data-reveal="clip"><Picture id={water.stages[i]!.slot} locale={locale} sizes="(min-width: 1024px) 40vw, 100vw" /></div>
+            <div class="wp__stage-text">
+              <p class="t-caps wp__stage-label" data-reveal>{s.label}</p>
+              <h3 class="t-d3" data-reveal>{s.brand}</h3>
+              <p class="muted t-lead" data-reveal>{s.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="wp theme-dark bg-dark-solid" data-bg="dark" aria-labelledby="wp-metrics">
+    <div class="container-x wp__metrics-grid">
+      <div>
+        <Eyebrow>{p.metricsTitle}</Eyebrow>
+        <h2 id="wp-metrics" class="t-d2 wp__title wp__title--light" data-split="words">{p.metricsTitle}</h2>
+        <p class="t-lead muted-dark wp__intro" data-reveal>{p.metricsIntro}</p>
+        <p class="t-small wp__method" data-reveal>{p.methodNote}</p>
+      </div>
+      <dl class="wp__metrics" data-counter-scope data-reveal-group data-reveal-stagger="0.1">
+        {water.metrics.map((m) => (
+          <div class="wp__metric" data-reveal>
+            <dt class="t-caption muted-dark">{m.label[locale]}</dt>
+            <dd class="wp__metric-value">
+              {isPlaceholder(m.value) ? <Placeholder value={m.value} /> : <span class="t-num" data-counter={m.value.replace(',', '.')} data-decimals={m.value.includes('.') || m.value.includes(',') ? 1 : 0}>{m.value}</span>}
+              {m.unit && <span class="wp__unit">{m.unit}</span>}
+            </dd>
+            <dd class="t-caption muted-dark">{m.note[locale]}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <section class="wp theme-light" data-bg="porcelain">
+    <div class="container-x wp__claims-wrap">
+      <ul class="wp__claims" data-reveal-group>
+        {w.claims.map((c) => <li class="wp__claim" data-reveal><svg width="16" height="16" viewBox="0 0 14 14" aria-hidden="true"><path d="M2.5 7.5l3 3 6-6" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>{c}</li>)}
+      </ul>
+      <div data-reveal><Button data-open-booking>{p.cta}</Button></div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .wp { position: relative; padding-block: var(--section-y); }
+  .wp__hero-media { margin-top: 3rem; }
+  .wp__title { margin-bottom: 2.5rem; max-width: 16ch; }
+  .wp__title--light { color: var(--c-bone); }
+  .wp__intro { max-width: 46ch; margin-bottom: 1.5rem; }
+  .wp__method { max-width: 46ch; color: var(--c-aqua-400); padding-left: 1rem; border-left: 2px solid var(--c-aqua-600); }
+  .wp__why { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+  .wp__why-item { padding-top: 1.25rem; border-top: 1px solid var(--c-line-on-light); }
+  .wp__why-item h3 { margin: 0.75rem 0 0.5rem; }
+  .wp__num { font-family: var(--font-display); font-weight: 300; font-size: 1.75rem; color: var(--c-aqua-text); }
+  .wp__stages { display: flex; flex-direction: column; gap: 4rem; }
+  .wp__stage { display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: center; }
+  .wp__stage:nth-child(even) .wp__stage-media { order: 1; }
+  .wp__stage-label { color: var(--c-aqua-text); margin-bottom: 0.75rem; }
+  .wp__stage-text h3 { margin-bottom: 1rem; }
+  .wp__stage-text p { max-width: 44ch; }
+  .wp__metrics-grid { display: grid; grid-template-columns: 1fr; gap: 3rem; }
+  .wp__metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .wp__metric { display: flex; flex-direction: column; gap: 0.35rem; padding-top: 1.25rem; border-top: 1px solid var(--c-line-on-dark); }
+  .wp__metric-value { display: flex; align-items: baseline; gap: 0.4rem; color: var(--c-bone); }
+  .wp__unit { color: var(--c-aqua-400); font-weight: 500; }
+  .wp__claims-wrap { display: flex; flex-direction: column; gap: 2rem; align-items: flex-start; }
+  .wp__claims { display: grid; grid-template-columns: 1fr; gap: 0.9rem; }
+  .wp__claim { display: flex; gap: 0.75rem; align-items: flex-start; max-width: 52ch; }
+  .wp__claim svg { flex: none; margin-top: 0.3em; color: var(--c-aqua-600); }
+  @media (min-width: 768px) { .wp__why { grid-template-columns: repeat(3, 1fr); } .wp__stage { grid-template-columns: 1fr 1fr; column-gap: 4rem; } .wp__claims { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1024px) { .wp__metrics-grid { grid-template-columns: 5fr 7fr; column-gap: 5rem; align-items: start; } .wp__metrics { grid-template-columns: repeat(2, 1fr); } }
+</style>

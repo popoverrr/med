@@ -1,0 +1,115 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/ui/PageHero.astro';
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import Button from '@/components/ui/Button.astro';
+import Picture from '@/components/ui/Picture.astro';
+import Indications from '@/components/sections/Indications.astro';
+import Contraindications from '@/components/sections/Contraindications.astro';
+import Faq from '@/components/sections/Faq.astro';
+import BookingSection from '@/components/sections/BookingSection.astro';
+import { t, localePath, type Locale } from '@/lib/i18n';
+import { procedureLd, faqLd, breadcrumbLd } from '@/lib/seo';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const dict = t(locale);
+const p = dict.pages.procedure;
+const how = dict.home.how;
+---
+
+<BaseLayout locale={locale} path="/procedure" title={dict.seo.procedure.title} description={dict.seo.procedure.description} page="procedure" jsonLd={[procedureLd(locale), faqLd(locale), breadcrumbLd(locale, [{ name: dict.nav.procedure, path: '/procedure' }])]}>
+  <PageHero locale={locale} title={p.h1} lead={p.lead} eyebrow={dict.nav.procedure} crumbs={[{ name: dict.nav.procedure, path: '/procedure' }]} />
+
+  <section class="pp theme-light" data-bg="porcelain" aria-labelledby="pp-what">
+    <div class="container-x pp__grid">
+      <div class="pp__col">
+        <Eyebrow>{p.sections.what.title}</Eyebrow>
+        <h2 id="pp-what" class="t-d2" data-split="words">{p.sections.what.title}</h2>
+      </div>
+      <div class="pp__col pp__prose" data-reveal-group>
+        {p.sections.what.paragraphs.map((par) => <p class="t-lead pp__par" data-reveal>{par}</p>)}
+        <div class="pp__media" data-reveal="clip"><Picture id="device-hydrocolon" locale={locale} sizes="(min-width: 1024px) 30vw, 100vw" /></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pp theme-light pp--steps" data-bg="bone" id="how" aria-labelledby="pp-how">
+    <div class="container-x">
+      <div class="pp__head">
+        <Eyebrow>{how.eyebrow}</Eyebrow>
+        <h2 id="pp-how" class="t-d2" data-split="words">{p.sections.how.title}</h2>
+        <p class="t-lead muted pp__intro" data-reveal>{p.sections.how.intro}</p>
+      </div>
+      <ol class="pp__steps" data-reveal-group data-reveal-stagger="0.1" aria-label={dict.a11y.stepList}>
+        {how.steps.map((s, i) => (
+          <li class="pp__step card" data-reveal>
+            <div class="pp__step-top"><span class="pp__num tnum" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span class="t-caption muted tnum">{s.duration}</span></div>
+            <h3 class="t-d3 pp__step-title">{s.title}</h3>
+            <p class="muted">{s.text}</p>
+          </li>
+        ))}
+      </ol>
+      <div class="pp__scene" data-reveal="clip"><Picture id="consultation-scene" locale={locale} sizes="100vw" /></div>
+    </div>
+  </section>
+
+  <section class="pp theme-light" data-bg="porcelain" aria-labelledby="pp-prep">
+    <div class="container-x pp__two">
+      <div class="pp__box" data-reveal-group>
+        <h2 id="pp-prep" class="t-d3 pp__box-title" data-reveal>{p.sections.prep.title}</h2>
+        <ol class="pp__list">
+          {p.sections.prep.items.map((it, i) => <li data-reveal><span class="pp__li-num tnum">{i + 1}</span><span>{it}</span></li>)}
+        </ol>
+      </div>
+      <div class="pp__box" data-reveal-group>
+        <h2 class="t-d3 pp__box-title" data-reveal>{p.sections.after.title}</h2>
+        <ul class="pp__list">
+          {p.sections.after.items.map((it) => <li data-reveal><span class="pp__li-dot" aria-hidden="true"></span><span>{it}</span></li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <Indications locale={locale} static />
+  <Contraindications locale={locale} />
+  <Faq locale={locale} />
+
+  <section class="pp pp--cta theme-light" data-bg="porcelain">
+    <div class="container-x pp__cta" data-reveal>
+      <p class="t-d3">{p.sections.cta}</p>
+      <div class="pp__cta-actions">
+        <Button data-open-booking>{dict.common.ctaBook}</Button>
+        <Button variant="secondary" href={localePath(locale, '/prices')}>{dict.nav.prices}</Button>
+      </div>
+    </div>
+  </section>
+  <BookingSection locale={locale} />
+</BaseLayout>
+
+<style>
+  .pp { position: relative; padding-block: var(--section-y); }
+  .pp__grid, .pp__two { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
+  .pp__par + .pp__par { margin-top: 1.25rem; }
+  .pp__par { max-width: 56ch; }
+  .pp__media { margin-top: 2.5rem; max-width: 26rem; }
+  .pp__head { margin-bottom: 2.5rem; }
+  .pp__intro { margin-top: 1rem; max-width: 46ch; }
+  .pp__steps { display: grid; grid-template-columns: 1fr; gap: 1.25rem; counter-reset: step; }
+  .pp__step { padding: clamp(1.5rem, 1rem + 1.5vw, 2.25rem); display: flex; flex-direction: column; }
+  .pp__step-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.25rem; }
+  .pp__num { font-family: var(--font-display); font-weight: 300; font-size: 2rem; line-height: 1; color: var(--c-burgundy-600); }
+  .pp__step-title { margin-bottom: 0.6rem; }
+  .pp__scene { margin-top: 2.5rem; }
+  .pp__box { padding-top: 1.5rem; border-top: 1px solid var(--c-line-on-light); }
+  .pp__box-title { margin-bottom: 1.5rem; }
+  .pp__list { display: flex; flex-direction: column; gap: 0.9rem; }
+  .pp__list li { display: flex; gap: 1rem; align-items: flex-start; max-width: 60ch; }
+  .pp__li-num { flex: none; width: 1.75rem; height: 1.75rem; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--c-line-on-light); border-radius: 50%; font-size: 0.8rem; color: var(--c-burgundy-700); }
+  .pp__li-dot { flex: none; width: 6px; height: 6px; margin-top: 0.7em; border-radius: 50%; background: var(--c-burgundy-600); }
+  .pp--cta { padding-block: 0 var(--section-y); }
+  .pp__cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; padding: clamp(1.5rem, 1rem + 2vw, 3rem); border-radius: var(--r-card); background: var(--c-bone); border: 1px solid rgba(53, 10, 22, 0.06); box-shadow: var(--sh-card); }
+  .pp__cta-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  @media (min-width: 768px) { .pp__steps { grid-template-columns: repeat(2, 1fr); } .pp__two { grid-template-columns: 1fr 1fr; column-gap: 4rem; } }
+  @media (min-width: 1024px) { .pp__grid { grid-template-columns: 4fr 8fr; column-gap: 5rem; align-items: start; } .pp__steps { grid-template-columns: repeat(5, 1fr); gap: 1rem; } }
+</style>

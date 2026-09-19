@@ -13,6 +13,7 @@ const { locale } = Astro.props;
 const dict = t(locale);
 const d = dict.home.how;
 const hasSequence = sequenceAvailable('procedure-seq');
+const hasMobileSequence = sequenceAvailable('procedure-seq', '640');
 ---
 
 <section class="how theme-dark" data-bg="dark" data-scene="how" id="how" aria-labelledby="how-title">
@@ -29,6 +30,7 @@ const hasSequence = sequenceAvailable('procedure-seq');
           class="how__canvas-wrap"
           data-sequence
           data-sequence-base="/media/sequence/procedure-seq-"
+          data-sequence-base-mobile={hasMobileSequence ? '/media/sequence/640/procedure-seq-' : undefined}
           data-sequence-frames="90"
           data-sequence-available={hasSequence ? '1' : '0'}
         >
@@ -84,21 +86,32 @@ const hasSequence = sequenceAvailable('procedure-seq');
   .how__step-title { margin-bottom: 0.6rem; }
   .how__step-text { max-width: 40ch; }
   .how__bar, .how__count { display: none; }
+  .how__steps { position: relative; }
 
-  /* Pinned-режим (десктоп + motion) */
+  /* Pinned-режим (все ширины, кроме reduced-motion): секция закреплена, карточки едут горизонтально */
+  html.js:not(.rm) .how.is-pinned .how__pin { min-height: 100svh; display: flex; align-items: center; padding-block: 4.5rem 2rem; }
+  html.js:not(.rm) .how.is-pinned .how__steps { overflow: hidden; }
+  html.js:not(.rm) .how.is-pinned .how__track { flex-direction: row; gap: 1rem; will-change: transform; }
+  html.js:not(.rm) .how.is-pinned .how__step { flex: 0 0 100%; opacity: 0.4; transition: opacity var(--d-base) var(--e-out); }
+  html.js:not(.rm) .how.is-pinned .how__step.is-current { opacity: 1; }
+  html.js:not(.rm) .how.is-pinned .how__bar { display: block; height: 2px; margin-top: 1.25rem; background: var(--c-line-on-dark); border-radius: 1px; overflow: hidden; }
+  html.js:not(.rm) .how.is-pinned .how__bar-fill { display: block; height: 100%; width: 100%; background: var(--c-wine-glow); transform: scaleX(0.2); transform-origin: left; }
+  html.js:not(.rm) .how.is-pinned .how__count { display: block; margin-top: 0.6rem; color: var(--c-text-muted-on-dark); letter-spacing: 0.1em; }
+  /* На узких экранах экономим высоту: без вводного абзаца и с компактной карточкой */
+  @media (max-width: 1023px) {
+    html.js:not(.rm) .how.is-pinned .how__inner { gap: 1.25rem; }
+    html.js:not(.rm) .how.is-pinned .how__intro { display: none; }
+    html.js:not(.rm) .how.is-pinned .how__step { padding: 1.25rem; }
+    html.js:not(.rm) .how.is-pinned .how__step-top { margin-bottom: 0.6rem; }
+    html.js:not(.rm) .how.is-pinned .how__step-text { font-size: var(--fs-small); }
+  }
   @media (min-width: 1024px) {
     .how__inner { grid-template-columns: 7fr 5fr; grid-template-rows: auto 1fr; column-gap: 3rem; row-gap: 2rem; align-items: start; }
     .how__head { grid-column: 1 / -1; display: grid; grid-template-columns: 7fr 5fr; column-gap: 3rem; align-items: end; }
     .how__head :global(.eyebrow), .how__head h2 { grid-column: 1; }
     .how__intro { grid-column: 2; margin-top: 0; }
-    .how__steps { position: relative; }
-    html.js:not(.rm) .how.is-pinned .how__pin { min-height: 100svh; display: flex; align-items: center; padding-block: 5rem; }
-    html.js:not(.rm) .how.is-pinned .how__steps { overflow: hidden; }
-    html.js:not(.rm) .how.is-pinned .how__track { flex-direction: row; gap: 1.5rem; will-change: transform; }
-    html.js:not(.rm) .how.is-pinned .how__step { flex: 0 0 100%; min-height: 20rem; opacity: 0.4; transition: opacity var(--d-base) var(--e-out); }
-    html.js:not(.rm) .how.is-pinned .how__step.is-current { opacity: 1; }
-    html.js:not(.rm) .how.is-pinned .how__bar { display: block; height: 2px; margin-top: 1.5rem; background: var(--c-line-on-dark); border-radius: 1px; overflow: hidden; }
-    html.js:not(.rm) .how.is-pinned .how__bar-fill { display: block; height: 100%; width: 100%; background: var(--c-wine-glow); transform: scaleX(0.2); transform-origin: left; }
-    html.js:not(.rm) .how.is-pinned .how__count { display: block; margin-top: 0.6rem; color: var(--c-text-muted-on-dark); letter-spacing: 0.1em; }
+    html.js:not(.rm) .how.is-pinned .how__pin { padding-block: 5rem; }
+    html.js:not(.rm) .how.is-pinned .how__track { gap: 1.5rem; }
+    html.js:not(.rm) .how.is-pinned .how__step { min-height: 20rem; }
   }
 </style>

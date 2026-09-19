@@ -1,7 +1,7 @@
 /**
  * Хореография главной страницы: pinned-секции со scrub, image-sequence, горизонтальные ленты,
  * диапазоны сцены для WebGL, «нить воды», постер-деградация. Грузится отдельным чанком только на главной.
- * Все pin-режимы — только при ширине ≥ 1024 и без prefers-reduced-motion (gsap.matchMedia).
+ * Pin-режимы работают на всех ширинах (решение заказчика), отключаются только при prefers-reduced-motion.
  */
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { sceneStore, type SceneKey, type SceneRange } from '@/lib/scene/store';
@@ -10,7 +10,8 @@ import { initImageSequence } from './sequence';
 import { createMorph } from '@/lib/motion/svgPath';
 import { BG } from '@/lib/motion/background';
 
-const DESKTOP_MOTION = '(min-width: 1024px) and (prefers-reduced-motion: no-preference)';
+const MOTION_OK = '(prefers-reduced-motion: no-preference)';
+const yieldToMain = () => new Promise<void>((r) => setTimeout(r, 0));
 
 export function initHome(): () => void {
   const mm = gsap.matchMedia();
@@ -20,19 +21,34 @@ export function initHome(): () => void {
   cleanups.push(loadScene());
   cleanups.push(initPosterFade());
 
-  mm.add(DESKTOP_MOTION, () => {
+  mm.add(MOTION_OK, () => {
     const c: Array<() => void> = [];
-    c.push(initWhat());
-    c.push(initHow());
-    c.push(initWater());
-    c.push(initIndications());
-    c.push(initThread());
-    return () => c.forEach((fn) => fn());
+    let alive = true;
+    // Каждый pin — вставка pin-spacer'а и замер страницы (forced reflow). Дробим на короткие задачи,
+    // чтобы не блокировать главный поток одним куском (TBT/INP на телефонах), и пересчитываем один раз в конце.
+    const steps = [initWhat, initHow, initWater, initIndications];
+    if (window.innerWidth >= 1280) steps.push(initThread);
+    void (async () => {
+      await yieldToMain();
+      for (const step of steps) {
+        if (!alive) return;
+        const t0 = performance.now();
+        c.push(step());
+        performance.measure(`hm:home:${step.name}`, { start: t0 });
+        await yieldToMain();
+      }
+      if (!alive) return;
+      const t0 = performance.now();
+      ScrollTrigger.refresh();
+      performance.measure('hm:home:refresh', { start: t0 });
+    })();
+    return () => { alive = false; c.forEach((fn) => fn()); };
   });
 
-  // Мобайл / reduced-motion: секции статичны, все слайды видны, sequence → постер
-  mm.add('(max-width: 1023px), (prefers-reduced-motion: reduce)', () => {
+  // Reduced-motion: секции статичны, все слайды видны, sequence → постер; pin-секций нет — один refresh сразу
+  mm.add('(prefers-reduced-motion: reduce)', () => {
     document.querySelectorAll<HTMLElement>('[data-what-slide]').forEach((s) => s.removeAttribute('aria-hidden'));
+    ScrollTrigger.refresh();
     return () => {};
   });
 
@@ -182,6 +198,9 @@ function initHow(): () => void {
   section.classList.add('is-pinned');
 
   const seq = initImageSequence(section.querySelector<HTMLElement>('[data-sequence]'));
+  // Ширина шага (карточка + gap) — замеряется на refresh, а не на каждом кадре скролла (forced reflow)
+  let stepW = 0;
+  const measure = () => { stepW = steps[0]!.offsetWidth + parseFloat(getComputedStyle(track).gap || '0'); };
 
   const st = ScrollTrigger.create({
     trigger: section,
@@ -191,12 +210,13 @@ function initHow(): () => void {
     scrub: 0.6,
     anticipatePin: 1,
     invalidateOnRefresh: true,
+    onRefresh: measure,
     onUpdate: (self) => {
       const p = self.progress;
       // Кадр = функция прогресса
       seq.render(p);
       // Горизонтальный сдвиг: n карточек, каждая = ширина колонки
-      const stepW = steps[0]!.offsetWidth + parseFloat(getComputedStyle(track).gap || '0');
+      if (!stepW) measure();
       // Карточка держится 55% сегмента, затем плавно уезжает — читается как шаги, а не непрерывный поток
       const raw = p * (n - 1);
       const k = Math.min(n - 2, Math.floor(raw));

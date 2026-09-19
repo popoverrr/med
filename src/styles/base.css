@@ -55,8 +55,8 @@
     background: var(--bg-current);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+    /* Кернинг и лигатуры у браузеров включены по умолчанию; явные text-rendering: optimizeLegibility /
+       font-feature-settings отключают «быстрый путь» раскладки текста (первый layout страницы ×2 дольше). */
     overflow-x: clip;
   }
   /* Тёмная/светлая тема задаётся классом на секции, а не media query:
@@ -326,9 +326,10 @@ html.js [data-reveal] { opacity: 0; }
 html.js [data-split] .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.08em; margin-bottom: -0.08em; }
 html.js [data-split] .w > .c { display: inline-block; }
 /* До разбиения и установки стартовых позиций — скрыто (без вспышки); GSAP снимает через .is-split.
-   Только десктоп: на мобильных заголовки видны сразу (LCP не ждёт JS), кинетика — десктопный приём. */
+   Hero-заголовок ([data-split-lcp]) на мобильных виден сразу — LCP не ждёт JS. */
+html.js:not(.rm) [data-split]:not(.is-split):not([data-split-lcp]) { visibility: hidden; }
 @media (min-width: 1024px) {
-  html.js:not(.rm) [data-split]:not(.is-split) { visibility: hidden; }
+  html.js:not(.rm) [data-split-lcp]:not(.is-split) { visibility: hidden; }
 }
 html.js.rm [data-reveal] { opacity: 1; transition: opacity 200ms ease-out; }
 

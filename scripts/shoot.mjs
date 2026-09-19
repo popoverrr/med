@@ -69,7 +69,15 @@ const a11y = [
   { name: 'nojs-home', url: '/', ...D, nojs: true, wait: 1500 },
   { name: 'nojs-home-water', url: '/', ...D, nojs: true, scroll: 3200, wait: 1500 },
 ];
-const sets = { home, pages, legal, mobile, '3d': threeD, '3d-quick': threeD.slice(2, 4), a11y };
+// Мобильный 3D: позиции — по селектору секции + смещение (px)
+const threeDMobile = [
+  { name: 'm3d-hero', url: '/?force3d', ...M, wait: 6000 },
+  { name: 'm3d-what', url: '/?force3d', ...M, sel: '#what', offset: 500, wait: 6000 },
+  { name: 'm3d-how', url: '/?force3d', ...M, sel: '#how', offset: 700, wait: 6000 },
+  { name: 'm3d-water', url: '/?force3d', ...M, sel: '#water', offset: 200, wait: 6000 },
+  { name: 'm3d-indications', url: '/?force3d', ...M, sel: '#indications', offset: 300, wait: 6000 },
+];
+const sets = { home, pages, legal, mobile, '3d': threeD, '3d-quick': threeD.slice(2, 4), '3d-mobile': threeDMobile, a11y };
 const targets = preset === 'all' ? [...home, ...pages, ...legal, ...mobile] : sets[preset] ?? home;
 
 // --- CDP mini-client ---
@@ -125,9 +133,10 @@ try {
       if (t.nojs) await cdp.send('Emulation.setScriptExecutionDisabled', { value: true });
       await cdp.send('Page.navigate', { url: base + t.url });
       await cdp.waitEvent('Page.loadEventFired', 20000);
-      await sleep(t.scroll ? 1200 : t.wait);
-      if (t.scroll) {
-        await cdp.send('Runtime.evaluate', { expression: `(() => { const l = window.__lenis; const y = Math.min(${t.scroll}, document.documentElement.scrollHeight - innerHeight); if (l) l.scrollTo(y, { immediate: true, force: true }); else window.scrollTo(0, y); return y; })()`, awaitPromise: true });
+      await sleep(t.scroll || t.sel ? 1200 : t.wait);
+      if (t.scroll || t.sel) {
+        const target = t.sel ? `(document.querySelector('${t.sel}').getBoundingClientRect().top + scrollY + ${t.offset ?? 0})` : String(t.scroll);
+        await cdp.send('Runtime.evaluate', { expression: `(() => { const l = window.__lenis; const y = Math.min(${target}, document.documentElement.scrollHeight - innerHeight); if (l) l.scrollTo(y, { immediate: true, force: true }); else window.scrollTo(0, y); return y; })()`, awaitPromise: true });
         await sleep(t.wait);
       }
       if (t.click) {
@@ -140,7 +149,7 @@ try {
       const shot = await cdp.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
       const file = join(out, `${t.name}.png`);
       writeFileSync(file, Buffer.from(shot.data, 'base64'));
-      console.log(`OK  ${t.name} ${t.w}x${t.h} ${t.url}${t.scroll ? ' @' + t.scroll : ''}`);
+      console.log(`OK  ${t.name} ${t.w}x${t.h} ${t.url}${t.scroll ? ' @' + t.scroll : ''}${t.sel ? ' @' + t.sel + '+' + (t.offset ?? 0) : ''}`);
     } catch (e) {
       console.log(`ERR ${t.name}: ${e.message}`);
     } finally {

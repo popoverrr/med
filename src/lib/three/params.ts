@@ -45,6 +45,25 @@ export const KEYFRAMES: Record<SceneKey, SceneParams> = {
 
 export const KEY_ORDER: SceneKey[] = ['hero', 'what', 'how', 'water', 'equipment', 'fade'];
 
+/** Вертикальный угол камеры (Scene.tsx), половина — для расчёта видимой области в плоскости капли (z = 0). */
+export const CAMERA_FOV = 35;
+
+/**
+ * Портретные экраны (телефоны, планшеты вертикально): позиция капли задаётся долями видимой области
+ * (fx, fy ∈ −1…1 — от левого/нижнего края к правому/верхнему), чтобы не зависеть от пропорций экрана;
+ * капля меньше и уходит в свободные от текста зоны (углы и кромки экрана).
+ */
+export interface PortraitPose { fx: number; fy: number; blobScale: number }
+
+export const PORTRAIT_POSES: Record<SceneKey, PortraitPose> = {
+  hero:      { fx: 0.8,   fy: 0.76,  blobScale: 0.45 },
+  what:      { fx: 0.82,  fy: -0.82, blobScale: 0.45 },
+  how:       { fx: 0.0,   fy: -0.9,  blobScale: 0.2 },
+  water:     { fx: 0.92,  fy: 0.35,  blobScale: 0.45 },
+  equipment: { fx: 0.92,  fy: 0.78,  blobScale: 0.28 },
+  fade:      { fx: 0.95,  fy: 0.8,   blobScale: 0.15 },
+};
+
 export function smoothstep(t: number): number {
   const x = Math.min(1, Math.max(0, t));
   return x * x * (3 - 2 * x);

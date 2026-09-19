@@ -1,6 +1,7 @@
 // Плейсхолдеры кадров image-sequence (90 × 1280×720 WebP) в фирменном стиле с номером кадра,
 // чтобы механика scroll-scrub была видна заказчику до появления реальных кадров.
-// Реальные кадры кладутся на те же имена: public/media/sequence/procedure-seq-001.webp … 090.
+// Реальные кадры кладутся на те же имена: public/media/sequence/procedure-seq-001.webp … 090 (1280×720)
+// и public/media/sequence/640/procedure-seq-001.webp … 090 (640×360 — для мобильных).
 // Запуск: node scripts/gen-placeholders.mjs
 import sharp from 'sharp';
 import { mkdirSync, existsSync } from 'node:fs';
@@ -34,11 +35,15 @@ function frameSvg(i) {
 </svg>`;
 }
 
+mkdirSync(`${DIR}/640`, { recursive: true });
 let made = 0;
 for (let i = 0; i < FRAMES; i++) {
-  const out = `${DIR}/procedure-seq-${String(i + 1).padStart(3, '0')}.webp`;
+  const name = `procedure-seq-${String(i + 1).padStart(3, '0')}.webp`;
+  const out = `${DIR}/${name}`;
   if (existsSync(out) && process.argv.includes('--keep')) continue;
-  await sharp(Buffer.from(frameSvg(i))).webp({ quality: 58, effort: 4 }).toFile(out);
+  const svg = Buffer.from(frameSvg(i));
+  await sharp(svg).webp({ quality: 58, effort: 4 }).toFile(out);
+  await sharp(svg).resize(640, 360).webp({ quality: 60, effort: 4 }).toFile(`${DIR}/640/${name}`);
   made++;
 }
 console.log(`Сгенерировано кадров: ${made} → ${DIR}`);

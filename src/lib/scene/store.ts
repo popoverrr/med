@@ -3,6 +3,7 @@
  * и из 3D-острова). Хранит нормализованный прогресс скролла, диапазоны секций и текущий фон.
  */
 import { createStore } from 'zustand/vanilla';
+import type { Quality } from './tiers';
 
 export type SceneKey = 'hero' | 'what' | 'how' | 'water' | 'equipment' | 'fade';
 
@@ -27,8 +28,8 @@ export interface SceneState {
   pointer: { x: number; y: number };
   /** Сцена смонтирована и рендерится */
   active: boolean;
-  /** Уровень качества, выставляется PerformanceMonitor */
-  quality: 'high' | 'medium' | 'low';
+  /** Уровень качества, выставляется QualityMonitor */
+  quality: Quality;
   setProgress(p: number): void;
   setRanges(r: SceneRange[]): void;
   setBands(b: SceneBand[]): void;

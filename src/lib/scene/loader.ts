@@ -1,29 +1,52 @@
 /**
- * Загрузка 3D только при выполнении условий ТЗ §4.3:
- * WebGL2 ∧ prefers-reduced-motion: no-preference ∧ hardwareConcurrency ≥ 4 ∧ ширина ≥ 1024 ∧ ¬saveData.
- * Иначе — статичный постер (CSS). Чанк подгружается динамически после первого кадра.
+ * Загрузка 3D на любых устройствах с автоадаптацией качества (решение заказчика, отклонение от ТЗ §4.3):
+ *  - условия запуска: WebGL2 (без software-рендера) ∧ prefers-reduced-motion: no-preference ∧ ¬saveData;
+ *  - стартовый уровень качества — по эвристике устройства, дальше QualityMonitor поднимает/опускает его;
+ *  - если даже низший уровень не держит fps — сцена размонтируется, остаётся CSS-постер.
+ * Чанк подгружается динамически после первого кадра (на мобильных — с большей задержкой).
  */
 import { sceneStore } from './store';
+import { isQuality, type Quality } from './tiers';
+
+export type { Quality };
+
+/** QA/демо: ?force3d — запуск без проверки GPU и без монитора; ?quality=basic|low|medium|high — фиксированный уровень */
+function qaOptions(): { force: boolean; quality: Quality | null } {
+  const q = new URLSearchParams(window.location.search);
+  const quality = q.get('quality');
+  return { force: q.has('force3d') || quality !== null, quality: isQuality(quality) ? quality : null };
+}
 
 export function canRunWebGL(): boolean {
   if (typeof window === 'undefined') return false;
-  // ?force3d — принудительный запуск для QA/демо (обходит только проверку производительности GPU)
-  const force = new URLSearchParams(window.location.search).has('force3d');
+  const { force } = qaOptions();
   if (!window.matchMedia('(prefers-reduced-motion: no-preference)').matches) return false;
-  if (window.innerWidth < 1024) return false;
-  if ((navigator.hardwareConcurrency ?? 0) < 4) return false;
   const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
   if (conn?.saveData === true) return false;
   try {
     const canvas = document.createElement('canvas');
     const gl = canvas.getContext('webgl2', { failIfMajorPerformanceCaveat: !force });
     if (!gl) return false;
-    const ext = gl.getExtension('WEBGL_lose_context');
-    ext?.loseContext();
+    gl.getExtension('WEBGL_lose_context')?.loseContext();
     return true;
   } catch {
     return false;
   }
+}
+
+export function isMobileDevice(): boolean {
+  return window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768;
+}
+
+/** Стартовый уровень: телефоны — low, ноутбуки — medium, мощные десктопы — high. Дальше решает fps. */
+export function initialQuality(): Quality {
+  const qa = qaOptions().quality;
+  if (qa) return qa;
+  const cores = navigator.hardwareConcurrency ?? 4;
+  const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4;
+  if (isMobileDevice()) return 'low';
+  if (cores >= 8 && memory >= 8 && window.innerWidth >= 1280) return 'high';
+  return 'medium';
 }
 
 export function loadScene(): () => void {
@@ -42,29 +65,42 @@ export function loadScene(): () => void {
     sceneStore.getState().setPointer((e.clientX / window.innerWidth) * 2 - 1, -((e.clientY / window.innerHeight) * 2 - 1));
   };
 
+  const teardown = (state: string) => {
+    unmount?.();
+    unmount = null;
+    document.documentElement.classList.remove('scene-on');
+    sceneStore.getState().setActive(false);
+    host.dataset.state = state;
+  };
+
   const start = () => {
     import('@/components/3d/mount')
       .then((m) => {
         if (cancelled) return;
-        unmount = m.mountScene(host);
+        const t0 = performance.now();
+        unmount = m.mountScene(host, {
+          quality: initialQuality(),
+          monitor: !qaOptions().force,
+          // Даже низший уровень не тянет — уступаем CSS-постеру
+          onFallback: () => teardown('fallback'),
+        });
         host.dataset.state = 'active';
         document.documentElement.classList.add('scene-on');
         sceneStore.getState().setActive(true);
         window.addEventListener('pointermove', onPointer, { passive: true });
+        performance.measure('hm:scene:mount', { start: t0 });
       })
       .catch(() => { host.dataset.state = 'fallback'; });
   };
-  // Не мешаем первому рендеру и LCP
-  if ('requestIdleCallback' in window) (window as Window & { requestIdleCallback: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback(start, { timeout: 1500 });
-  else setTimeout(start, 300);
+  // Не мешаем первому рендеру, LCP и первому взаимодействию; на мобильных ждём дольше
+  const timeout = isMobileDevice() ? 3500 : 1500;
+  if ('requestIdleCallback' in window) (window as Window & { requestIdleCallback: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback(start, { timeout });
+  else setTimeout(start, timeout / 3);
 
   return () => {
     cancelled = true;
     window.removeEventListener('pointermove', onPointer);
-    unmount?.();
-    document.documentElement.classList.remove('scene-on');
-    sceneStore.getState().setActive(false);
-    host.dataset.state = '';
+    teardown('');
     host.style.opacity = '';
   };
 }

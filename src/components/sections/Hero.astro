@@ -10,7 +10,7 @@ const dict = t(locale);
 <section class="hero theme-dark" data-bg="dark" data-scene="hero" id="hero" aria-labelledby="hero-title">
   <div class="container-x hero__inner">
     <p class="hero__eyebrow t-caps" data-reveal data-reveal-delay="0.2">{d.eyebrow}</p>
-    <h1 id="hero-title" class="hero__title t-hero" data-split="words">{d.titleLine1}<br />{d.titleLine2}</h1>
+    <h1 id="hero-title" class="hero__title t-hero" data-split="words" data-split-lcp>{d.titleLine1}<br />{d.titleLine2}</h1>
     <p class="hero__sub t-lead measure-narrow" data-reveal data-reveal-delay="0.5">{d.subtitle}</p>
     <div class="hero__cta" data-reveal data-reveal-delay="0.65">
       <Button onDark data-open-booking>{d.ctaPrimary}</Button>

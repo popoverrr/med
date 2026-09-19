@@ -7,7 +7,7 @@
 import { gsap, ScrollTrigger, prefersReducedMotion, isFinePointer, isDesktop } from '@/lib/gsap';
 
 export function initParallax(root: ParentNode = document): () => void {
-  if (prefersReducedMotion() || !isDesktop()) return () => {};
+  if (prefersReducedMotion()) return () => {};
   const triggers: ScrollTrigger[] = [];
   root.querySelectorAll<HTMLElement>('[data-parallax]').forEach((el) => {
     const factor = Math.min(0.12, Math.abs(Number(el.dataset.parallax || 0.06))) * Math.sign(Number(el.dataset.parallax || 1) || 1);

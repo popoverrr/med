@@ -58,7 +58,7 @@
 |---|---|---|
 | `hero-water-loop` | видео 16:9 (webm+mp4, постер) | critical |
 | `water-macro-loop` | видео 16:9 | high |
-| `procedure-seq-001…090` | 90 кадров WebP 1280×720 → `public/media/sequence/` | high |
+| `procedure-seq-001…090` | 90 кадров WebP 1280×720 → `public/media/sequence/` **и** 640×360 → `public/media/sequence/640/` (мобильные) | high |
 | `procedure-poster` | изображение 16:9 | high |
 | `water-system-voko`, `water-system-tyent` | 4:5 (фото реального оборудования лучше генерации) | high |
 | `specialist-portrait` | 4:5 — **реальная фотосессия**, генерация недопустима | high |

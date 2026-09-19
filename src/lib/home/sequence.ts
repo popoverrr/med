@@ -20,8 +20,11 @@ export function initImageSequence(wrap: HTMLElement | null): Sequence {
   if (!ctx) return noop;
 
   const frames = Math.max(1, Number(host.dataset.sequenceFrames || 90));
-  const base = host.dataset.sequenceBase || '';
+  // Мобильные: кадры 640×360 (в 4 раза меньше трафика), если они есть
+  const mobile = window.innerWidth < 768 && !!host.dataset.sequenceBaseMobile;
+  const base = (mobile ? host.dataset.sequenceBaseMobile : host.dataset.sequenceBase) || '';
   const available = host.dataset.sequenceAvailable === '1';
+  if (mobile) { canvas.width = 640; canvas.height = 360; }
   const W = canvas.width;
   const H = canvas.height;
   const images: Array<HTMLImageElement | null> = new Array(frames).fill(null);

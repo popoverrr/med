@@ -13,6 +13,9 @@ export const D = { fast: 0.24, base: 0.56, slow: 1.1 } as const;
 
 gsap.defaults({ ease: 'expo.out', duration: D.base });
 gsap.config({ nullTargetWarn: false });
+// Пересчёт триггеров по 'load' не нужен: оркестратор (lib/app.ts) сам делает refresh после инициализации
+// страницы и после загрузки шрифтов — иначе на телефонах получаем 3–4 полных замера страницы подряд.
+ScrollTrigger.config({ autoRefreshEvents: 'visibilitychange,DOMContentLoaded,resize' });
 
 export function prefersReducedMotion(): boolean {
   return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;

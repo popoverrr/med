@@ -40,7 +40,9 @@ const dict = t(locale);
     animation-duration: 24s;
     animation-direction: alternate-reverse;
   }
-  .scene-root { position: absolute; inset: 0; opacity: 1; }
+  /* Появление сцены после монтирования — плавное (канвас закрашен тем же цветом, что и постер) */
+  .scene-root { position: absolute; inset: 0; opacity: 0; transition: opacity 0.9s var(--e-out); }
+  .scene-root[data-state='active'] { opacity: 1; }
   .scene-root:not([data-state='active']) { visibility: hidden; }
   @keyframes drift {
     0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }

@@ -7,8 +7,9 @@ import { useFrame } from '@react-three/fiber';
 import { AdditiveBlending, Color, ShaderMaterial, type Points } from 'three';
 import { params } from '@/lib/three/params';
 import { PARTICLES_VERT, PARTICLES_FRAG } from '@/lib/three/glsl';
+import { TIER, type Quality } from '@/lib/scene/tiers';
 
-interface Props { quality: 'high' | 'medium' | 'low' }
+interface Props { quality: Quality }
 
 function seeded(seed: number) {
   // Детерминированный генератор (mulberry32) — формы одинаковы между перезагрузками
@@ -24,7 +25,7 @@ function seeded(seed: number) {
 
 export function Particles({ quality }: Props) {
   const ref = useRef<Points>(null);
-  const count = quality === 'high' ? 3000 : quality === 'medium' ? 1800 : 800;
+  const count = TIER[quality].particles;
 
   const { origin, cloud, column, seed } = useMemo(() => {
     const rnd = seeded(20250415);

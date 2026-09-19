@@ -43,12 +43,18 @@ const d = dict.home.indications;
   .ind__card-title { margin-bottom: 0.75rem; }
   .ind__card-text { max-width: 36ch; }
   .ind__foot { margin-top: 2.5rem; max-width: 60ch; padding-top: 1.25rem; border-top: 1px solid var(--c-line-on-light); }
+  /* Pinned-режим (все ширины, кроме reduced-motion): горизонтальная лента внутри вертикального скролла */
+  html.js:not(.rm) .ind.is-pinned .ind__pin { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding-block: 5.5rem 2rem; }
+  html.js:not(.rm) .ind.is-pinned .ind__viewport { overflow: hidden; }
+  html.js:not(.rm) .ind.is-pinned .ind__track { display: flex; gap: 1rem; width: max-content; will-change: transform; padding-right: var(--gutter); }
+  html.js:not(.rm) .ind.is-pinned .ind__card { flex: 0 0 min(78vw, 24rem); min-height: 15rem; }
+  html.js:not(.rm) .ind.is-pinned .ind__head { margin-bottom: 1.5rem; }
+  html.js:not(.rm) .ind.is-pinned .ind__foot { margin-top: 1.5rem; }
   @media (min-width: 640px) { .ind__track { grid-template-columns: 1fr 1fr; } }
   @media (min-width: 1024px) {
     .ind__track { grid-template-columns: repeat(3, 1fr); }
-    html.js:not(.rm) .ind.is-pinned .ind__pin { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding-block: 5.5rem 2.5rem; }
-    html.js:not(.rm) .ind.is-pinned .ind__viewport { overflow: hidden; }
-    html.js:not(.rm) .ind.is-pinned .ind__track { display: flex; gap: 1.5rem; width: max-content; will-change: transform; padding-right: var(--gutter); }
+    html.js:not(.rm) .ind.is-pinned .ind__pin { padding-block: 5.5rem 2.5rem; }
+    html.js:not(.rm) .ind.is-pinned .ind__track { gap: 1.5rem; }
     html.js:not(.rm) .ind.is-pinned .ind__card { flex: 0 0 clamp(19rem, 24vw, 24rem); min-height: 16rem; }
     html.js:not(.rm) .ind.is-pinned .ind__head { margin-bottom: 1.75rem; }
     html.js:not(.rm) .ind.is-pinned .ind__foot { margin-top: 1.75rem; }

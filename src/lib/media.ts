@@ -48,8 +48,8 @@ export function videoExists(id: string): boolean {
   return existsSync(join(PUBLIC, 'media', `${id}.mp4`)) || existsSync(join(PUBLIC, 'media', `${id}.webm`));
 }
 
-export function sequenceAvailable(id: string): boolean {
-  return existsSync(join(PUBLIC, 'media', 'sequence', `${id}-001.webp`));
+export function sequenceAvailable(id: string, variant: '' | '640' = ''): boolean {
+  return existsSync(join(PUBLIC, 'media', 'sequence', variant, `${id}-001.webp`));
 }
 
 /** Какие форматы реально лежат в public/media для слота (для <picture>). */

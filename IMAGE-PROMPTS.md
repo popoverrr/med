@@ -47,7 +47,7 @@ NEGATIVE + "colored liquid, foam, condensation drips"
 
 ```
 Prompt: slow dolly through an empty premium colon hydrotherapy treatment room: treatment couch with disposable white sheet, modern hydrotherapy device with a clear water reservoir, warm diffused daylight from a window, porcelain white walls with deep burgundy accents, then macro of a sealed disposable kit on a tray, then drift toward the window, no people, STYLE
-Aspect: 16:9 · 1280×720 · 90 frames · files procedure-seq-001.webp … procedure-seq-090.webp → public/media/sequence/
+Aspect: 16:9 · 1280×720 · 90 frames · files procedure-seq-001.webp … procedure-seq-090.webp → public/media/sequence/ ; те же кадры в 640×360 → public/media/sequence/640/ (мобильные)
 NEGATIVE + "people, hands, moving objects other than camera"
 ```
 

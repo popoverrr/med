@@ -21,6 +21,8 @@ let booted = false;
 
 /** Уступить главный поток между этапами инициализации — дробим работу на короткие задачи (TBT/INP). */
 const yieldToMain = () => new Promise<void>((r) => setTimeout(r, 0));
+/** Метки этапов для профилирования (performance.measure 'hm:*' — видны в DevTools Performance) */
+const stage = (name: string, fn: () => void) => { const t0 = performance.now(); fn(); performance.measure(`hm:${name}`, { start: t0 }); };
 
 function boot() {
   if (booted) return;
@@ -36,24 +38,29 @@ function boot() {
 }
 
 async function mountPage() {
-  boot();
+  // Отделяем инициализацию от задачи, в которой выполняются модули и диспатчится astro:page-load
+  await yieldToMain();
+  stage('boot', boot);
   const html = document.documentElement;
   // Порядок важен: фон/шапка → появления → эффекты → UI. Между этапами уступаем главный поток.
-  pageCleanups.push(initHeader(), initBackground());
+  stage('header+bg', () => pageCleanups.push(initHeader(), initBackground()));
   await yieldToMain();
-  pageCleanups.push(initReveals());
+  stage('reveals', () => pageCleanups.push(initReveals()));
   await yieldToMain();
-  pageCleanups.push(initParallax(), initCounters(), initDrawOnScroll(), initMagnetic());
+  stage('effects', () => pageCleanups.push(initParallax(), initCounters(), initDrawOnScroll(), initMagnetic()));
   await yieldToMain();
-  pageCleanups.push(initBookingModal(), initLightbox(), initFaq(), initCookieBanner(), initMap());
-  if (html.dataset.page === 'home') {
+  stage('ui', () => pageCleanups.push(initBookingModal(), initLightbox(), initFaq(), initCookieBanner(), initMap()));
+  const home = html.dataset.page === 'home';
+  if (home) {
     const mod = await import('@/lib/home');
     await yieldToMain();
-    pageCleanups.push(mod.initHome());
+    stage('home', () => pageCleanups.push(mod.initHome()));
   }
-  // Шрифты могут изменить высоты — пересчитать триггеры
-  document.fonts?.ready.then(() => ScrollTrigger.refresh());
-  ScrollTrigger.refresh();
+  // Полный пересчёт триггеров — один раз (главная делает его сама после создания pin-секций)
+  // и ещё раз после загрузки шрифтов, если они ещё грузятся
+  const fontsPending = document.fonts && document.fonts.status !== 'loaded';
+  if (!home) stage('refresh', () => ScrollTrigger.refresh());
+  if (fontsPending) document.fonts.ready.then(() => stage('refresh-fonts', () => ScrollTrigger.refresh()));
   curtainOut();
   // QA: ?scrollTo=<px> — прокрутка к позиции для headless-скриншотов (scripts/shoot.mjs)
   const to = Number(new URLSearchParams(location.search).get('scrollTo'));

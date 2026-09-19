@@ -7,10 +7,11 @@ import { useEffect, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Color } from 'three';
 import { sceneStore, locate } from '@/lib/scene/store';
-import { params, KEYFRAMES, KEY_ORDER, smoothstep, damp, type SceneParams } from '@/lib/three/params';
+import { params, KEYFRAMES, KEY_ORDER, PORTRAIT_POSES, CAMERA_FOV, smoothstep, damp, type SceneParams } from '@/lib/three/params';
 
 const HOLD = 0.62; // доля секции, в течение которой кадр «держится»; переход — в последней трети (после снятия pin)
 const KEYS = Object.keys(KEYFRAMES.hero) as Array<keyof SceneParams>;
+const HALF_FOV_TAN = Math.tan((CAMERA_FOV / 2) * (Math.PI / 180));
 
 export function Director({ host }: { host: HTMLElement }) {
   const { invalidate, scene, gl, camera } = useThree();
@@ -49,6 +50,17 @@ export function Director({ host }: { host: HTMLElement }) {
 
     const tp = target2.current;
     for (const name of KEYS) tp[name] = a[name] + (b[name] - a[name]) * k;
+    // Портретный экран: позиция/масштаб капли — из мобильной таблицы в долях видимой области
+    // (пересчёт в мировые координаты по камере: половина высоты кадра в плоскости z = 0)
+    if (state.size.width < state.size.height) {
+      const pa = PORTRAIT_POSES[key];
+      const pb = PORTRAIT_POSES[nextKey];
+      const halfH = tp.camZ * HALF_FOV_TAN;
+      const halfW = halfH * (state.size.width / state.size.height);
+      tp.blobX = (pa.fx + (pb.fx - pa.fx) * k) * halfW;
+      tp.blobY = (pa.fy + (pb.fy - pa.fy) * k) * halfH;
+      tp.blobScale = pa.blobScale + (pb.blobScale - pa.blobScale) * k;
+    }
 
     // Сглаживание: геометрия медленнее, прозрачность быстрее
     for (const name of KEYS) {
@@ -66,7 +78,6 @@ export function Director({ host }: { host: HTMLElement }) {
     bgColor.current.lerp(target.current, 1 - Math.exp(-6 * dt));
     gl.setClearColor(bgColor.current, 1);
 
-    void state;
     void host;
   }, -1);
 

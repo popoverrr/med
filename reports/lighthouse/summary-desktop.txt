@@ -1,5 +1,6 @@
-/                perf 99  a11y 100  bp 100  seo 100   LCP 0.8 s  CLS 0.053  TBT 40 ms  FCP 0.4 s
-/procedure       perf 100  a11y 100  bp 100  seo 100   LCP 0.6 s  CLS 0  TBT 30 ms  FCP 0.4 s
-/kk              perf 99  a11y 100  bp 100  seo 100   LCP 0.8 s  CLS 0.05  TBT 50 ms  FCP 0.5 s
+Lighthouse desktop (astro preview, вариант А), 19.09.2026
+/                perf 100  a11y 100  bp 100  seo 100   LCP 0.7 s  CLS 0  TBT 45 ms
+/kk/procedure    perf 100  a11y 100  bp 100  seo 100   LCP 0.7 s  CLS 0  TBT 18 ms
+(медианы 2 и 1 прогона соответственно; a11y/bp/seo — из предыдущего полного прогона scripts/lighthouse.mjs --desktop: 100/100/100)
 
 Отчёты: reports/lighthouse/*.report.html

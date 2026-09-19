@@ -1,5 +1,8 @@
-/kk              perf 87  a11y 100  bp 100  seo 100   LCP 2.6 s  CLS 0  TBT 380 ms  FCP 1.7 s
-/                perf 93  a11y 100  bp 100  seo 100   LCP 2.6 s  CLS 0  TBT 190 ms  FCP 1.8 s
-/procedure       perf 96  a11y 100  bp 100  seo 100   LCP 2.6 s  CLS 0  TBT 20 ms  FCP 1.8 s
+Lighthouse mobile (медиана 3 прогонов, astro preview, вариант А — 3D и хореография на всех устройствах), 19.09.2026
+/                perf 93  a11y 100  bp 100  seo 100   LCP 2.5 s  CLS 0  TBT 187 ms  FCP 1.9 s
+/procedure       perf 95  a11y 100  bp 100  seo 100   LCP 2.6 s  CLS 0  TBT 119 ms  FCP 1.8 s
+/kk              perf 78  a11y 100  bp 100  seo 100   LCP 2.6 s  CLS 0  TBT 715 ms  FCP 1.8 s   (замер при загрузке CPU сторонним браузером ~90% — требует повторного прогона на свободной машине)
 
-Отчёты: reports/lighthouse/*.report.html
+До варианта А (3D только на десктопе): / 93, /procedure 96, /kk 87.
+Основные статьи TBT на телефонах: первый layout страницы и перекладка при подмене web-шрифтов (kk грузит 6 субсетов), pin-секции.
+Отчёты: reports/lighthouse/*.report.html; медианы: scratch-скрипт lh-median (см. README «Профилирование»)

@@ -4,6 +4,7 @@
  * Файлы: public/documents/<id>-{preview,medium,full}.webp, <id>.pdf
  */
 import type { Locale } from '@/lib/i18n';
+import { withBase } from '@/lib/base';
 
 interface Props {
   id: string;
@@ -23,8 +24,8 @@ const { id, alt, caption, group = 'documents', class: className = '', aspect = '
   type="button"
   class:list={['doc', className]}
   data-lightbox
-  data-lightbox-src={`/documents/${id}-full.webp`}
-  data-lightbox-pdf={`/documents/${id}.pdf`}
+  data-lightbox-src={withBase(`/documents/${id}-full.webp`)}
+  data-lightbox-pdf={withBase(`/documents/${id}.pdf`)}
   data-lightbox-caption={caption}
   data-lightbox-alt={alt}
   data-lightbox-group={group}
@@ -34,8 +35,8 @@ const { id, alt, caption, group = 'documents', class: className = '', aspect = '
 >
   <span class="doc__frame">
     <img
-      src={`/documents/${id}-preview.webp`}
-      srcset={`/documents/${id}-preview.webp 480w, /documents/${id}-medium.webp 1200w`}
+      src={withBase(`/documents/${id}-preview.webp`)}
+      srcset={`${withBase(`/documents/${id}-preview.webp`)} 480w, ${withBase(`/documents/${id}-medium.webp`)} 1200w`}
       sizes="(min-width: 1024px) 24vw, 60vw"
       alt={alt}
       loading="lazy"

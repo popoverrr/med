@@ -8,6 +8,7 @@ import CookieBanner from '@/components/layout/CookieBanner.astro';
 import BookingModal from '@/components/layout/BookingModal.astro';
 import Lightbox from '@/components/layout/Lightbox.astro';
 import { t, type Locale } from '@/lib/i18n';
+import { withBase, PREVIEW } from '@/lib/base';
 
 interface Props {
   locale: Locale;
@@ -50,19 +51,20 @@ const startBg = bg === 'dark' ? 'var(--c-burgundy-900)' : 'var(--c-porcelain)';
     <meta name="theme-color" content={bg === 'dark' ? '#350a16' : '#f6f1ee'} />
     <meta name="color-scheme" content="light" />
     <meta name="format-detection" content="telephone=no" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="icon" href="/favicon.ico" sizes="32x32" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="manifest" href="/site.webmanifest" />
-    <link rel="preload" href="/fonts/onest-cyrillic-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/inter-tight-cyrillic-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
-    {locale === 'kk' && <link rel="preload" href="/fonts/onest-cyrillic-ext-wght-normal.woff2" as="font" type="font/woff2" crossorigin />}
-    {locale === 'kk' && <link rel="preload" href="/fonts/inter-tight-cyrillic-ext-wght-normal.woff2" as="font" type="font/woff2" crossorigin />}
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+    <link rel="icon" href={withBase('/favicon.ico')} sizes="32x32" />
+    <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
+    <link rel="manifest" href={withBase('/site.webmanifest')} />
+    {PREVIEW && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="preload" href={withBase('/fonts/onest-cyrillic-wght-normal.woff2')} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={withBase('/fonts/inter-tight-cyrillic-wght-normal.woff2')} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={withBase('/fonts/inter-tight-latin-wght-normal.woff2')} as="font" type="font/woff2" crossorigin />
+    {locale === 'kk' && <link rel="preload" href={withBase('/fonts/onest-cyrillic-ext-wght-normal.woff2')} as="font" type="font/woff2" crossorigin />}
+    {locale === 'kk' && <link rel="preload" href={withBase('/fonts/inter-tight-cyrillic-ext-wght-normal.woff2')} as="font" type="font/woff2" crossorigin />}
     {/* Второстепенные субсеты (цифры/латиница в тексте, «ҚАЗ» в шапке) — с низким приоритетом, чтобы не конкурировать с LCP */}
-    <link rel="preload" href="/fonts/onest-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin fetchpriority="low" />
-    {locale !== 'kk' && <link rel="preload" href="/fonts/inter-tight-cyrillic-ext-wght-normal.woff2" as="font" type="font/woff2" crossorigin fetchpriority="low" />}
-    <script is:inline src="/scripts/early.js"></script>
+    <link rel="preload" href={withBase('/fonts/onest-latin-wght-normal.woff2')} as="font" type="font/woff2" crossorigin fetchpriority="low" />
+    {locale !== 'kk' && <link rel="preload" href={withBase('/fonts/inter-tight-cyrillic-ext-wght-normal.woff2')} as="font" type="font/woff2" crossorigin fetchpriority="low" />}
+    <script is:inline src={withBase('/scripts/early.js')}></script>
     <ClientRouter fallback="swap" />
   </head>
   <body class:list={[bg === 'dark' ? 'theme-dark' : 'theme-light']}>

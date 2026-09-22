@@ -4,6 +4,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHero from '@/components/ui/PageHero.astro';
 import DocumentThumb from '@/components/ui/DocumentThumb.astro';
 import LicenseBlock from '@/components/sections/LicenseBlock.astro';
+import { withBase } from '@/lib/base';
 import company from '@content/config/company.json';
 import { t, localePath, type Locale } from '@/lib/i18n';
 import { breadcrumbLd } from '@/lib/seo';
@@ -37,7 +38,7 @@ const others = (Object.keys(index.items) as Array<keyof typeof index.items>).fil
             <DocumentThumb id={doc.id} alt={alts[doc.id] ?? doc.title} caption={`${doc.title} — ${doc.caption}`} locale={locale} group="legal-docs" aspect={doc.id.startsWith('certificate') ? '3 / 2' : '3 / 4'} label={dict.common.viewDocument} />
             <h3 class="t-h4 lp__doc-title">{doc.title}</h3>
             <p class="t-small muted">{doc.caption}</p>
-            <a class="t-small link-u" href={`/documents/${doc.id}.pdf`} download>{dict.common.downloadPdf}</a>
+            <a class="t-small link-u" href={withBase(`/documents/${doc.id}.pdf`)} download>{dict.common.downloadPdf}</a>
           </li>
         ))}
       </ul>

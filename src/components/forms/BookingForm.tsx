@@ -2,6 +2,7 @@ import { useId, useMemo, useRef, useState, type FormEvent } from 'react';
 import { AnimatePresence, LazyMotion, domAnimation, m, useReducedMotion } from 'motion/react';
 import type { BookingStrings } from './strings';
 import { formatPhone, isValidPhone, submitForm, todayISO } from './shared';
+import { withBase } from '@/lib/base';
 
 interface Props {
   strings: BookingStrings;
@@ -15,7 +16,7 @@ type Errors = Partial<Record<'name' | 'phone' | 'date' | 'consent' | 'form', str
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-export default function BookingForm({ strings: s, locale, compact = false, endpoint = '/api/booking.php' }: Props) {
+export default function BookingForm({ strings: s, locale, compact = false, endpoint = withBase('/api/booking.php') }: Props) {
   const id = useId();
   const reduce = useReducedMotion();
   const startedAt = useRef<number>(Date.now());
@@ -219,11 +220,12 @@ export default function BookingForm({ strings: s, locale, compact = false, endpo
             </div>
             {errors.consent && <p id={`${id}-consent-err`} className="bf__error" role="alert">{errors.consent}</p>}
 
+            {s.disabledNotice && <p className="bf__notice" role="note">{s.disabledNotice}</p>}
             <div className="bf__actions">
               <m.button
                 type="submit"
                 className="btn btn-primary-on-dark bf__submit"
-                disabled={status === 'submitting'}
+                disabled={status === 'submitting' || !!s.disabledNotice}
                 whileTap={reduce ? undefined : { scale: 0.98 }}
               >
                 {status === 'submitting' ? s.submitting : s.submit}

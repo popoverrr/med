@@ -7,6 +7,7 @@
 import { getSlot, parseAspect, videoExists } from '@/lib/media';
 import MediaPlaceholder from './MediaPlaceholder.astro';
 import { t, type Locale } from '@/lib/i18n';
+import { withBase } from '@/lib/base';
 
 interface Props {
   id: string;
@@ -33,13 +34,13 @@ const dict = t(locale);
       loop
       preload="metadata"
       autoplay={autoplay}
-      poster={`/media/${id}-poster.webp`}
+      poster={withBase(`/media/${id}-poster.webp`)}
       aria-label={slot.alt[locale]}
       width={slot.sizes[0]}
       height={Math.round((slot.sizes[0]! * h) / w)}
     >
-      <source src={`/media/${id}.webm`} type="video/webm" />
-      <source src={`/media/${id}.mp4`} type="video/mp4" />
+      <source src={withBase(`/media/${id}.webm`)} type="video/webm" />
+      <source src={withBase(`/media/${id}.mp4`)} type="video/mp4" />
     </video>
     <button type="button" class="video__toggle" data-video-toggle aria-pressed="false" aria-label={dict.common.pause}>
       <svg class="video__icon video__icon--pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 3h3v10H4zM9 3h3v10H9z" fill="currentColor"/></svg>

@@ -3,10 +3,22 @@ import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
-import { SITE_URL } from './src/content/config/site.mjs';
+import { SITE_URL, SITE_BASE } from './src/content/config/site.mjs';
+
+/** Превью на GitHub Pages живёт в подпути (SITE_BASE=/med): абсолютные url() шрифтов в CSS получают префикс. */
+function fontBasePlugin() {
+  return {
+    name: 'hydromed-font-base',
+    transform(code, id) {
+      if (!SITE_BASE || !/[\\/]src[\\/]styles[\\/]fonts\.css$/.test(id)) return null;
+      return { code: code.replaceAll("url('/fonts/", `url('${SITE_BASE}/fonts/`), map: null };
+    },
+  };
+}
 
 export default defineConfig({
   site: SITE_URL,
+  base: SITE_BASE || '/',
   output: 'static',
   trailingSlash: 'never',
   build: {
@@ -39,7 +51,7 @@ export default defineConfig({
     defaultStrategy: 'hover',
   },
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [tailwindcss(), fontBasePlugin()],
     build: {
       // 0 = ничего не инлайнить: скрипты всегда внешние (строгий CSP script-src 'self'),
       // шрифты/картинки не превращаются в data: URI.

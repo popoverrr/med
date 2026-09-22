@@ -7,6 +7,7 @@ import Eyebrow from '@/components/ui/Eyebrow.astro';
 import Picture from '@/components/ui/Picture.astro';
 import { t, type Locale } from '@/lib/i18n';
 import { sequenceAvailable } from '@/lib/media';
+import { withBase } from '@/lib/base';
 
 interface Props { locale: Locale }
 const { locale } = Astro.props;
@@ -29,8 +30,8 @@ const hasMobileSequence = sequenceAvailable('procedure-seq', '640');
         <div
           class="how__canvas-wrap"
           data-sequence
-          data-sequence-base="/media/sequence/procedure-seq-"
-          data-sequence-base-mobile={hasMobileSequence ? '/media/sequence/640/procedure-seq-' : undefined}
+          data-sequence-base={withBase('/media/sequence/procedure-seq-')}
+          data-sequence-base-mobile={hasMobileSequence ? withBase('/media/sequence/640/procedure-seq-') : undefined}
           data-sequence-frames="90"
           data-sequence-available={hasSequence ? '1' : '0'}
         >

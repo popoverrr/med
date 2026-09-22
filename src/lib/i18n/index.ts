@@ -1,5 +1,6 @@
 import ru from '@content/i18n/ru.json';
 import kk from '@content/i18n/kk.json';
+import { withBase, stripBase } from '@/lib/base';
 
 export type Locale = 'ru' | 'kk';
 export type Dict = typeof ru;
@@ -14,23 +15,25 @@ export function t(locale: Locale): Dict {
   return dicts[locale];
 }
 
-/** Путь страницы в нужной локали: ru без префикса, kk с /kk. */
+/** Путь страницы в нужной локали (с учётом базового пути сайта): ru без префикса, kk с /kk. */
 export function localePath(locale: Locale, path: string): string {
   const clean = path.startsWith('/') ? path : `/${path}`;
-  if (locale === 'ru') return clean === '/' ? '/' : clean.replace(/\/$/, '');
-  return clean === '/' ? '/kk' : `/kk${clean.replace(/\/$/, '')}`;
+  if (locale === 'ru') return withBase(clean === '/' ? '/' : clean.replace(/\/$/, ''));
+  return withBase(clean === '/' ? '/kk' : `/kk${clean.replace(/\/$/, '')}`);
 }
 
 /** Определяет локаль по текущему pathname. */
 export function localeFromPath(pathname: string): Locale {
-  return pathname === '/kk' || pathname.startsWith('/kk/') ? 'kk' : 'ru';
+  const p = stripBase(pathname);
+  return p === '/kk' || p.startsWith('/kk/') ? 'kk' : 'ru';
 }
 
-/** Путь без локального префикса. */
+/** Путь без базового и локального префиксов. */
 export function stripLocale(pathname: string): string {
-  if (pathname === '/kk') return '/';
-  if (pathname.startsWith('/kk/')) return pathname.slice(3) || '/';
-  return pathname || '/';
+  const p = stripBase(pathname);
+  if (p === '/kk') return '/';
+  if (p.startsWith('/kk/')) return p.slice(3) || '/';
+  return p || '/';
 }
 
 export function otherLocale(locale: Locale): Locale {

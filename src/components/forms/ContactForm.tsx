@@ -2,6 +2,7 @@ import { useId, useRef, useState, type FormEvent } from 'react';
 import { AnimatePresence, LazyMotion, domAnimation, m, useReducedMotion } from 'motion/react';
 import type { ContactStrings } from './strings';
 import { submitForm } from './shared';
+import { withBase } from '@/lib/base';
 
 interface Props {
   strings: ContactStrings;
@@ -13,7 +14,7 @@ type Status = 'idle' | 'submitting' | 'success' | 'error';
 type Errors = Partial<Record<'name' | 'contact' | 'message' | 'consent' | 'form', string>>;
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-export default function ContactForm({ strings: s, locale, endpoint = '/api/contact.php' }: Props) {
+export default function ContactForm({ strings: s, locale, endpoint = withBase('/api/contact.php') }: Props) {
   const id = useId();
   const reduce = useReducedMotion();
   const startedAt = useRef(Date.now());
@@ -111,8 +112,9 @@ export default function ContactForm({ strings: s, locale, endpoint = '/api/conta
               </label>
             </div>
             {errors.consent && <p id={`${id}-consent-err`} className="bf__error" role="alert">{errors.consent}</p>}
+            {s.disabledNotice && <p className="bf__notice" role="note">{s.disabledNotice}</p>}
             <div className="bf__actions">
-              <button type="submit" className="btn btn-primary bf__submit" disabled={status === 'submitting'}>{status === 'submitting' ? s.submitting : s.submit}</button>
+              <button type="submit" className="btn btn-primary bf__submit" disabled={status === 'submitting' || !!s.disabledNotice}>{status === 'submitting' ? s.submitting : s.submit}</button>
               <p className="bf__status" aria-live="polite" role="status">{status === 'error' && errors.form ? errors.form : ''}</p>
             </div>
           </m.form>

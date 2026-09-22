@@ -1,4 +1,5 @@
 import { t, localePath, type Locale } from '@/lib/i18n';
+import { PREVIEW } from '@/lib/base';
 
 export function formStrings(locale: Locale) {
   const dict = t(locale);
@@ -6,6 +7,8 @@ export function formStrings(locale: Locale) {
     ...dict.forms.booking,
     consentHref: localePath(locale, '/legal/consent'),
     privacyHref: localePath(locale, '/legal/privacy'),
+    /** Превью-сборка: отправка отключена, показываем пояснение */
+    disabledNotice: PREVIEW ? dict.forms.booking.previewNotice : '',
   };
 }
 export type BookingStrings = ReturnType<typeof formStrings>;
@@ -28,6 +31,7 @@ export function contactStrings(locale: Locale) {
     network: dict.forms.booking.errors.network,
     consentHref: localePath(locale, '/legal/consent'),
     privacyHref: localePath(locale, '/legal/privacy'),
+    disabledNotice: PREVIEW ? dict.forms.booking.previewNotice : '',
   };
 }
 export type ContactStrings = ReturnType<typeof contactStrings>;

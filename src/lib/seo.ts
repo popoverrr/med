@@ -2,12 +2,14 @@ import company from '@content/config/company.json';
 import contacts from '@content/config/contacts.json';
 import { SITE_URL } from '@content/config/site.mjs';
 import { t, localePath, type Locale } from '@/lib/i18n';
+import { withBase } from '@/lib/base';
 import { real } from '@/lib/utils/placeholders';
 
 type JsonLd = Record<string, unknown>;
 
+/** Абсолютный URL для пути сайта (базовый путь добавляется, если его ещё нет — localePath() уже его содержит). */
 export function absolute(path: string): string {
-  return new URL(path, SITE_URL).toString();
+  return new URL(withBase(path), SITE_URL).toString();
 }
 
 /** Организация + медицинская организация — на каждой странице. */

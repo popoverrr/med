@@ -45,6 +45,10 @@ scripts/                                          сборочные и QA-ск�
 
 Документы проекта: `DEPLOY.md` (выкладка на Plesk), `CONTENT-TODO.md` (что нужно от заказчика), `IMAGE-PROMPTS.md` (промпты для медиа), `LEGAL-REVIEW.md` (проверка юристом).
 
+## Превью для заказчика (GitHub Pages)
+
+Пуш в `main` → GitHub Actions (`.github/workflows/pages.yml`) собирает сайт с `SITE_URL=https://popoverrr.github.io SITE_BASE=/med PUBLIC_PREVIEW=1` и публикует на **https://popoverrr.github.io/med/**. Превью-сборка: все пути с префиксом `/med` (`lib/base.ts` → `withBase()`, `localePath()`), `noindex` + `robots.txt Disallow`, формы показывают пояснение и не отправляются (PHP на Pages не работает), `.htaccess` не действует (чистые URL отдаёт сам Pages). Боевая сборка для Plesk — обычный `npm run build` без этих переменных. Локально превью-сборку можно посмотреть так же, как её отдаёт Pages: `node scripts/serve-pages.mjs dist //med 4323`.
+
 ## Как это работает
 
 - **Контент**: только `src/content/i18n/*.json`; факты — `src/content/config/*.json`. Плейсхолдеры `{{TOKEN}}` рендерятся как пунктирные метки, список — в `CONTENT-TODO.md`.

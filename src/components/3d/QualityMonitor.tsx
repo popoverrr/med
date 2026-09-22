@@ -21,6 +21,7 @@ interface Props {
 const WINDOW_MS = 1000;
 const WARMUP_MS = 2000;
 const FPS_LOW = 45;
+const FPS_THROTTLED = 4;
 const DECLINE_WINDOWS = 3;
 const INCLINE_WINDOWS = 5;
 
@@ -59,6 +60,9 @@ export function QualityMonitor({ quality, onChange, onFallback }: Props) {
     const fps = (frames.current / span) * 1000;
     frames.current = 0;
     windowStart.current = now;
+    // Единицы кадров в секунду — это не «слабый GPU», а заторможенный rAF (фоновое/перекрытое окно,
+    // энергосбережение): такие окна не учитываем
+    if (fps < FPS_THROTTLED) { bad.current = 0; good.current = 0; return; }
     refreshRate.current = Math.max(refreshRate.current, fps);
     const fpsHigh = refreshRate.current > 100 ? 100 : 57;
     const i = TIERS.indexOf(quality);

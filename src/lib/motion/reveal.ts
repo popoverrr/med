@@ -59,7 +59,9 @@ export function initReveals(root: ParentNode = document): () => void {
   // --- Кинетическая типографика (на всех ширинах; hero-заголовок [data-split-lcp] на мобильных виден сразу — ради LCP) ---
   root.querySelectorAll<HTMLElement>('[data-split]').forEach((el) => {
     if (el.closest('[data-split-manual]')) return;
-    if (!desktop && el.hasAttribute('data-split-lcp')) return;
+    // Помечаем как «готовый», чтобы правило visibility:hidden для [data-split-lcp]:not(.is-split) (десктоп)
+    // не спрятало заголовок, если ширина вырастет позже (поворот планшета)
+    if (!desktop && el.hasAttribute('data-split-lcp')) { el.classList.add('is-split'); return; }
     items.push({ el, prep: () => {
       const mode = (el.dataset.split as SplitMode) || 'words';
       const { pieces } = splitText(el, mode);

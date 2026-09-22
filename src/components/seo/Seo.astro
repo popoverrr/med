@@ -2,6 +2,7 @@
 import { SITE_URL } from '@content/config/site.mjs';
 import { t, localePath, locales, type Locale } from '@/lib/i18n';
 import { absolute, organizationLd, webPageLd } from '@/lib/seo';
+import { PREVIEW } from '@/lib/base';
 
 interface Props {
   locale: Locale;
@@ -16,7 +17,9 @@ interface Props {
   bare?: boolean;
 }
 
-const { locale, path, title, description, ogImage, jsonLd = [], noindex = false, bare = false } = Astro.props;
+const { locale, path, title, description, ogImage, jsonLd = [], bare = false } = Astro.props;
+// Превью-сборка (GitHub Pages) не индексируется целиком
+const noindex = Astro.props.noindex || PREVIEW;
 const dict = t(locale);
 const fullTitle = bare ? title : `${title}${dict.meta.titleSuffix}`;
 const canonical = absolute(localePath(locale, path));

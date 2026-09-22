@@ -8,7 +8,7 @@ import CookieBanner from '@/components/layout/CookieBanner.astro';
 import BookingModal from '@/components/layout/BookingModal.astro';
 import Lightbox from '@/components/layout/Lightbox.astro';
 import { t, type Locale } from '@/lib/i18n';
-import { withBase, PREVIEW } from '@/lib/base';
+import { withBase } from '@/lib/base';
 
 interface Props {
   locale: Locale;
@@ -55,7 +55,6 @@ const startBg = bg === 'dark' ? 'var(--c-burgundy-900)' : 'var(--c-porcelain)';
     <link rel="icon" href={withBase('/favicon.ico')} sizes="32x32" />
     <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
     <link rel="manifest" href={withBase('/site.webmanifest')} />
-    {PREVIEW && <meta name="robots" content="noindex, nofollow" />}
     <link rel="preload" href={withBase('/fonts/onest-cyrillic-wght-normal.woff2')} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={withBase('/fonts/inter-tight-cyrillic-wght-normal.woff2')} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={withBase('/fonts/inter-tight-latin-wght-normal.woff2')} as="font" type="font/woff2" crossorigin />

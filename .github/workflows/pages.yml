@@ -35,7 +35,8 @@ jobs:
           SITE_BASE: /med
           PUBLIC_PREVIEW: '1'
       - name: Preview must not be indexed
-        run: printf 'User-agent: *\nDisallow: /\n' > dist/robots.txt
+        run: |
+          printf 'User-agent: *\nDisallow: /\n' > dist/robots.txt
       - uses: actions/configure-pages@v5
         with:
           enablement: true

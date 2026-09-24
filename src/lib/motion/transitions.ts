@@ -1,6 +1,6 @@
 /**
  * Page transitions (ТЗ §4.2.10): Astro View Transitions (ClientRouter) + GSAP-занавес
- * цвета бургунди. Занавес закрывается до загрузки следующей страницы и открывается
+ * цвета глубокой воды. Занавес закрывается до загрузки следующей страницы и открывается
  * после инициализации новой (astro:page-load). Reduced motion → без занавеса.
  */
 import { gsap, prefersReducedMotion } from '@/lib/gsap';

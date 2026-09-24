@@ -64,32 +64,32 @@ export function initImageSequence(wrap: HTMLElement | null): Sequence {
   function drawPlaceholder(i: number) {
     const t = i / Math.max(1, frames - 1);
     const g = ctx!.createLinearGradient(0, 0, W, H);
-    g.addColorStop(0, '#4e0f21');
-    g.addColorStop(0.55, '#350a16');
-    g.addColorStop(1, '#12080b');
+    g.addColorStop(0, '#0a3a46');
+    g.addColorStop(0.55, '#07313b');
+    g.addColorStop(1, '#04141a');
     ctx!.fillStyle = g;
     ctx!.fillRect(0, 0, W, H);
     // «Свет», движущийся по прогрессу — визуализация того, что кадр = функция скролла
     const cx = W * (0.18 + t * 0.64);
     const cy = H * (0.62 - Math.sin(t * Math.PI) * 0.25);
     const r = ctx!.createRadialGradient(cx, cy, 0, cx, cy, W * 0.42);
-    r.addColorStop(0, 'rgba(196,86,110,0.55)');
-    r.addColorStop(0.5, 'rgba(143,194,206,0.12)');
+    r.addColorStop(0, 'rgba(79, 195, 214,0.55)');
+    r.addColorStop(0.5, 'rgba(143, 214, 226,0.12)');
     r.addColorStop(1, 'rgba(0,0,0,0)');
     ctx!.fillStyle = r;
     ctx!.fillRect(0, 0, W, H);
     // Горизонт-линия и подпись слота
-    ctx!.strokeStyle = 'rgba(255,252,250,0.18)';
+    ctx!.strokeStyle = 'rgba(251,253,253,0.18)';
     ctx!.lineWidth = 1;
     ctx!.beginPath();
     ctx!.moveTo(0, H * 0.72);
     ctx!.lineTo(W, H * 0.72);
     ctx!.stroke();
-    ctx!.fillStyle = 'rgba(255,252,250,0.82)';
+    ctx!.fillStyle = 'rgba(251,253,253,0.82)';
     ctx!.textAlign = 'center';
     ctx!.font = `500 ${Math.round(H * 0.026)}px ui-monospace, Consolas, monospace`;
     ctx!.fillText(`procedure-seq-${String(i + 1).padStart(3, '0')}`, W / 2, H * 0.47);
-    ctx!.fillStyle = 'rgba(255,252,250,0.55)';
+    ctx!.fillStyle = 'rgba(251,253,253,0.55)';
     ctx!.font = `400 ${Math.round(H * 0.02)}px system-ui, sans-serif`;
     ctx!.fillText(`IMAGE SEQUENCE · 16:9 · ${frames} × 1280 px · кадр = прогресс скролла`, W / 2, H * 0.52);
   }

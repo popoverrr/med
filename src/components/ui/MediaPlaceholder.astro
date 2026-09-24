@@ -1,7 +1,7 @@
 ---
 /**
  * Аккуратный плейсхолдер медиа-слота (ТЗ §9.1): правильное соотношение сторон,
- * мягкий бургунди-градиент, шум-текстура, по центру — ID слота, размеры и описание кадра.
+ * мягкий аква-градиент, шум-текстура, по центру — ID слота, размеры и описание кадра.
  */
 import { getSlot, parseAspect } from '@/lib/media';
 import type { Locale } from '@/lib/i18n';
@@ -54,18 +54,18 @@ const typeLabel = slot.type === 'video' ? 'VIDEO' : slot.type === 'sequence' ? '
     overflow: hidden;
     border-radius: var(--r-media);
     background:
-      radial-gradient(120% 90% at 20% 10%, rgba(196, 86, 110, 0.22), transparent 60%),
-      radial-gradient(90% 80% at 85% 90%, rgba(143, 194, 206, 0.12), transparent 55%),
-      linear-gradient(160deg, var(--c-burgundy-800), var(--c-burgundy-900) 55%, var(--c-ink));
-    color: rgba(255, 252, 250, 0.82);
+      radial-gradient(120% 90% at 20% 10%, rgba(79, 195, 214, 0.22), transparent 60%),
+      radial-gradient(90% 80% at 85% 90%, rgba(143, 214, 226, 0.12), transparent 55%),
+      linear-gradient(160deg, var(--c-deep-800), var(--c-deep-900) 55%, var(--c-ink));
+    color: rgba(251, 253, 253, 0.82);
     isolation: isolate;
   }
   .mph--light {
     background:
-      radial-gradient(120% 90% at 20% 10%, rgba(196, 86, 110, 0.18), transparent 60%),
-      radial-gradient(90% 80% at 85% 90%, rgba(143, 194, 206, 0.16), transparent 55%),
-      linear-gradient(160deg, #efe3e0, var(--c-porcelain) 50%, #e9dcd8);
-    color: rgba(53, 10, 22, 0.78);
+      radial-gradient(120% 90% at 20% 10%, rgba(79, 195, 214, 0.18), transparent 60%),
+      radial-gradient(90% 80% at 85% 90%, rgba(143, 214, 226, 0.16), transparent 55%),
+      linear-gradient(160deg, #e2f0f2, var(--c-porcelain) 50%, #dbeaed);
+    color: rgba(7, 49, 59, 0.78);
   }
   .mph__noise {
     position: absolute;
@@ -78,7 +78,7 @@ const typeLabel = slot.type === 'video' ? 'VIDEO' : slot.type === 'sequence' ? '
   .mph__glow {
     position: absolute;
     inset: -20%;
-    background: radial-gradient(40% 40% at 50% 50%, rgba(255, 252, 250, 0.08), transparent 70%);
+    background: radial-gradient(40% 40% at 50% 50%, rgba(251, 253, 253, 0.08), transparent 70%);
     pointer-events: none;
   }
   .mph__label {

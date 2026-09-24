@@ -38,7 +38,7 @@ const dict = t(locale);
     color: inherit;
     overflow: visible;
   }
-  .modal::backdrop { background: rgba(18, 8, 11, 0.55); backdrop-filter: blur(6px); }
+  .modal::backdrop { background: rgba(4, 20, 26, 0.55); backdrop-filter: blur(6px); }
   .modal[open] { display: block; }
   .modal__panel {
     position: relative;
@@ -46,7 +46,7 @@ const dict = t(locale);
     overflow-y: auto;
     padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
     border-radius: var(--r-card);
-    background: var(--c-burgundy-900);
+    background: var(--c-deep-900);
     color: var(--c-bone);
     box-shadow: var(--sh-modal);
     transform-origin: center;
@@ -65,7 +65,7 @@ const dict = t(locale);
     opacity: 0.8;
     transition: opacity var(--d-fast) var(--e-out), background-color var(--d-fast) var(--e-out);
   }
-  .modal__close:hover { opacity: 1; background: rgba(255, 252, 250, 0.08); }
+  .modal__close:hover { opacity: 1; background: rgba(251, 253, 253, 0.08); }
   .modal__eyebrow { opacity: 0.7; margin-bottom: 0.75rem; }
   .modal__title { margin-bottom: 0.5rem; padding-right: 2.5rem; }
   .modal__note { margin-bottom: 1.5rem; }

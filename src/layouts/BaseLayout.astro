@@ -39,7 +39,7 @@ const {
   ogImage,
 } = Astro.props;
 const dict = t(locale);
-const startBg = bg === 'dark' ? 'var(--c-burgundy-900)' : 'var(--c-porcelain)';
+const startBg = bg === 'dark' ? 'var(--c-deep-900)' : 'var(--c-porcelain)';
 ---
 
 <!doctype html>
@@ -48,7 +48,7 @@ const startBg = bg === 'dark' ? 'var(--c-burgundy-900)' : 'var(--c-porcelain)';
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <Seo locale={locale} path={path} title={title} description={description} jsonLd={jsonLd} noindex={noindex} bare={bare} ogImage={ogImage} />
-    <meta name="theme-color" content={bg === 'dark' ? '#350a16' : '#f6f1ee'} />
+    <meta name="theme-color" content={bg === 'dark' ? '#07313b' : '#eef5f6'} />
     <meta name="color-scheme" content="light" />
     <meta name="format-detection" content="telephone=no" />
     <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
@@ -96,7 +96,7 @@ const startBg = bg === 'dark' ? 'var(--c-burgundy-900)' : 'var(--c-porcelain)';
     z-index: 100;
     padding: 0.75rem 1rem;
     border-radius: var(--r-control);
-    background: var(--c-burgundy-700);
+    background: var(--c-deep-700);
     color: var(--c-bone);
     font-weight: 500;
     transform: translateY(-200%);

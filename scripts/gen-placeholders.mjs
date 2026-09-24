@@ -20,18 +20,18 @@ function frameSvg(i) {
   return `
 <svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4e0f21"/><stop offset="0.55" stop-color="#350a16"/><stop offset="1" stop-color="#12080b"/></linearGradient>
-    <radialGradient id="light" cx="${(cx / W).toFixed(3)}" cy="${(cy / H).toFixed(3)}" r="0.42"><stop offset="0" stop-color="#c4566e" stop-opacity="0.55"/><stop offset="0.5" stop-color="#8fc2ce" stop-opacity="0.12"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a3a46"/><stop offset="0.55" stop-color="#07313b"/><stop offset="1" stop-color="#04141a"/></linearGradient>
+    <radialGradient id="light" cx="${(cx / W).toFixed(3)}" cy="${(cy / H).toFixed(3)}" r="0.42"><stop offset="0" stop-color="#4fc3d6" stop-opacity="0.55"/><stop offset="0.5" stop-color="#8fd6e2" stop-opacity="0.12"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
     <filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 0.08"/></feComponentTransfer></filter>
   </defs>
   <rect width="${W}" height="${H}" fill="url(#bg)"/>
   <rect width="${W}" height="${H}" fill="url(#light)"/>
   <rect width="${W}" height="${H}" filter="url(#noise)"/>
-  <line x1="0" y1="${H * 0.72}" x2="${W}" y2="${H * 0.72}" stroke="#fffcfa" stroke-opacity="0.18"/>
-  <circle cx="${cx.toFixed(1)}" cy="${(H * 0.72).toFixed(1)}" r="4" fill="#fffcfa" fill-opacity="0.7"/>
-  <text x="${W / 2}" y="${H * 0.47}" text-anchor="middle" font-family="Consolas, monospace" font-size="${Math.round(H * 0.028)}" font-weight="500" fill="#fffcfa" fill-opacity="0.85">procedure-seq-${num}</text>
-  <text x="${W / 2}" y="${H * 0.525}" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="${Math.round(H * 0.02)}" fill="#fffcfa" fill-opacity="0.55">IMAGE SEQUENCE · 16:9 · ${FRAMES} × ${W} px · кадр = прогресс скролла</text>
-  <text x="${W - 40}" y="${H - 28}" text-anchor="end" font-family="Consolas, monospace" font-size="18" fill="#fffcfa" fill-opacity="0.5">${num} / ${String(FRAMES).padStart(3, '0')}</text>
+  <line x1="0" y1="${H * 0.72}" x2="${W}" y2="${H * 0.72}" stroke="#fbfdfd" stroke-opacity="0.18"/>
+  <circle cx="${cx.toFixed(1)}" cy="${(H * 0.72).toFixed(1)}" r="4" fill="#fbfdfd" fill-opacity="0.7"/>
+  <text x="${W / 2}" y="${H * 0.47}" text-anchor="middle" font-family="Consolas, monospace" font-size="${Math.round(H * 0.028)}" font-weight="500" fill="#fbfdfd" fill-opacity="0.85">procedure-seq-${num}</text>
+  <text x="${W / 2}" y="${H * 0.525}" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="${Math.round(H * 0.02)}" fill="#fbfdfd" fill-opacity="0.55">IMAGE SEQUENCE · 16:9 · ${FRAMES} × ${W} px · кадр = прогресс скролла</text>
+  <text x="${W - 40}" y="${H - 28}" text-anchor="end" font-family="Consolas, monospace" font-size="18" fill="#fbfdfd" fill-opacity="0.5">${num} / ${String(FRAMES).padStart(3, '0')}</text>
 </svg>`;
 }
 

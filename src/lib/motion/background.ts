@@ -8,13 +8,13 @@ import { gsap, ScrollTrigger, prefersReducedMotion } from '@/lib/gsap';
 import { sceneStore } from '@/lib/scene/store';
 
 export const BG: Record<string, string> = {
-  porcelain: '#f6f1ee',
-  bone: '#fffcfa',
-  dark: '#350a16',
-  burgundy: '#4e0f21',
-  ink: '#12080b',
+  porcelain: '#eef5f6',
+  bone: '#fbfdfd',
+  dark: '#07313b',
+  deep: '#0a3a46',
+  ink: '#04141a',
 };
-const DARK = new Set(['dark', 'burgundy', 'ink']);
+const DARK = new Set(['dark', 'deep', 'ink']);
 
 export function initBackground(): () => void {
   const html = document.documentElement;

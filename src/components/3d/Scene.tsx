@@ -43,24 +43,25 @@ function Effects({ quality }: { quality: Quality }) {
   );
 }
 
-const KEY_WARM = new Color('#d9788e');
-const KEY_COOL = new Color('#a9dde8');
-const RIM_WARM = new Color('#8fc2ce');
-const RIM_COOL = new Color('#ffffff');
+// Свет только холодный: белый ключ с аква-подтоном + яркий контровой — «блик на воде»
+const KEY_DEEP = new Color('#bdeef6');
+const KEY_CLEAR = new Color('#f2fdff');
+const RIM_DEEP = new Color('#8fd6e2');
+const RIM_CLEAR = new Color('#ffffff');
 
-/** Свет: тёплый бургунди-ключ сверху-справа, холодный aqua-контровой, заливка. Цвета следуют colorMix. */
+/** Свет: мягкий аква-ключ сверху-справа, холодный aqua-контровой, заливка. Цвета следуют colorMix. */
 function Lights() {
   const key = useRef<SpotLight>(null);
   const rim = useRef<DirectionalLight>(null);
   useFrame(() => {
-    key.current?.color.copy(KEY_WARM).lerp(KEY_COOL, params.colorMix);
-    rim.current?.color.copy(RIM_WARM).lerp(RIM_COOL, params.colorMix * 0.6);
+    key.current?.color.copy(KEY_DEEP).lerp(KEY_CLEAR, params.colorMix);
+    rim.current?.color.copy(RIM_DEEP).lerp(RIM_CLEAR, params.colorMix * 0.6);
   });
   return (
     <>
-      <spotLight ref={key} position={[4.5, 5, 4]} angle={0.6} penumbra={1} intensity={60} color="#d9788e" />
-      <directionalLight ref={rim} position={[-5, 2.5, -4]} intensity={2.2} color="#8fc2ce" />
-      <ambientLight intensity={0.35} color="#f6f1ee" />
+      <spotLight ref={key} position={[4.5, 5, 4]} angle={0.6} penumbra={1} intensity={55} color="#bdeef6" />
+      <directionalLight ref={rim} position={[-5, 2.5, -4]} intensity={2.6} color="#8fd6e2" />
+      <ambientLight intensity={0.35} color="#eef5f6" />
     </>
   );
 }
@@ -95,12 +96,12 @@ export function Scene({ host, initialQuality, monitor, onFallback }: SceneProps)
       {monitor && <QualityMonitor quality={quality} onChange={change} onFallback={onFallback} />}
       <Director host={host} />
       <Lights />
-      {/* Процедурное окружение вместо внешнего HDR: софтбоксы — тёплый, холодный, заливка, задник */}
+      {/* Процедурное окружение вместо внешнего HDR: софтбоксы — белое «окно», аква-контровой, глубокий задник */}
       <Environment resolution={tier.effects ? 256 : 128} frames={1}>
-        <Lightformer form="rect" intensity={3} color="#f0c9d2" position={[4, 4, 3]} scale={[4, 3, 1]} target={[0, 0, 0]} />
-        <Lightformer form="rect" intensity={2} color="#a9d6de" position={[-5, 1, -2]} scale={[3, 6, 1]} target={[0, 0, 0]} />
-        <Lightformer form="ring" intensity={1.2} color="#fffcfa" position={[0, -4, 2]} scale={[6, 6, 1]} target={[0, 0, 0]} />
-        <Lightformer form="rect" intensity={0.6} color="#6b1730" position={[0, 0, -6]} scale={[10, 10, 1]} target={[0, 0, 0]} />
+        {/* Только прямоугольные софтбоксы сверху и сбоку: кольцо/полоса снизу отражались в капле «ядром»/«улыбкой» — капля читалась как клетка */}
+        <Lightformer form="rect" intensity={6} color="#f4fdff" position={[3.5, 4.5, 3]} scale={[2.2, 1.2, 1]} target={[0, 0, 0]} />
+        <Lightformer form="rect" intensity={1.6} color="#8fd6e2" position={[-5, 1, -2]} scale={[2, 7, 1]} target={[0, 0, 0]} />
+        <Lightformer form="rect" intensity={0.5} color="#1b8499" position={[0, 0, -6]} scale={[12, 12, 1]} target={[0, 0, 0]} />
       </Environment>
       <Bands />
       {tier.caustics && <CausticPlane />}

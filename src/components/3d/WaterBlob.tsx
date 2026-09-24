@@ -14,12 +14,14 @@ import { params } from '@/lib/three/params';
 import { NOISE, BLOB_NORMAL_CHUNK, BLOB_POSITION_CHUNK } from '@/lib/three/glsl';
 import { TIER, type Quality } from '@/lib/scene/tiers';
 
-const COLOR_BURGUNDY = new Color('#fff4f6');
-const COLOR_AQUA = new Color('#f2fbfc');
-const ATT_BURGUNDY = new Color('#d98aa0');
-const ATT_AQUA = new Color('#a9dbe4');
-const BASIC_BURGUNDY = new Color('#d98aa0');
-const BASIC_AQUA = new Color('#cfe9ef');
+// Палитра капли: только вода. colorMix 0 — «глубокая» капля (лёгкое бирюзовое поглощение на тёмном фоне),
+// 1 — кристально прозрачная (на светлом фоне). Никаких тёплых/красных тонов: капля должна читаться как вода, а не клетка.
+const COLOR_DEEP = new Color('#effcfe');
+const COLOR_CLEAR = new Color('#fbffff');
+const ATT_DEEP = new Color('#7fd3e0');
+const ATT_CLEAR = new Color('#5cc3d6'); // на светлом фоне капле нужен явный аква-оттенок, иначе она читается «молочной»
+const BASIC_DEEP = new Color('#8fd6e2');
+const BASIC_CLEAR = new Color('#d9f4f8');
 
 interface Props { quality: Quality }
 
@@ -81,17 +83,17 @@ export function WaterBlob({ quality }: Props) {
     const pm = mat.current;
     if (!pm) return;
     if (tier.transmission) {
-      tint.copy(COLOR_BURGUNDY).lerp(COLOR_AQUA, params.colorMix);
-      att.copy(ATT_BURGUNDY).lerp(ATT_AQUA, params.colorMix);
+      tint.copy(COLOR_DEEP).lerp(COLOR_CLEAR, params.colorMix);
+      att.copy(ATT_DEEP).lerp(ATT_CLEAR, params.colorMix);
       pm.color.copy(tint);
       pm.attenuationColor.copy(att);
-      pm.roughness = 0.05 + (1 - params.clarity) * 0.07;
-      // На светлом фоне (aqua-состояния) капля прозрачнее: меньше поглощения
-      pm.attenuationDistance = 3.5 + params.colorMix * 5;
-      pm.thickness = 0.9 - params.colorMix * 0.4;
+      // Вода: почти нулевая шероховатость, слабое поглощение — капля прозрачна, объём читается по преломлению и бликам
+      pm.roughness = 0.02 + (1 - params.clarity) * 0.03;
+      pm.attenuationDistance = 6 - params.colorMix * 3.2;
+      pm.thickness = 0.7 + params.colorMix * 0.35;
     } else {
       // Дешёвый материал: полупрозрачное «матовое стекло» без преломления
-      tint.copy(BASIC_BURGUNDY).lerp(BASIC_AQUA, params.colorMix);
+      tint.copy(BASIC_DEEP).lerp(BASIC_CLEAR, params.colorMix);
       pm.color.copy(tint);
       pm.opacity = 0.55 + params.colorMix * 0.1;
       pm.roughness = 0.1 + (1 - params.clarity) * 0.1;
@@ -108,27 +110,27 @@ export function WaterBlob({ quality }: Props) {
           resolution={tier.resolution}
           transmission={1}
           thickness={0.9}
-          roughness={0.08}
+          roughness={0.03}
           ior={1.33}
           chromaticAberration={quality === 'high' ? 0.035 : quality === 'medium' ? 0.015 : 0}
-          anisotropy={0.15}
-          distortion={0.18}
-          distortionScale={0.6}
-          temporalDistortion={0.08}
-          attenuationDistance={3.5}
-          attenuationColor="#d98aa0"
-          color="#fff4f6"
+          anisotropy={0.1}
+          distortion={0.06}
+          distortionScale={0.4}
+          temporalDistortion={0.03}
+          attenuationDistance={6}
+          attenuationColor="#7fd3e0"
+          color="#effcfe"
           backside={tier.backside}
           backsideThickness={0.4}
           envMapIntensity={1.6}
-          clearcoat={0.35}
-          clearcoatRoughness={0.12}
+          clearcoat={1}
+          clearcoatRoughness={0.03}
         />
       ) : (
         <meshPhysicalMaterial
           ref={mat}
-          color="#d98aa0"
-          roughness={0.12}
+          color="#8fd6e2"
+          roughness={0.06}
           metalness={0}
           clearcoat={0.6}
           clearcoatRoughness={0.15}

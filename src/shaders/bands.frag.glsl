@@ -19,4 +19,8 @@ void main() {
     col = mix(col, uColors[i], t);
   }
   gl_FragColor = vec4(col, 1.0);
+  // Цвета uColors/uBase приходят в линейном пространстве (THREE.Color). Без пост-обработки (уровни low/basic —
+  // телефоны) рендер идёт прямо в sRGB-канвас, и без перевода фон становился почти чёрным. С EffectComposer
+  // цель рендера линейная — чанк ничего не меняет, sRGB-перевод делает финальный проход композера.
+  #include <colorspace_fragment>
 }

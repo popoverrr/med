@@ -69,20 +69,20 @@ const hasMobileSequence = sequenceAvailable('procedure-seq', '640');
   .how__inner { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
   .how__title { color: var(--c-bone); }
   .how__intro { margin-top: 1rem; max-width: 40ch; }
-  .how__canvas-wrap { position: relative; aspect-ratio: 16 / 9; border-radius: var(--r-media); overflow: hidden; background: var(--c-burgundy-800); box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35); }
+  .how__canvas-wrap { position: relative; aspect-ratio: 16 / 9; border-radius: var(--r-media); overflow: hidden; background: var(--c-deep-800); box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35); }
   .how__canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity var(--d-base) var(--e-out); }
   .how__canvas-wrap.is-ready .how__canvas { opacity: 1; }
   .how__poster { position: absolute; inset: 0; }
   .how__poster :global(.picture), .how__poster :global(.mph) { height: 100%; border-radius: 0; }
   .how__poster :global(.picture__img) { height: 100%; }
   .how__canvas-wrap.is-ready .how__poster { opacity: 0; transition: opacity var(--d-base) var(--e-out); }
-  .how__frame { position: absolute; right: 1rem; bottom: 0.75rem; color: rgba(255, 252, 250, 0.7); letter-spacing: 0.1em; opacity: 0; transition: opacity var(--d-base) var(--e-out); }
+  .how__frame { position: absolute; right: 1rem; bottom: 0.75rem; color: rgba(251, 253, 253, 0.7); letter-spacing: 0.1em; opacity: 0; transition: opacity var(--d-base) var(--e-out); }
   .how__canvas-wrap.is-ready .how__frame { opacity: 1; }
   .how__track { display: flex; flex-direction: column; gap: 1.25rem; }
-  .how__step { padding: 1.5rem; border-radius: var(--r-card); background: rgba(255, 252, 250, 0.05); border: 1px solid var(--c-line-on-dark); color: var(--c-bone); }
+  .how__step { padding: 1.5rem; border-radius: var(--r-card); background: rgba(251, 253, 253, 0.05); border: 1px solid var(--c-line-on-dark); color: var(--c-bone); }
   .how__step-title { color: var(--c-bone); }
   .how__step-top { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1rem; }
-  .how__num { font-family: var(--font-display); font-weight: 300; font-size: 2rem; letter-spacing: -0.02em; color: var(--c-wine-text); line-height: 1; }
+  .how__num { font-family: var(--font-display); font-weight: 300; font-size: 2rem; letter-spacing: -0.02em; color: var(--c-glow-text); line-height: 1; }
   .how__dur { color: var(--c-text-muted-on-dark); letter-spacing: 0.06em; text-transform: uppercase; }
   .how__step-title { margin-bottom: 0.6rem; }
   .how__step-text { max-width: 40ch; }
@@ -96,7 +96,7 @@ const hasMobileSequence = sequenceAvailable('procedure-seq', '640');
   html.js:not(.rm) .how.is-pinned .how__step { flex: 0 0 100%; opacity: 0.4; transition: opacity var(--d-base) var(--e-out); }
   html.js:not(.rm) .how.is-pinned .how__step.is-current { opacity: 1; }
   html.js:not(.rm) .how.is-pinned .how__bar { display: block; height: 2px; margin-top: 1.25rem; background: var(--c-line-on-dark); border-radius: 1px; overflow: hidden; }
-  html.js:not(.rm) .how.is-pinned .how__bar-fill { display: block; height: 100%; width: 100%; background: var(--c-wine-glow); transform: scaleX(0.2); transform-origin: left; }
+  html.js:not(.rm) .how.is-pinned .how__bar-fill { display: block; height: 100%; width: 100%; background: var(--c-glow); transform: scaleX(0.2); transform-origin: left; }
   html.js:not(.rm) .how.is-pinned .how__count { display: block; margin-top: 0.6rem; color: var(--c-text-muted-on-dark); letter-spacing: 0.1em; }
   /* На узких экранах экономим высоту: без вводного абзаца и с компактной карточкой */
   @media (max-width: 1023px) {

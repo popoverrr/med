@@ -1,0 +1,230 @@
+---
+/**
+ * Эксперт — второй экран главной, главный смысловой акцент сайта: процедуру проводит врач с опытом 20 лет.
+ * Хореография (lib/home/index.ts → initExpert, при prefers-reduced-motion: no-preference, на всех ширинах):
+ * без pin — всё привязано к прохождению секции (scrub): портрет раскрывается из «окна» (clip-path + scale),
+ * счётчик опыта набирается 0 → 20, аква-кольцо за цифрой прочерчивается, при уходе — лёгкий параллакс портрета.
+ * При reduced motion — статично; в HTML сразу финальное значение (SEO, скринридеры, работа без JS).
+ * Медиа: видеообращение specialist-video (lib/home/expertVideo.ts) — грузится при подходе к блоку,
+ * плавно проявляется из постера и запускается без звука, когда блок в кадре; пауза, когда ушёл.
+ * Кнопки «Включить звук» (перезапуск с начала) и «Пауза» (WCAG 2.2.2). Без файлов видео — фото specialist-portrait.
+ * Сцена: data-scene="expert" — капля уходит в верхний правый угол и уменьшается.
+ */
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import Picture from '@/components/ui/Picture.astro';
+import { getSlot, videoExists } from '@/lib/media';
+import { withBase } from '@/lib/base';
+import Button from '@/components/ui/Button.astro';
+import DocumentThumb from '@/components/ui/DocumentThumb.astro';
+import company from '@content/config/company.json';
+import { t, type Locale } from '@/lib/i18n';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const d = t(locale).home.expert;
+const sp = company.specialist;
+const dict = t(locale);
+const VIDEO = 'specialist-video';
+const hasVideo = videoExists(VIDEO);
+const videoAlt = getSlot(VIDEO).alt[locale];
+---
+
+<section class="expert theme-dark" data-bg="dark" data-scene="expert" id="expert" aria-labelledby="expert-title">
+  <div class="expert__wrap">
+    <div class="container-x expert__inner">
+      <figure class="expert__portrait" data-expert-portrait>
+        <div class="expert__portrait-clip" data-expert-clip data-parallax-scope>
+          <div class="expert__portrait-media" data-expert-media>
+            {hasVideo ? (
+              <div class="xv" data-expert-video data-state="idle">
+                <img class="xv__poster" src={withBase(`/media/${VIDEO}-poster.webp`)} alt="" aria-hidden="true" width="478" height="850" loading="lazy" decoding="async" />
+                <video
+                  class="xv__el"
+                  muted
+                  playsinline
+                  loop
+                  preload="none"
+                  aria-label={videoAlt}
+                  width="478"
+                  height="850"
+                  data-src-webm={withBase(`/media/${VIDEO}.webm`)}
+                  data-src-mp4={withBase(`/media/${VIDEO}.mp4`)}
+                ></video>
+                <button type="button" class="xv__big" data-xv-start aria-label={d.videoWatch}>
+                  <span class="xv__big-ring" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M5 3l8 5-8 5z" fill="currentColor"/></svg></span>
+                  <span class="xv__big-label">{d.videoWatch}</span>
+                </button>
+                <div class="xv__bar">
+                  <button type="button" class="xv__btn" data-xv-sound aria-pressed="false" data-on={d.videoSoundOn} data-off={d.videoSoundOff}>
+                    <svg class="xv__ico xv__ico--muted" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h3l4-3v10l-4-3H2z" fill="currentColor"/><path d="M11 6l4 4M15 6l-4 4" stroke="currentColor" stroke-width="1.3" fill="none"/></svg>
+                    <svg class="xv__ico xv__ico--sound" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h3l4-3v10l-4-3H2z" fill="currentColor"/><path d="M11.5 5.5a3.5 3.5 0 0 1 0 5M13.5 3.5a6.3 6.3 0 0 1 0 9" stroke="currentColor" stroke-width="1.3" fill="none"/></svg>
+                    <span data-xv-sound-label>{d.videoSoundOn}</span>
+                  </button>
+                  <button type="button" class="xv__btn xv__btn--icon" data-xv-toggle aria-pressed="false" aria-label={dict.common.pause} data-pause={dict.common.pause} data-play={dict.common.play}>
+                    <svg class="xv__ico xv__ico--pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 3h3v10H4zM9 3h3v10H9z" fill="currentColor"/></svg>
+                    <svg class="xv__ico xv__ico--play" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3l8 5-8 5z" fill="currentColor"/></svg>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <Picture id="specialist-portrait" locale={locale} tone="dark" sizes="(min-width: 1024px) 38vw, 100vw" />
+            )}
+          </div>
+        </div>
+        <figcaption class="expert__caption t-caption">
+          <span class="expert__caption-dot" aria-hidden="true"></span>{sp.name[locale]}
+        </figcaption>
+      </figure>
+
+      <div class="expert__text">
+        <Eyebrow>{d.eyebrow}</Eyebrow>
+
+        <p class="expert__counter">
+          <span class="sr-only">{d.counterValue} {d.counterLabel}</span>
+          <span class="expert__ring" aria-hidden="true">
+            <svg viewBox="0 0 200 200" width="200" height="200"><circle cx="100" cy="100" r="96" pathLength="1" data-expert-ring /></svg>
+          </span>
+          <span class="expert__num" aria-hidden="true"><span data-expert-counter>{d.counterValue}</span>{d.counterSuffix && <span class="expert__num-suffix">{d.counterSuffix}</span>}</span>
+          <span class="expert__num-label t-caps" aria-hidden="true">{d.counterLabel}</span>
+        </p>
+
+        <h2 id="expert-title" class="expert__name t-d2" data-split="words">{sp.name[locale]}</h2>
+        <p class="expert__role t-caps" data-reveal>{sp.role[locale]}</p>
+
+        <p class="expert__lead t-lead" data-reveal>{d.lead}</p>
+        <p class="expert__body muted-dark" data-reveal>{d.text}</p>
+
+        <ul class="expert__points" data-reveal-group data-reveal-stagger="0.1">
+          {d.points.map((p) => (
+            <li class="expert__point" data-reveal>
+              <span class="expert__point-line" data-line aria-hidden="true"></span>
+              <p class="expert__point-title t-h4">{p.title}</p>
+              <p class="expert__point-text t-small muted-dark">{p.text}</p>
+            </li>
+          ))}
+        </ul>
+
+        <div class="expert__actions" data-reveal>
+          <Button onDark data-open-booking>{d.ctaPrimary}</Button>
+          <div class="expert__cert">
+            <DocumentThumb
+              id={sp.certificate.document}
+              alt={d.certAlt}
+              caption={`${d.certTitle} — ${sp.name[locale]}`}
+              group="expert"
+              locale={locale}
+              aspect="3 / 2"
+              label={d.ctaCert}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .expert { position: relative; }
+  .expert__wrap { min-height: 100svh; display: flex; align-items: center; padding-block: var(--section-y); }
+  .expert__inner { display: grid; grid-template-columns: 1fr; gap: 3rem; width: 100%; }
+
+  /* --- Портрет --- */
+  .expert__portrait { position: relative; margin: 0; }
+  .expert__portrait-clip {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--r-media);
+    aspect-ratio: 4 / 5;
+    box-shadow: 0 40px 120px rgba(4, 20, 26, 0.55);
+    /* тонкая аква-кромка — «мениск» воды по краю кадра */
+    outline: 1px solid rgba(143, 214, 226, 0.18);
+    outline-offset: -1px;
+  }
+  .expert__portrait-media { position: absolute; inset: 0; will-change: transform; }
+  .expert__portrait-media :global(picture),
+  .expert__portrait-media :global(img),
+  .expert__portrait-media :global(.ph) { width: 100%; height: 100%; object-fit: cover; }
+  .expert__caption { display: flex; align-items: center; gap: 0.6rem; margin-top: 1rem; color: var(--c-text-muted-on-dark); letter-spacing: 0.02em; }
+  .expert__caption-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c-glow); box-shadow: 0 0 12px var(--c-glow); }
+
+  /* --- Счётчик опыта --- */
+  .expert__counter { position: relative; display: grid; grid-template-columns: auto 1fr; align-items: end; gap: 0 1.25rem; margin: 0.5rem 0 2rem; }
+  .expert__num {
+    display: inline-flex;
+    align-items: flex-start;
+    font-family: var(--font-display);
+    font-weight: 200;
+    font-size: clamp(6rem, 3rem + 11vw, 13rem);
+    line-height: 0.82;
+    letter-spacing: -0.05em;
+    font-variant-numeric: tabular-nums;
+    /* цифра «налита водой»: вертикальный градиент от светлой аквы к белому */
+    background: linear-gradient(180deg, #ffffff 0%, var(--c-aqua-400) 70%, var(--c-glow) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .expert__num-suffix { font-size: 0.42em; line-height: 1; margin-left: 0.04em; margin-top: 0.08em; color: var(--c-glow-text); -webkit-text-fill-color: var(--c-glow-text); }
+  .expert__num-label { max-width: 16ch; padding-bottom: 0.9em; color: var(--c-glow-text); }
+  .expert__ring { position: absolute; left: -8%; top: 50%; width: clamp(9rem, 5rem + 12vw, 17rem); aspect-ratio: 1; transform: translateY(-58%); pointer-events: none; opacity: 0.55; }
+  .expert__ring svg { width: 100%; height: 100%; overflow: visible; }
+  .expert__ring circle { fill: none; stroke: var(--c-glow); stroke-width: 0.6; stroke-dasharray: 1; stroke-dashoffset: 0; filter: drop-shadow(0 0 6px rgba(79, 195, 214, 0.6)); }
+
+  /* --- Имя, текст --- */
+  .expert__name { color: var(--c-bone); max-width: 18ch; margin-bottom: 0.6rem; }
+  .expert__role { color: var(--c-glow-text); margin-bottom: 2rem; }
+  .expert__lead { color: var(--c-bone); max-width: 34ch; margin-bottom: 1rem; }
+  .expert__body { max-width: 58ch; margin-bottom: 2.5rem; }
+
+  .expert__points { display: grid; grid-template-columns: 1fr; gap: 0; margin-bottom: 2.5rem; }
+  .expert__point { position: relative; padding: 1.25rem 0; }
+  .expert__point-line { position: absolute; left: 0; top: 0; width: 100%; height: 1px; background: var(--c-line-on-dark); transform-origin: left; }
+  .expert__point-title { color: var(--c-bone); margin-bottom: 0.3rem; }
+
+  .expert__actions { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 1.5rem 2rem; }
+  .expert__cert { width: min(220px, 60vw); }
+
+  @media (min-width: 640px) {
+    .expert__points { grid-template-columns: 1fr 1fr; column-gap: 2rem; }
+  }
+  @media (min-width: 1024px) {
+    .expert__inner { grid-template-columns: 5fr 7fr; column-gap: clamp(3rem, 1rem + 4vw, 6rem); align-items: center; }
+    .expert__portrait { align-self: stretch; display: flex; flex-direction: column; justify-content: center; }
+    .expert__portrait-clip { max-height: calc(100svh - 10rem); }
+    .expert__counter { margin-top: 0; }
+  }
+  /* --- Видеообращение --- */
+  .xv { position: absolute; inset: 0; background: var(--c-deep-900); }
+  .xv__poster, .xv__el { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; }
+  /* Плавный вход: видео проявляется поверх постера — прозрачность, лёгкий зум и расфокус уходят за 1.2 с */
+  .xv__el { opacity: 0; transform: scale(1.06); filter: blur(10px) saturate(0.9); transition: opacity 1.2s var(--e-out), transform 1.6s var(--e-out), filter 1.2s var(--e-out); }
+  .xv[data-state='playing'] .xv__el, .xv[data-state='paused'] .xv__el { opacity: 1; transform: none; filter: none; }
+  /* Нижний градиент под кнопки */
+  .xv::after { content: ''; position: absolute; inset: auto 0 0 0; height: 30%; background: linear-gradient(to top, rgba(4, 20, 26, 0.55), transparent); pointer-events: none; opacity: 0; transition: opacity 0.6s var(--e-out); }
+  .xv[data-state='playing']::after, .xv[data-state='paused']::after { opacity: 1; }
+  .xv__bar { position: absolute; left: 14px; right: 14px; bottom: 14px; z-index: 2; display: flex; justify-content: space-between; gap: 0.5rem; opacity: 0; transform: translateY(8px); transition: opacity 0.6s var(--e-out) 0.4s, transform 0.6s var(--e-out) 0.4s; }
+  .xv[data-state='playing'] .xv__bar, .xv[data-state='paused'] .xv__bar { opacity: 1; transform: none; }
+  .xv__btn {
+    display: inline-flex; align-items: center; gap: 0.5rem; min-height: 44px; min-width: 44px; padding: 0 0.95rem;
+    border-radius: var(--r-control); background: rgba(4, 20, 26, 0.5); color: var(--c-bone);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); font-size: 0.8125rem; letter-spacing: 0.01em;
+    border: 1px solid rgba(143, 214, 226, 0.22); transition: background-color var(--d-fast) var(--e-out), border-color var(--d-fast) var(--e-out);
+  }
+  .xv__btn:hover { background: rgba(4, 20, 26, 0.72); border-color: rgba(143, 214, 226, 0.45); }
+  .xv__btn--icon { justify-content: center; padding: 0; }
+  .xv__ico { width: 16px; height: 16px; flex: none; }
+  .xv__ico--sound, .xv__ico--play { display: none; }
+  .xv__btn[data-xv-sound][aria-pressed='true'] .xv__ico--sound { display: block; }
+  .xv__btn[data-xv-sound][aria-pressed='true'] .xv__ico--muted { display: none; }
+  .xv__btn[data-xv-toggle][aria-pressed='true'] .xv__ico--play { display: block; }
+  .xv__btn[data-xv-toggle][aria-pressed='true'] .xv__ico--pause { display: none; }
+  /* Большая кнопка — когда автозапуск невозможен (reduced motion, энергосбережение iOS) */
+  .xv__big { position: absolute; left: 50%; top: 50%; z-index: 2; display: none; flex-direction: column; align-items: center; gap: 0.75rem; transform: translate(-50%, -50%); color: var(--c-bone); }
+  .xv[data-state='blocked'] .xv__big { display: flex; }
+  .xv__big-ring { display: grid; place-items: center; width: 76px; height: 76px; border-radius: 50%; background: rgba(4, 20, 26, 0.45); border: 1px solid rgba(143, 214, 226, 0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 0 0 10px rgba(79, 195, 214, 0.1); transition: transform var(--d-base) var(--e-out); }
+  .xv__big:hover .xv__big-ring { transform: scale(1.06); }
+  .xv__big-ring svg { width: 22px; height: 22px; margin-left: 3px; }
+  .xv__big-label { font-size: 0.875rem; letter-spacing: 0.02em; text-shadow: 0 1px 12px rgba(4, 20, 26, 0.6); }
+  @media (prefers-reduced-motion: reduce) { .xv__el { transition: opacity 0.2s linear; transform: none; filter: none; } }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  @media (prefers-reduced-motion: reduce) { .expert__portrait-media { will-change: auto; } }
+</style>

@@ -1,5 +1,5 @@
-// Фрагмент частиц: мягкий круглый спрайт, цвет — смесь бургунди-свечения и aqua по uColorMix.
-uniform vec3 uColorA;   // бургунди (wine-glow)
+// Фрагмент частиц: мягкий круглый спрайт, цвет — смесь глубокого свечения и aqua по uColorMix.
+uniform vec3 uColorA;   // глубокая вода (glow)
 uniform vec3 uColorB;   // aqua
 uniform float uColorMix;
 uniform float uOpacity;
@@ -17,4 +17,5 @@ void main() {
   if (a < 0.004) discard;
   vec3 col = mix(uColorA, uColorB, clamp(uColorMix + (vSeed - 0.5) * 0.3, 0.0, 1.0));
   gl_FragColor = vec4(col, a);
+  #include <colorspace_fragment>
 }

@@ -6,10 +6,12 @@
 import { useEffect, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Color } from 'three';
-import { sceneStore, locate } from '@/lib/scene/store';
+import { sceneStore, locate, type SceneKey } from '@/lib/scene/store';
 import { params, KEYFRAMES, KEY_ORDER, PORTRAIT_POSES, CAMERA_FOV, smoothstep, damp, type SceneParams } from '@/lib/three/params';
 
 const HOLD = 0.62; // доля секции, в течение которой кадр «держится»; переход — в последней трети (после снятия pin)
+/** Свои доли удержания: Эксперт — высокая секция с текстом справа, капля должна оставаться в углу почти до конца. */
+const HOLD_BY_KEY: Partial<Record<SceneKey, number>> = { expert: 0.88 };
 const KEYS = Object.keys(KEYFRAMES.hero) as Array<keyof SceneParams>;
 const HALF_FOV_TAN = Math.tan((CAMERA_FOV / 2) * (Math.PI / 180));
 
@@ -46,7 +48,8 @@ export function Director({ host }: { host: HTMLElement }) {
     const nextKey = KEY_ORDER[Math.min(KEY_ORDER.indexOf(key) + 1, KEY_ORDER.length - 1)] ?? key;
     const a = KEYFRAMES[key];
     const b = KEYFRAMES[nextKey];
-    const k = index >= ranges.length - 1 ? 0 : smoothstep((t - HOLD) / (1 - HOLD));
+    const hold = HOLD_BY_KEY[key] ?? HOLD;
+    const k = index >= ranges.length - 1 ? 0 : smoothstep((t - hold) / (1 - hold));
 
     const tp = target2.current;
     for (const name of KEYS) tp[name] = a[name] + (b[name] - a[name]) * k;

@@ -7,6 +7,7 @@ import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { sceneStore, type SceneKey, type SceneRange } from '@/lib/scene/store';
 import { loadScene } from '@/lib/scene/loader';
 import { initImageSequence } from './sequence';
+import { initExpertVideo } from './expertVideo';
 import { createMorph } from '@/lib/motion/svgPath';
 import { BG } from '@/lib/motion/background';
 
@@ -20,13 +21,15 @@ export function initHome(): () => void {
   cleanups.push(initSceneRange());
   cleanups.push(loadScene());
   cleanups.push(initPosterFade());
+  // Видеообращение специалиста: работает и при reduced motion (тогда без автозапуска — по кнопке)
+  cleanups.push(initExpertVideo());
 
   mm.add(MOTION_OK, () => {
     const c: Array<() => void> = [];
     let alive = true;
     // Каждый pin — вставка pin-spacer'а и замер страницы (forced reflow). Дробим на короткие задачи,
     // чтобы не блокировать главный поток одним куском (TBT/INP на телефонах), и пересчитываем один раз в конце.
-    const steps = [initWhat, initHow, initWater, initIndications];
+    const steps = [initExpert, initWhat, initHow, initWater, initIndications];
     if (window.innerWidth >= 1280) steps.push(initThread);
     void (async () => {
       await yieldToMain();
@@ -55,6 +58,56 @@ export function initHome(): () => void {
   return () => {
     mm.revert();
     cleanups.forEach((fn) => fn());
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/* Эксперт: портрет раскрывается из «окна», счётчик опыта, кольцо         */
+/* ------------------------------------------------------------------ */
+function initExpert(): () => void {
+  const section = document.querySelector<HTMLElement>('#expert');
+  if (!section) return () => {};
+  const clip = section.querySelector<HTMLElement>('[data-expert-clip]');
+  const media = section.querySelector<HTMLElement>('[data-expert-media]');
+  const counter = section.querySelector<HTMLElement>('[data-expert-counter]');
+  const ring = section.querySelector<SVGCircleElement>('[data-expert-ring]');
+  const final = counter?.textContent ?? '';
+  const target = Number(final) || 0;
+  const proxy = { v: 0 };
+
+  // Всё привязано к прохождению секции (scrub), без pin: к моменту, когда секция поднялась до верхней трети
+  // экрана, портрет полностью открыт и счётчик показывает финальное значение.
+  const tl = gsap.timeline({
+    defaults: { ease: 'none' },
+    scrollTrigger: { trigger: section, start: 'top 92%', end: 'top 18%', scrub: 0.6 },
+  });
+  if (clip) tl.fromTo(clip, { clipPath: 'inset(16% 14% 16% 14% round 32px)' }, { clipPath: 'inset(0% 0% 0% 0% round 32px)' }, 0);
+  if (media) tl.fromTo(media, { scale: 1.2 }, { scale: 1 }, 0);
+  if (counter && target) {
+    tl.fromTo(proxy, { v: 0 }, {
+      v: target,
+      ease: 'power2.out',
+      onUpdate: () => { counter.textContent = String(Math.round(proxy.v)); },
+    }, 0.15);
+  }
+  if (ring) tl.fromTo(ring, { strokeDashoffset: 1 }, { strokeDashoffset: 0 }, 0.2);
+
+  // Уход секции: мягкий параллакс портрета (≤ 8%)
+  const drift = media
+    ? gsap.fromTo(media, { yPercent: 0 }, {
+        yPercent: -8,
+        ease: 'none',
+        scrollTrigger: { trigger: section, start: 'top top', end: 'bottom top', scrub: 0.6 },
+      })
+    : null;
+
+  return () => {
+    tl.scrollTrigger?.kill();
+    tl.kill();
+    drift?.scrollTrigger?.kill();
+    drift?.kill();
+    if (counter) counter.textContent = final;
+    gsap.set([clip, media, ring].filter(Boolean), { clearProps: 'all' });
   };
 }
 

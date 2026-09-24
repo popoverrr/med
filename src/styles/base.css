@@ -3,15 +3,15 @@
 @import './forms.css';
 @import 'tailwindcss';
 
-/* Токены → утилиты Tailwind (bg-burgundy-700, text-porcelain, rounded-card, ease-out-x …) */
+/* Токены → утилиты Tailwind (bg-deep-700, text-porcelain, rounded-card, ease-out-x …) */
 @theme inline {
   --color-ink: var(--c-ink);
-  --color-burgundy-900: var(--c-burgundy-900);
-  --color-burgundy-800: var(--c-burgundy-800);
-  --color-burgundy-700: var(--c-burgundy-700);
-  --color-burgundy-600: var(--c-burgundy-600);
-  --color-burgundy-500: var(--c-burgundy-500);
-  --color-wine: var(--c-wine-glow);
+  --color-deep-900: var(--c-deep-900);
+  --color-deep-800: var(--c-deep-800);
+  --color-deep-700: var(--c-deep-700);
+  --color-deep-600: var(--c-deep-600);
+  --color-deep-500: var(--c-deep-500);
+  --color-glow: var(--c-glow);
   --color-bone: var(--c-bone);
   --color-porcelain: var(--c-porcelain);
   --color-ash: var(--c-ash);
@@ -81,14 +81,14 @@
   strong, b { font-weight: 600; }
   [hidden] { display: none !important; }
 
-  /* Видимый focus-ring: бургунди, 2px, offset 3px (ТЗ §11) */
+  /* Видимый focus-ring: deep-600, 2px, offset 3px (ТЗ §11) */
   :focus-visible {
     outline: 2px solid var(--c-focus);
     outline-offset: 3px;
     border-radius: var(--r-control);
   }
-  .theme-dark :focus-visible { outline-color: var(--c-wine-glow); }
-  ::selection { background: var(--c-burgundy-600); color: var(--c-bone); }
+  .theme-dark :focus-visible { outline-color: var(--c-glow); }
+  ::selection { background: var(--c-deep-600); color: var(--c-bone); }
 
   /* Табличные цифры для цен и показателей */
   .tnum { font-variant-numeric: tabular-nums lining-nums; }
@@ -158,7 +158,7 @@
   & ul { margin: 0.8em 0 0.8em 1.2em; list-style: disc; }
   & ol { margin: 0.8em 0 0.8em 1.4em; list-style: decimal; }
   & li + li { margin-top: 0.35em; }
-  & a { text-decoration: underline; text-underline-offset: 0.2em; text-decoration-color: rgba(107, 23, 48, 0.4); }
+  & a { text-decoration: underline; text-underline-offset: 0.2em; text-decoration-color: rgba(13, 79, 94, 0.4); }
   & a:hover { text-decoration-color: currentColor; }
 }
 
@@ -179,7 +179,7 @@
 @utility section-y { padding-block: var(--section-y); }
 
 /* Непрозрачные темы секций. */
-@utility bg-dark-solid { background-color: var(--c-burgundy-900); color: var(--c-text-on-dark); }
+@utility bg-dark-solid { background-color: var(--c-deep-900); color: var(--c-text-on-dark); }
 @utility bg-ink-solid { background-color: var(--c-ink); color: var(--c-text-on-dark); }
 @utility bg-light-solid { background-color: var(--c-porcelain); color: var(--c-text-on-light); }
 
@@ -189,10 +189,10 @@
    интерполируется по скроллу (lib/motion/background.ts). */
 html:not(.scene-on) [data-bg='porcelain'] { background-color: var(--c-porcelain); }
 html:not(.scene-on) [data-bg='bone'] { background-color: var(--c-bone); }
-html:not(.scene-on) [data-bg='dark']:not(.hero):not(.trust) { background-color: var(--c-burgundy-900); } /* hero/trust — прозрачны ради CSS-постера */
+html:not(.scene-on) [data-bg='dark']:not(.hero):not(.trust) { background-color: var(--c-deep-900); } /* hero/trust — прозрачны ради CSS-постера */
 html:not(.scene-on) [data-bg='ink'] { background-color: var(--c-ink); }
 html:not(.scene-on) [data-bg='dark'] + [data-bg='porcelain'],
-html:not(.scene-on) [data-bg='dark'] + [data-bg='bone'] { background-image: linear-gradient(to bottom, var(--c-burgundy-900), transparent 4rem); }
+html:not(.scene-on) [data-bg='dark'] + [data-bg='bone'] { background-image: linear-gradient(to bottom, var(--c-deep-900), transparent 4rem); }
 html:not(.scene-on) [data-bg='porcelain'] + [data-bg='dark'],
 html:not(.scene-on) [data-bg='bone'] + [data-bg='dark'] { background-image: linear-gradient(to bottom, var(--c-porcelain), transparent 4rem); }
 
@@ -221,33 +221,33 @@ html:not(.scene-on) [data-bg='bone'] + [data-bg='dark'] { background-image: line
     box-shadow var(--d-base) var(--e-out);
 }
 @utility btn-primary {
-  background: var(--c-burgundy-700);
+  background: var(--c-deep-700);
   color: var(--c-bone);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 8px 24px rgba(53, 10, 22, 0.18);
-  &:hover { background: var(--c-burgundy-600); box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 12px 32px rgba(53, 10, 22, 0.26); }
-  &:active { background: var(--c-burgundy-800); }
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 8px 24px rgba(7, 49, 59, 0.18);
+  &:hover { background: var(--c-deep-600); box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 12px 32px rgba(7, 49, 59, 0.26); }
+  &:active { background: var(--c-deep-800); }
 }
 @utility btn-primary-on-dark {
   background: var(--c-bone);
-  color: var(--c-burgundy-900);
+  color: var(--c-deep-900);
   &:hover { background: #ffffff; }
 }
 @utility btn-secondary {
   background: transparent;
   color: currentColor;
   border: 1px solid var(--c-line-on-light);
-  &:hover { border-color: var(--c-burgundy-600); color: var(--c-burgundy-700); }
+  &:hover { border-color: var(--c-deep-600); color: var(--c-deep-700); }
 }
 @utility btn-secondary-on-dark {
   background: transparent;
   color: var(--c-bone);
   border: 1px solid var(--c-line-on-dark);
-  &:hover { border-color: var(--c-wine-glow); }
+  &:hover { border-color: var(--c-glow); }
 }
 @utility btn-ghost {
   padding-inline: 0.6em;
   color: currentColor;
-  &:hover { color: var(--c-burgundy-600); }
+  &:hover { color: var(--c-deep-600); }
 }
 
 @utility card {
@@ -255,15 +255,15 @@ html:not(.scene-on) [data-bg='bone'] + [data-bg='dark'] { background-image: line
   background: var(--c-bone);
   color: var(--c-text-on-light);
   border-radius: var(--r-card);
-  border: 1px solid rgba(53, 10, 22, 0.06);
+  border: 1px solid rgba(7, 49, 59, 0.06);
   box-shadow: var(--sh-card);
   transition: transform var(--d-base) var(--e-out), box-shadow var(--d-base) var(--e-out), border-color var(--d-base) var(--e-out);
 }
 @utility card-hover {
-  &:hover { transform: translateY(-6px); box-shadow: var(--sh-card-hover); border-color: rgba(196, 86, 110, 0.35); }
+  &:hover { transform: translateY(-6px); box-shadow: var(--sh-card-hover); border-color: rgba(79, 195, 214, 0.35); }
 }
 @utility card-dark {
-  background: rgba(255, 252, 250, 0.04);
+  background: rgba(251, 253, 253, 0.04);
   color: var(--c-text-on-dark);
   border: 1px solid var(--c-line-on-dark);
   border-radius: var(--r-card);
@@ -276,10 +276,10 @@ html:not(.scene-on) [data-bg='bone'] + [data-bg='dark'] { background-image: line
   text-decoration: underline;
   text-underline-offset: 0.22em;
   text-decoration-thickness: 1px;
-  text-decoration-color: rgba(107, 23, 48, 0.35);
+  text-decoration-color: rgba(13, 79, 94, 0.35);
   transition: text-decoration-color var(--d-fast) var(--e-out);
   &:hover { text-decoration-color: currentColor; }
-  :where(.theme-dark) & { text-decoration-color: rgba(255, 252, 250, 0.5); }
+  :where(.theme-dark) & { text-decoration-color: rgba(251, 253, 253, 0.5); }
 }
 
 /* Метка-плейсхолдер для данных, которых ещё нет (токены из конфигов) */
@@ -301,20 +301,20 @@ html:not(.scene-on) [data-bg='bone'] + [data-bg='dark'] { background-image: line
   min-height: 3.25rem;
   padding: 0.9rem 1rem;
   border-radius: var(--r-control);
-  background: rgba(255, 252, 250, 0.06);
+  background: rgba(251, 253, 253, 0.06);
   border: 1px solid var(--c-line-on-dark);
   color: var(--c-bone);
   transition: border-color var(--d-fast) var(--e-out), background-color var(--d-fast) var(--e-out);
-  &::placeholder { color: rgba(255, 252, 250, 0.45); }
-  &:focus { outline: none; border-color: var(--c-wine-glow); background: rgba(255, 252, 250, 0.09); }
+  &::placeholder { color: rgba(251, 253, 253, 0.45); }
+  &:focus { outline: none; border-color: var(--c-glow); background: rgba(251, 253, 253, 0.09); }
   &[aria-invalid='true'] { border-color: #f2a3b3; }
 }
 @utility field-light {
   background: #ffffff;
-  border: 1px solid rgba(53, 10, 22, 0.16);
+  border: 1px solid rgba(7, 49, 59, 0.16);
   color: var(--c-ink);
-  &::placeholder { color: rgba(18, 8, 11, 0.45); }
-  &:focus { border-color: var(--c-burgundy-600); background: #ffffff; }
+  &::placeholder { color: rgba(4, 20, 26, 0.45); }
+  &:focus { border-color: var(--c-deep-600); background: #ffffff; }
   &[aria-invalid='true'] { border-color: #b3213f; }
 }
 
@@ -344,14 +344,14 @@ html.js.rm [data-reveal] { opacity: 1; transition: opacity 200ms ease-out; }
     width: 28px;
     height: 28px;
     margin: -14px 0 0 -14px;
-    border: 1.5px solid var(--c-burgundy-600);
+    border: 1.5px solid var(--c-deep-600);
     border-radius: 50%;
     pointer-events: none;
     z-index: var(--z-cursor);
     opacity: 0;
     will-change: transform;
   }
-  html.cursor-on .cursor-ring.is-dark { border-color: var(--c-wine-glow); }
+  html.cursor-on .cursor-ring.is-dark { border-color: var(--c-glow); }
 }
 
 /* Занавес page-transition */
@@ -359,7 +359,7 @@ html.js.rm [data-reveal] { opacity: 1; transition: opacity 200ms ease-out; }
   position: fixed;
   inset: 0;
   z-index: var(--z-curtain);
-  background: var(--c-burgundy-800);
+  background: var(--c-deep-800);
   /* Стартовое положение задаёт GSAP (yPercent), CSS-transform здесь недопустим — конфликт кэша процентов */
   visibility: hidden;
   pointer-events: none;
@@ -370,7 +370,7 @@ html.js.rm [data-reveal] { opacity: 1; transition: opacity 200ms ease-out; }
 @media (pointer: fine) {
   ::-webkit-scrollbar { width: 10px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: rgba(107, 23, 48, 0.35); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
+  ::-webkit-scrollbar-thumb { background: rgba(13, 79, 94, 0.35); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
 }
 
 /* Lenis */

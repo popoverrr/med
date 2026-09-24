@@ -1,4 +1,4 @@
-/* Формы (React-острова BookingForm / ContactForm). Тёмный контекст по умолчанию (бургунди-фон). */
+/* Формы (React-острова BookingForm / ContactForm). Тёмный контекст по умолчанию (deep-фон). */
 .bf { position: relative; }
 .bf__form { display: flex; flex-direction: column; gap: 1.1rem; }
 .bf__row { display: grid; grid-template-columns: 1fr; gap: 1.1rem; }
@@ -8,16 +8,16 @@
 .bf__error { font-size: 0.8125rem; color: #f2a3b3; }
 .bf__hp { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
 .bf__consent { display: flex; align-items: flex-start; gap: 0.75rem; margin-top: 0.25rem; font-size: 0.9rem; line-height: 1.45; }
-.bf__checkbox { flex: none; width: 20px; height: 20px; margin-top: 0.15rem; accent-color: var(--c-wine-glow); cursor: pointer; }
+.bf__checkbox { flex: none; width: 20px; height: 20px; margin-top: 0.15rem; accent-color: var(--c-glow); cursor: pointer; }
 .bf__consent-label { cursor: pointer; opacity: 0.9; }
 .bf__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-top: 0.5rem; }
 .bf__submit { min-width: 12rem; }
 .bf__submit:disabled { opacity: 0.6; cursor: wait; }
 .bf__status { font-size: 0.875rem; color: #f2a3b3; min-height: 1.3em; }
 /* Превью-сборка: пояснение, почему отправка отключена */
-.bf__notice { font-size: 0.875rem; line-height: 1.45; padding: 0.75rem 1rem; border: 1px dashed rgba(255, 252, 250, 0.35); border-radius: var(--r-card); opacity: 0.85; }
+.bf__notice { font-size: 0.875rem; line-height: 1.45; padding: 0.75rem 1rem; border: 1px dashed rgba(251, 253, 253, 0.35); border-radius: var(--r-card); opacity: 0.85; }
 .bf__success { display: flex; flex-direction: column; align-items: flex-start; gap: 0.75rem; padding: 1rem 0; }
-.bf__check { color: var(--c-wine-glow); margin-bottom: 0.5rem; }
+.bf__check { color: var(--c-glow); margin-bottom: 0.5rem; }
 .bf__success-title { font-family: var(--font-display); font-size: var(--fs-d3); font-weight: 400; letter-spacing: var(--track-h); }
 .bf__success-text { opacity: 0.85; max-width: 44ch; }
 .bf__again { margin-top: 0.5rem; }
@@ -27,14 +27,14 @@ input[type='date'].field::-webkit-calendar-picker-indicator { filter: invert(1);
 textarea.field { resize: vertical; min-height: 6rem; }
 
 /* Светлый контекст (страница /contacts) */
-.bf--light .field { background: #fff; border-color: rgba(53, 10, 22, 0.16); color: var(--c-ink); }
-.bf--light .field::placeholder { color: rgba(18, 8, 11, 0.45); }
-.bf--light .field:focus { border-color: var(--c-burgundy-600); }
+.bf--light .field { background: #fff; border-color: rgba(7, 49, 59, 0.16); color: var(--c-ink); }
+.bf--light .field::placeholder { color: rgba(4, 20, 26, 0.45); }
+.bf--light .field:focus { border-color: var(--c-deep-600); }
 .bf--light .bf__error, .bf--light .bf__status { color: #b3213f; }
-.bf--light .bf__notice { border-color: rgba(53, 10, 22, 0.3); }
-.bf--light .bf__checkbox { accent-color: var(--c-burgundy-700); }
+.bf--light .bf__notice { border-color: rgba(7, 49, 59, 0.3); }
+.bf--light .bf__checkbox { accent-color: var(--c-deep-700); }
 .bf--light select.field { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%2312080b' stroke-width='1.5'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E"); }
-.bf--light .bf__check { color: var(--c-burgundy-700); }
+.bf--light .bf__check { color: var(--c-deep-700); }
 
 @media (min-width: 640px) {
   .bf__row { grid-template-columns: 1fr 1fr; }

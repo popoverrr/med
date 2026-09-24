@@ -3,6 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import SceneLayer from '@/components/sections/SceneLayer.astro';
 import WaterThread from '@/components/sections/WaterThread.astro';
 import Hero from '@/components/sections/Hero.astro';
+import Expert from '@/components/sections/Expert.astro';
 import TrustStrip from '@/components/sections/TrustStrip.astro';
 import WhatIs from '@/components/sections/WhatIs.astro';
 import HowItGoes from '@/components/sections/HowItGoes.astro';
@@ -10,7 +11,6 @@ import WaterBlock from '@/components/sections/WaterBlock.astro';
 import Indications from '@/components/sections/Indications.astro';
 import Contraindications from '@/components/sections/Contraindications.astro';
 import Sterility from '@/components/sections/Sterility.astro';
-import Specialist from '@/components/sections/Specialist.astro';
 import LicenseBlock from '@/components/sections/LicenseBlock.astro';
 import Prices from '@/components/sections/Prices.astro';
 import Faq from '@/components/sections/Faq.astro';
@@ -39,6 +39,7 @@ const dict = t(locale);
   <div class="scene-range" data-scene-range>
     <WaterThread />
     <Hero locale={locale} />
+    <Expert locale={locale} />
     <TrustStrip locale={locale} />
     <WhatIs locale={locale} />
     <HowItGoes locale={locale} />
@@ -46,9 +47,9 @@ const dict = t(locale);
     <Indications locale={locale} />
     <Contraindications locale={locale} />
     <Sterility locale={locale} />
-    <Specialist locale={locale} />
+    {/* Финал сцены (капля гаснет) — на блоке лицензии. Подробная карточка специалиста — на /about; на главной её роль играет Expert */}
+    <div data-scene="fade"><LicenseBlock locale={locale} /></div>
   </div>
-  <LicenseBlock locale={locale} />
   <Prices locale={locale} />
   <Faq locale={locale} />
   <BookingSection locale={locale} />

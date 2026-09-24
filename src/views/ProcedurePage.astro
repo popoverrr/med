@@ -50,7 +50,10 @@ const how = dict.home.how;
           </li>
         ))}
       </ol>
-      <div class="pp__scene" data-reveal="clip"><Picture id="consultation-scene" locale={locale} sizes="100vw" /></div>
+      <div class="pp__scene" data-reveal-group data-reveal-stagger="0.15">
+        <div data-reveal><Picture id="consultation-scene" locale={locale} sizes="(min-width: 768px) 45vw, 100vw" /></div>
+        <div data-reveal><Picture id="consultation-scene-02" locale={locale} sizes="(min-width: 768px) 45vw, 100vw" /></div>
+      </div>
     </div>
   </section>
 
@@ -98,17 +101,18 @@ const how = dict.home.how;
   .pp__steps { display: grid; grid-template-columns: 1fr; gap: 1.25rem; counter-reset: step; }
   .pp__step { padding: clamp(1.5rem, 1rem + 1.5vw, 2.25rem); display: flex; flex-direction: column; }
   .pp__step-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.25rem; }
-  .pp__num { font-family: var(--font-display); font-weight: 300; font-size: 2rem; line-height: 1; color: var(--c-burgundy-600); }
+  .pp__num { font-family: var(--font-display); font-weight: 300; font-size: 2rem; line-height: 1; color: var(--c-deep-600); }
   .pp__step-title { margin-bottom: 0.6rem; }
-  .pp__scene { margin-top: 2.5rem; }
+  .pp__scene { margin-top: 2.5rem; display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+  @media (min-width: 768px) { .pp__scene { grid-template-columns: 1fr 1fr; gap: clamp(1.25rem, 0.5rem + 2vw, 2.5rem); align-items: start; } .pp__scene > :nth-child(2) { margin-top: clamp(2rem, 1rem + 4vw, 5rem); } }
   .pp__box { padding-top: 1.5rem; border-top: 1px solid var(--c-line-on-light); }
   .pp__box-title { margin-bottom: 1.5rem; }
   .pp__list { display: flex; flex-direction: column; gap: 0.9rem; }
   .pp__list li { display: flex; gap: 1rem; align-items: flex-start; max-width: 60ch; }
-  .pp__li-num { flex: none; width: 1.75rem; height: 1.75rem; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--c-line-on-light); border-radius: 50%; font-size: 0.8rem; color: var(--c-burgundy-700); }
-  .pp__li-dot { flex: none; width: 6px; height: 6px; margin-top: 0.7em; border-radius: 50%; background: var(--c-burgundy-600); }
+  .pp__li-num { flex: none; width: 1.75rem; height: 1.75rem; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--c-line-on-light); border-radius: 50%; font-size: 0.8rem; color: var(--c-deep-700); }
+  .pp__li-dot { flex: none; width: 6px; height: 6px; margin-top: 0.7em; border-radius: 50%; background: var(--c-deep-600); }
   .pp--cta { padding-block: 0 var(--section-y); }
-  .pp__cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; padding: clamp(1.5rem, 1rem + 2vw, 3rem); border-radius: var(--r-card); background: var(--c-bone); border: 1px solid rgba(53, 10, 22, 0.06); box-shadow: var(--sh-card); }
+  .pp__cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; padding: clamp(1.5rem, 1rem + 2vw, 3rem); border-radius: var(--r-card); background: var(--c-bone); border: 1px solid rgba(7, 49, 59, 0.06); box-shadow: var(--sh-card); }
   .pp__cta-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
   @media (min-width: 768px) { .pp__steps { grid-template-columns: repeat(2, 1fr); } .pp__two { grid-template-columns: 1fr 1fr; column-gap: 4rem; } }
   @media (min-width: 1024px) { .pp__grid { grid-template-columns: 4fr 8fr; column-gap: 5rem; align-items: start; } .pp__steps { grid-template-columns: repeat(5, 1fr); gap: 1rem; } }

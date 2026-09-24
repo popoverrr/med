@@ -3,7 +3,7 @@
 uniform float uTime;
 uniform float uProgress;   // 0..1 общий прогресс сцены
 uniform float uFog;        // 0..1 — доля тумана вместо каустики
-uniform vec3 uColorA;      // тёплый бургунди-блик
+uniform vec3 uColorA;      // глубокий аква-блик
 uniform vec3 uColorB;      // aqua
 uniform float uColorMix;
 uniform float uOpacity;
@@ -35,4 +35,5 @@ void main() {
   float amount = mix(c * 0.6, fog, uFog);
   float alpha = amount * uOpacity;
   gl_FragColor = vec4(tint, alpha);
+  #include <colorspace_fragment>
 }

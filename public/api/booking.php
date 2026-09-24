@@ -66,7 +66,7 @@ $lines = [
 ];
 $text = "Новая заявка на запись (Hydromed)\n" . implode("\n", $lines);
 $html = '<h2 style="font-family:sans-serif">Новая заявка на запись — Hydromed</h2><table style="font-family:sans-serif;border-collapse:collapse">'
-    . implode('', array_map(static fn($l) => '<tr><td style="padding:4px 12px 4px 0;color:#6e5f60">' . hm_esc(strtok($l, ':')) . '</td><td style="padding:4px 0">' . hm_esc(trim((string)strstr($l, ':'), ': ')) . '</td></tr>', $lines))
+    . implode('', array_map(static fn($l) => '<tr><td style="padding:4px 12px 4px 0;color:#57707a">' . hm_esc(strtok($l, ':')) . '</td><td style="padding:4px 0">' . hm_esc(trim((string)strstr($l, ':'), ': ')) . '</td></tr>', $lines))
     . '</table>';
 
 $mailOk = hm_send_mail('Заявка на запись: ' . $name . ', ' . $phone, $html, $text);

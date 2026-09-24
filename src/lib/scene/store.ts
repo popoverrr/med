@@ -5,7 +5,7 @@
 import { createStore } from 'zustand/vanilla';
 import type { Quality } from './tiers';
 
-export type SceneKey = 'hero' | 'what' | 'how' | 'water' | 'equipment' | 'fade';
+export type SceneKey = 'hero' | 'expert' | 'what' | 'how' | 'water' | 'equipment' | 'fade';
 
 export interface SceneRange {
   key: SceneKey;
@@ -43,7 +43,7 @@ export const sceneStore = createStore<SceneState>((set) => ({
   progress: 0,
   ranges: [],
   bands: [],
-  bg: '#350a16',
+  bg: '#07313b',
   pointer: { x: 0, y: 0 },
   active: false,
   quality: 'high',

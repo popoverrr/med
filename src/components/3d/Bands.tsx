@@ -14,7 +14,7 @@ const MAX = 16;
 export function Bands() {
   const material = useMemo(() => {
     const colors: Color[] = [];
-    for (let i = 0; i < MAX; i++) colors.push(new Color('#350a16'));
+    for (let i = 0; i < MAX; i++) colors.push(new Color('#07313b'));
     return new ShaderMaterial({
       vertexShader: BANDS_VERT,
       fragmentShader: BANDS_FRAG,
@@ -26,7 +26,7 @@ export function Bands() {
         uCount: { value: 0 },
         uHeight: { value: 900 },
         uFeather: { value: 96 },
-        uBase: { value: new Color('#350a16') },
+        uBase: { value: new Color('#07313b') },
       },
     });
   }, []);

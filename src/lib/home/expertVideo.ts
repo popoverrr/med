@@ -97,10 +97,26 @@ export function initExpertVideo(): () => void {
   soundBtn?.addEventListener('click', onSound);
 
   // --- Ленивая загрузка на подходе к блоку ---
+  // Блок «Специалист» — второй экран, поэтому наблюдатель с запасом 600px сработал бы сразу при загрузке
+  // страницы: 2 МБ видео конкурировали бы с первым экраном. Включаем его после первого действия
+  // пользователя (скролл/указатель/клавиатура) — то есть когда к блоку действительно идут.
+  // Если страница открыта уже прокрученной (якорь, восстановленная позиция) — сразу.
   const nearIO = new IntersectionObserver((entries) => {
     if (entries.some((e) => e.isIntersecting)) { load(); nearIO.disconnect(); }
   }, { rootMargin: '600px 0px' });
-  nearIO.observe(wrap);
+
+  const armLazyLoad = () => {
+    window.removeEventListener('scroll', armLazyLoad);
+    window.removeEventListener('pointerdown', armLazyLoad);
+    window.removeEventListener('keydown', armLazyLoad);
+    nearIO.observe(wrap);
+  };
+  if (window.scrollY > 0) armLazyLoad();
+  else {
+    window.addEventListener('scroll', armLazyLoad, { passive: true, once: true });
+    window.addEventListener('pointerdown', armLazyLoad, { passive: true, once: true });
+    window.addEventListener('keydown', armLazyLoad, { once: true });
+  }
 
   // --- Запуск/пауза по видимости ---
   const viewIO = new IntersectionObserver((entries) => {
@@ -127,6 +143,9 @@ export function initExpertVideo(): () => void {
   syncToggle();
 
   return () => {
+    window.removeEventListener('scroll', armLazyLoad);
+    window.removeEventListener('pointerdown', armLazyLoad);
+    window.removeEventListener('keydown', armLazyLoad);
     nearIO.disconnect();
     viewIO.disconnect();
     document.removeEventListener('visibilitychange', onVisibility);

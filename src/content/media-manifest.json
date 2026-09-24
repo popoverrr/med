@@ -117,10 +117,10 @@
       "id": "specialist-video",
       "type": "video",
       "aspect": "4:5",
-      "sizes": [478],
+      "sizes": [480],
       "priority": "critical",
       "usage": "Главная — блок «Специалист» (Expert): видеообращение, запускается плавно при появлении блока",
-      "description": "Видео заказчика 478×850, 25 с, со звуком (речь). Файлы: specialist-video.webm (VP9+Opus), .mp4 (H.264+AAC, faststart), specialist-video-poster.webp. Кадр 4:5 — object-position 50% 18%",
+      "description": "Видео заказчика, 25 с, со звуком (речь), кадр 480×848 (кратен 16 — иначе аппаратный VP9-декодер бьёт картинку полосами). Файлы: specialist-video.mp4 (H.264+AAC, faststart — основной), .webm (VP9+Opus — запасной), specialist-video-poster.webp. Кадр 4:5 — object-position 50% 18%",
       "alt": { "ru": "Видеообращение Замиры Рахпатовой, врача, специалиста по гидроколонотерапии", "kk": "Гидроколонотерапия маманы, дәрігер Замира Рахпатованың бейнеүндеуі" }
     },
     {

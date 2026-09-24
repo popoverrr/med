@@ -52,7 +52,10 @@ export function initExpertVideo(): () => void {
     loaded = true;
     const webm = video.dataset.srcWebm;
     const mp4 = video.dataset.srcMp4;
-    video.src = webm && video.canPlayType('video/webm; codecs="vp9, opus"') ? webm : (mp4 ?? webm ?? '');
+    // H.264 первым: он аппаратно декодируется везде и без сюрпризов. VP9 на части GPU/драйверов
+    // (в т.ч. в браузерах на Chromium) портит картинку полосами — webm остаётся запасным вариантом
+    // для браузеров без поддержки H.264.
+    video.src = mp4 && video.canPlayType('video/mp4; codecs="avc1.64001f, mp4a.40.2"') ? mp4 : (webm ?? mp4 ?? '');
     video.preload = 'auto';
     video.load();
   };

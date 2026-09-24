@@ -36,7 +36,7 @@ const videoAlt = getSlot(VIDEO).alt[locale];
           <div class="expert__portrait-media" data-expert-media>
             {hasVideo ? (
               <div class="xv" data-expert-video data-state="idle">
-                <img class="xv__poster" src={withBase(`/media/${VIDEO}-poster.webp`)} alt="" aria-hidden="true" width="478" height="850" loading="lazy" decoding="async" />
+                <img class="xv__poster" src={withBase(`/media/${VIDEO}-poster.webp`)} alt="" aria-hidden="true" width="480" height="848" loading="lazy" decoding="async" />
                 <video
                   class="xv__el"
                   muted
@@ -44,8 +44,8 @@ const videoAlt = getSlot(VIDEO).alt[locale];
                   loop
                   preload="none"
                   aria-label={videoAlt}
-                  width="478"
-                  height="850"
+                  width="480"
+                  height="848"
                   data-src-webm={withBase(`/media/${VIDEO}.webm`)}
                   data-src-mp4={withBase(`/media/${VIDEO}.mp4`)}
                 ></video>

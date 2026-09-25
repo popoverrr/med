@@ -19,7 +19,7 @@ import { Bands } from './Bands';
 import { QualityMonitor } from './QualityMonitor';
 import { params, CAMERA_FOV } from '@/lib/three/params';
 import { sceneStore } from '@/lib/scene/store';
-import { TIER, type Quality } from '@/lib/scene/tiers';
+import { TIER, dprCap, type Quality } from '@/lib/scene/tiers';
 
 /** Пост-обработка — отдельная граница ошибок: при сбое сцена работает без эффектов. */
 class EffectsBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
@@ -77,7 +77,7 @@ interface SceneProps {
 export function Scene({ host, initialQuality, monitor, onFallback }: SceneProps) {
   const [quality, setQuality] = useState<Quality>(initialQuality);
   const tier = TIER[quality];
-  const dpr = Math.min(tier.dpr, typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1);
+  const dpr = Math.min(tier.dpr, dprCap(), typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1);
 
   const change = useCallback((next: Quality) => {
     sceneStore.getState().setQuality(next);

@@ -25,6 +25,11 @@ export function isDesktop(): boolean {
   return typeof window !== 'undefined' && window.innerWidth >= 1024;
 }
 
+/** Лёгкий режим (телефоны/планшеты) — класс ставит public/scripts/early.js до первого кадра. */
+export function isLite(): boolean {
+  return typeof document !== 'undefined' && document.documentElement.classList.contains('lite');
+}
+
 export function isFinePointer(): boolean {
   return typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 }

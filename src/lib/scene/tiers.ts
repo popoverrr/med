@@ -32,3 +32,15 @@ export const TIER: Record<Quality, TierSpec> = {
 export function isQuality(v: string | null | undefined): v is Quality {
   return v === 'high' || v === 'medium' || v === 'low' || v === 'basic';
 }
+
+/**
+ * Лёгкий режим (телефоны/планшеты, html.lite): сцена рисуется через кадр (~30 fps) и с dpr ≤ 1.
+ * Капля движется медленно, 30 fps на ней незаметны, а половина кадров GPU/главного потока
+ * остаётся нативному скроллу и анимациям страницы. QualityMonitor делит пороги fps на тот же делитель.
+ */
+export function frameDivider(): number {
+  return typeof document !== 'undefined' && document.documentElement.classList.contains('lite') ? 2 : 1;
+}
+export function dprCap(): number {
+  return frameDivider() > 1 ? 1 : Infinity;
+}

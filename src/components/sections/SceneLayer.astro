@@ -18,7 +18,11 @@ const dict = t(locale);
 </div>
 
 <style>
-  .scene-layer { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+  /* 100lvh: высота не меняется, когда мобильный браузер прячет/показывает адресную строку —
+     иначе канвас пересоздавал буферы на каждом скролле вверх-вниз */
+  .scene-layer { position: fixed; top: 0; left: 0; right: 0; height: 100vh; height: 100lvh; z-index: -1; pointer-events: none; overflow: hidden; transition: opacity 0.5s var(--e-out), visibility 0s linear 0s; }
+  /* Лёгкий режим: после первых экранов сцена «паркуется» — слой скрыт, рендер остановлен (Director) */
+  :global(html.scene-parked) .scene-layer { opacity: 0; visibility: hidden; transition: opacity 0.5s var(--e-out), visibility 0s linear 0.5s; }
   .scene-poster { position: absolute; inset: 0; background: var(--bg-current); }
   .scene-poster__drop {
     position: absolute;

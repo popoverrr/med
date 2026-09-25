@@ -43,6 +43,9 @@
   html {
     color-scheme: light;
     scroll-behavior: auto; /* инерцию даёт Lenis; нативный smooth конфликтует */
+    /* Без scroll anchoring: pin-spacer'ы и ленивые медиа меняют высоту выше экрана — браузер «подтягивал»
+       позицию, скролл прыгал, а шапка принимала прыжок назад за прокрутку вверх */
+    overflow-anchor: none;
     -webkit-text-size-adjust: 100%;
     background: var(--bg-current);
   }
@@ -195,6 +198,19 @@ html:not(.scene-on) [data-bg='dark'] + [data-bg='porcelain'],
 html:not(.scene-on) [data-bg='dark'] + [data-bg='bone'] { background-image: linear-gradient(to bottom, var(--c-deep-900), transparent 4rem); }
 html:not(.scene-on) [data-bg='porcelain'] + [data-bg='dark'],
 html:not(.scene-on) [data-bg='bone'] + [data-bg='dark'] { background-image: linear-gradient(to bottom, var(--c-porcelain), transparent 4rem); }
+
+/* Лёгкий режим (html.lite — телефоны/планшеты): секции непрозрачны всегда, даже при активной сцене.
+   Иначе фон секций рисует WebGL-слой, который на телефоне отстаёт от нативного скролла на несколько кадров —
+   текст оказывался на «чужом» фоне и блок визуально пропадал. Прозрачны только hero/эксперт/полоса доверия:
+   за ними капля (дальше сцена паркуется — html.scene-parked). */
+html.lite [data-bg='porcelain'] { background-color: var(--c-porcelain); }
+html.lite [data-bg='bone'] { background-color: var(--c-bone); }
+html.lite [data-bg='dark']:not(.hero):not(.trust):not(.expert) { background-color: var(--c-deep-900); }
+html.lite [data-bg='ink'] { background-color: var(--c-ink); }
+html.lite [data-bg='dark'] + [data-bg='porcelain'],
+html.lite [data-bg='dark'] + [data-bg='bone'] { background-image: linear-gradient(to bottom, var(--c-deep-900), transparent 4rem); }
+html.lite [data-bg='porcelain'] + [data-bg='dark'],
+html.lite [data-bg='bone'] + [data-bg='dark'] { background-image: linear-gradient(to bottom, var(--c-porcelain), transparent 4rem); }
 
 /* ------------------------------------------------------------------
    Компоненты

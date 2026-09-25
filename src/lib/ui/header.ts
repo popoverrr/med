@@ -1,5 +1,10 @@
-/** Шапка: фон при скролле, скрытие при прокрутке вниз, мобильное меню с focus trap. */
+/**
+ * Шапка: фон при скролле, скрытие при прокрутке вниз (только десктоп), мобильное меню с focus trap.
+ * На телефонах/планшетах (html.lite) шапка не прячется: вместе с адресной строкой браузера она «дёргалась»
+ * на каждом микродвижении пальца. На десктопе — гистерезис: прячем после 80px вниз, показываем после 40px вверх.
+ */
 import { stopScroll, startScroll } from '@/lib/scroll/lenis';
+import { isLite } from '@/lib/gsap';
 import { trapFocus } from './focus';
 
 export function initHeader(): () => void {
@@ -8,7 +13,11 @@ export function initHeader(): () => void {
   const toggle = header.querySelector<HTMLButtonElement>('[data-menu-toggle]');
   const menu = header.querySelector<HTMLElement>('[data-mobile-menu]');
   let lastY = window.scrollY;
+  let travel = 0; // накопленный путь в текущем направлении (+ вниз, − вверх)
   let ticking = false;
+  const autoHide = !isLite();
+  const HIDE_AFTER = 80;
+  const SHOW_AFTER = 40;
   let releaseTrap: (() => void) | null = null;
 
   const onScroll = () => {
@@ -18,8 +27,11 @@ export function initHeader(): () => void {
       const y = window.scrollY;
       header.classList.toggle('is-scrolled', y > 24);
       const menuOpen = menu && !menu.hidden;
-      header.classList.toggle('is-hidden', !menuOpen && y > 320 && y > lastY + 4);
-      if (y < lastY - 4) header.classList.remove('is-hidden');
+      const dy = y - lastY;
+      if (dy !== 0) travel = Math.sign(dy) === Math.sign(travel) ? travel + dy : dy;
+      if (!autoHide || menuOpen || y < 320) header.classList.remove('is-hidden');
+      else if (travel > HIDE_AFTER) header.classList.add('is-hidden');
+      else if (travel < -SHOW_AFTER) header.classList.remove('is-hidden');
       lastY = y;
       ticking = false;
     });

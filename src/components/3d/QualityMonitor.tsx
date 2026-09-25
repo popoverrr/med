@@ -10,7 +10,7 @@
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { params } from '@/lib/three/params';
-import { TIERS, type Quality } from '@/lib/scene/tiers';
+import { TIERS, frameDivider, type Quality } from '@/lib/scene/tiers';
 
 interface Props {
   quality: Quality;
@@ -20,7 +20,9 @@ interface Props {
 
 const WINDOW_MS = 1000;
 const WARMUP_MS = 2000;
-const FPS_LOW = 45;
+// В лёгком режиме Director сам рисует через кадр — пороги делим на тот же делитель
+const DIV = frameDivider();
+const FPS_LOW = 45 / DIV;
 const FPS_THROTTLED = 4;
 const DECLINE_WINDOWS = 3;
 const INCLINE_WINDOWS = 5;
@@ -64,7 +66,7 @@ export function QualityMonitor({ quality, onChange, onFallback }: Props) {
     // энергосбережение): такие окна не учитываем
     if (fps < FPS_THROTTLED) { bad.current = 0; good.current = 0; return; }
     refreshRate.current = Math.max(refreshRate.current, fps);
-    const fpsHigh = refreshRate.current > 100 ? 100 : 57;
+    const fpsHigh = (refreshRate.current > 100 / DIV ? 100 : 57) / DIV;
     const i = TIERS.indexOf(quality);
 
     if (fps < FPS_LOW) {

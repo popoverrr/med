@@ -7,6 +7,7 @@ import { useEffect, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Color } from 'three';
 import { sceneStore, locate, type SceneKey } from '@/lib/scene/store';
+import { frameDivider } from '@/lib/scene/tiers';
 import { params, KEYFRAMES, KEY_ORDER, PORTRAIT_POSES, CAMERA_FOV, smoothstep, damp, type SceneParams } from '@/lib/three/params';
 
 const HOLD = 0.62; // доля секции, в течение которой кадр «держится»; переход — в последней трети (после снятия pin)
@@ -27,12 +28,17 @@ export function Director({ host }: { host: HTMLElement }) {
   useEffect(() => {
     let running = true;
     let lastScroll = -1;
+    let n = 0;
+    const div = frameDivider();
     const tick = () => {
       if (!running) return;
-      const scroll = window.scrollY;
-      if (document.visibilityState === 'visible' && (params.opacity > 0.01 || scroll !== lastScroll)) invalidate();
-      lastScroll = scroll;
       raf.current = requestAnimationFrame(tick);
+      if (div > 1 && ++n % div) return; // лёгкий режим: кадр через раз
+      const scroll = window.scrollY;
+      // Лёгкий режим: сцена припаркована (слой скрыт, секции непрозрачны) — кадры не нужны
+      const parked = document.documentElement.classList.contains('scene-parked');
+      if (!parked && document.visibilityState === 'visible' && (params.opacity > 0.01 || scroll !== lastScroll)) invalidate();
+      lastScroll = scroll;
     };
     raf.current = requestAnimationFrame(tick);
     const unsub = sceneStore.subscribe((s) => { target.current.set(s.bg); });

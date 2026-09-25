@@ -4,7 +4,7 @@
  * на отрезке «верх секции 68% → 42% вьюпорта» (короткий, чтобы промежуточный «грязный» тон был мимолётным). Параллельно переключается тон шапки
  * и обновляется стор сцены (WebGL красит свой фон тем же цветом).
  */
-import { gsap, ScrollTrigger, prefersReducedMotion } from '@/lib/gsap';
+import { gsap, ScrollTrigger, prefersReducedMotion, isLite } from '@/lib/gsap';
 import { sceneStore } from '@/lib/scene/store';
 
 export const BG: Record<string, string> = {
@@ -21,7 +21,9 @@ export function initBackground(): () => void {
   const header = document.querySelector<HTMLElement>('[data-header]');
   const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-bg]'));
   const triggers: ScrollTrigger[] = [];
-  const rm = prefersReducedMotion();
+  // Лёгкий режим: переключение без scrub. Интерполяция CSS-переменной на <html> — это пересчёт стилей
+  // всего документа на каждом кадре скролла; на телефоне это заметные подлагивания.
+  const rm = prefersReducedMotion() || isLite();
 
   const setHeaderTone = (name: string) => {
     if (!header) return;

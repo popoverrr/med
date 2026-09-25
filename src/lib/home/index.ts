@@ -3,7 +3,7 @@
  * диапазоны сцены для WebGL, «нить воды», постер-деградация. Грузится отдельным чанком только на главной.
  * Pin-режимы работают на всех ширинах (решение заказчика), отключаются только при prefers-reduced-motion.
  */
-import { gsap, ScrollTrigger } from '@/lib/gsap';
+import { gsap, ScrollTrigger, isLite } from '@/lib/gsap';
 import { sceneStore, type SceneKey, type SceneRange } from '@/lib/scene/store';
 import { loadScene } from '@/lib/scene/loader';
 import { initImageSequence } from './sequence';
@@ -23,6 +23,7 @@ export function initHome(): () => void {
   cleanups.push(initPosterFade());
   // Видеообращение специалиста: работает и при reduced motion (тогда без автозапуска — по кнопке)
   cleanups.push(initExpertVideo());
+  cleanups.push(initScenePark());
 
   mm.add(MOTION_OK, () => {
     const c: Array<() => void> = [];
@@ -42,6 +43,10 @@ export function initHome(): () => void {
       }
       if (!alive) return;
       const t0 = performance.now();
+      // Триггеры шапки, фона и появлений созданы раньше pin-секций (app.ts) и при refresh не учитывали бы
+      // высоту pin-spacer'ов выше себя: тон шапки и цвет фона переключались не там — светлая шапка над
+      // тёмным блоком. sort() выстраивает все триггеры сверху вниз, после чего refresh считает их верно.
+      ScrollTrigger.sort();
       ScrollTrigger.refresh();
       performance.measure('hm:home:refresh', { start: t0 });
     })();
@@ -51,6 +56,7 @@ export function initHome(): () => void {
   // Reduced-motion: секции статичны, все слайды видны, sequence → постер; pin-секций нет — один refresh сразу
   mm.add('(prefers-reduced-motion: reduce)', () => {
     document.querySelectorAll<HTMLElement>('[data-what-slide]').forEach((s) => s.removeAttribute('aria-hidden'));
+    ScrollTrigger.sort();
     ScrollTrigger.refresh();
     return () => {};
   });
@@ -59,6 +65,24 @@ export function initHome(): () => void {
     mm.revert();
     cleanups.forEach((fn) => fn());
   };
+}
+
+/* ------------------------------------------------------------------ */
+/* Лёгкий режим: сцена «паркуется», когда «Что это» закрыло экран        */
+/* ------------------------------------------------------------------ */
+function initScenePark(): () => void {
+  const what = document.querySelector<HTMLElement>('#what');
+  if (!isLite() || !what) return () => {};
+  const html = document.documentElement;
+  // Ниже первых экранов секции непрозрачны (base.css, html.lite) — канвас не виден, и рендерить его незачем:
+  // Director перестаёт запрашивать кадры, слой скрывается. Назад — сцена просыпается.
+  const st = ScrollTrigger.create({
+    trigger: what,
+    start: 'top top',
+    onEnter: () => html.classList.add('scene-parked'),
+    onLeaveBack: () => html.classList.remove('scene-parked'),
+  });
+  return () => { st.kill(); html.classList.remove('scene-parked'); };
 }
 
 /* ------------------------------------------------------------------ */

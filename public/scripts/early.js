@@ -5,7 +5,11 @@
   h.classList.add('js');
   try {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) h.classList.add('rm');
-    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) h.classList.add('fine');
+    var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (fine) h.classList.add('fine');
+    // Лёгкий режим: телефоны и планшеты (сенсор без мыши) или узкий экран. Фон секций не зависит
+    // от кадров WebGL, 3D только на первых экранах, шапка не прячется, фон без scrub-интерполяции.
+    if (!fine || window.innerWidth < 1024) h.classList.add('lite');
   } catch (e) {}
   // Запоминаем выбор языка для возможного авто-редиректа в будущем (пока только сохраняем)
   try {

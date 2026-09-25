@@ -59,7 +59,7 @@ async function mountPage() {
   // Полный пересчёт триггеров — один раз (главная делает его сама после создания pin-секций)
   // и ещё раз после загрузки шрифтов, если они ещё грузятся
   const fontsPending = document.fonts && document.fonts.status !== 'loaded';
-  if (!home) stage('refresh', () => ScrollTrigger.refresh());
+  if (!home) stage('refresh', () => { ScrollTrigger.sort(); ScrollTrigger.refresh(); });
   if (fontsPending) document.fonts.ready.then(() => stage('refresh-fonts', () => ScrollTrigger.refresh()));
   curtainOut();
   // QA: ?scrollTo=<px> — прокрутка к позиции для headless-скриншотов (scripts/shoot.mjs)

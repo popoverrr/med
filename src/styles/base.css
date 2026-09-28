@@ -192,7 +192,10 @@
    интерполируется по скроллу (lib/motion/background.ts). */
 html:not(.scene-on) [data-bg='porcelain'] { background-color: var(--c-porcelain); }
 html:not(.scene-on) [data-bg='bone'] { background-color: var(--c-bone); }
-html:not(.scene-on) [data-bg='dark']:not(.hero):not(.doc) { background-color: var(--c-deep-900); } /* hero/врач — прозрачны ради CSS-постера */
+/* Прозрачен только hero (за ним CSS-постер). Блок врача без сцены непрозрачен: фон документа (--bg-current)
+   переключается на светлый, когда следующий блок доходит до 60–68 % экрана, — прозрачный блок врача
+   в этот момент показывал белый текст и кнопку на светлом фоне. Постер-капля к этому месту уже погашена. */
+html:not(.scene-on) [data-bg='dark']:not(.hero) { background-color: var(--c-deep-900); }
 html:not(.scene-on) [data-bg='ink'] { background-color: var(--c-ink); }
 html:not(.scene-on) [data-bg='dark'] + [data-bg='porcelain'],
 html:not(.scene-on) [data-bg='dark'] + [data-bg='bone'] { background-image: linear-gradient(to bottom, var(--c-deep-900), transparent 4rem); }
@@ -201,8 +204,8 @@ html:not(.scene-on) [data-bg='bone'] + [data-bg='dark'] { background-image: line
 
 /* Лёгкий режим (html.lite — телефоны/планшеты): секции непрозрачны всегда, даже при активной сцене.
    Иначе фон секций рисует WebGL-слой, который на телефоне отстаёт от нативного скролла на несколько кадров —
-   текст оказывался на «чужом» фоне и блок визуально пропадал. Прозрачны только hero/эксперт/полоса доверия:
-   за ними капля (дальше сцена паркуется — html.scene-parked). */
+   текст оказывался на «чужом» фоне и блок визуально пропадал. При активной сцене прозрачны только hero и
+   блок врача: за ними капля (дальше сцена паркуется — html.scene-parked); без сцены врач непрозрачен (правило выше). */
 html.lite [data-bg='porcelain'] { background-color: var(--c-porcelain); }
 html.lite [data-bg='bone'] { background-color: var(--c-bone); }
 html.lite [data-bg='dark']:not(.hero):not(.doc) { background-color: var(--c-deep-900); }

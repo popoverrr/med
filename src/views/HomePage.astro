@@ -1,21 +1,23 @@
 ---
+/**
+ * Главная — короткая посадочная (≈3 минуты чтения), mobile-first:
+ * 1 hero (что это, для чего, кто, записаться) → 2 врач (видео, 20 лет · 1500+, документы) →
+ * 3 с чем помогает (карусель → статьи) → 4 как проходит (20–45 мин, стерильность) → 5 вода →
+ * 6 противопоказания (свёрнуты) → 7 цены → 8 FAQ (5) → 9 запись + контакты.
+ * Сквозная WebGL-капля: hero → врач (в угол) → гаснет на «С чем помогает». На телефонах — только первые экраны.
+ */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import SceneLayer from '@/components/sections/SceneLayer.astro';
-import WaterThread from '@/components/sections/WaterThread.astro';
-import Hero from '@/components/sections/Hero.astro';
-import Expert from '@/components/sections/Expert.astro';
-import TrustStrip from '@/components/sections/TrustStrip.astro';
-import WhatIs from '@/components/sections/WhatIs.astro';
-import HowItGoes from '@/components/sections/HowItGoes.astro';
-import WaterBlock from '@/components/sections/WaterBlock.astro';
-import Indications from '@/components/sections/Indications.astro';
-import Contraindications from '@/components/sections/Contraindications.astro';
-import Sterility from '@/components/sections/Sterility.astro';
-import LicenseBlock from '@/components/sections/LicenseBlock.astro';
+import Hero from '@/components/landing/Hero.astro';
+import Doctor from '@/components/landing/Doctor.astro';
+import HelpCarousel from '@/components/landing/HelpCarousel.astro';
+import How from '@/components/landing/How.astro';
+import Water from '@/components/landing/Water.astro';
+import Important from '@/components/landing/Important.astro';
 import Prices from '@/components/sections/Prices.astro';
 import Faq from '@/components/sections/Faq.astro';
 import BookingSection from '@/components/sections/BookingSection.astro';
-import ContactsSection from '@/components/sections/ContactsSection.astro';
+import StickyCta from '@/components/landing/StickyCta.astro';
 import { t, type Locale } from '@/lib/i18n';
 import { procedureLd, faqLd } from '@/lib/seo';
 
@@ -37,23 +39,17 @@ const dict = t(locale);
 >
   <SceneLayer locale={locale} />
   <div class="scene-range" data-scene-range>
-    <WaterThread />
     <Hero locale={locale} />
-    <Expert locale={locale} />
-    <TrustStrip locale={locale} />
-    <WhatIs locale={locale} />
-    <HowItGoes locale={locale} />
-    <WaterBlock locale={locale} />
-    <Indications locale={locale} />
-    <Contraindications locale={locale} />
-    <Sterility locale={locale} />
-    {/* Финал сцены (капля гаснет) — на блоке лицензии. Подробная карточка специалиста — на /about; на главной её роль играет Expert */}
-    <div data-scene="fade"><LicenseBlock locale={locale} /></div>
+    <Doctor locale={locale} />
+    <div data-scene="fade"><HelpCarousel locale={locale} /></div>
   </div>
-  <Prices locale={locale} />
-  <Faq locale={locale} />
-  <BookingSection locale={locale} />
-  <ContactsSection locale={locale} />
+  <How locale={locale} />
+  <Water locale={locale} />
+  <Important locale={locale} />
+  <Prices locale={locale} compact />
+  <Faq locale={locale} limit={5} />
+  <BookingSection locale={locale} withContacts />
+  <StickyCta locale={locale} />
 </BaseLayout>
 
 <style>

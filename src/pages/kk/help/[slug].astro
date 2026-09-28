@@ -1,0 +1,9 @@
+---
+import Page from '@/views/HelpArticlePage.astro';
+import kk from '@content/i18n/kk.json';
+export function getStaticPaths() {
+  return kk.help.items.map((i) => ({ params: { slug: i.slug } }));
+}
+const { slug } = Astro.params;
+---
+<Page locale="kk" slug={slug!} />

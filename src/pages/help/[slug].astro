@@ -1,0 +1,9 @@
+---
+import Page from '@/views/HelpArticlePage.astro';
+import ru from '@content/i18n/ru.json';
+export function getStaticPaths() {
+  return ru.help.items.map((i) => ({ params: { slug: i.slug } }));
+}
+const { slug } = Astro.params;
+---
+<Page locale="ru" slug={slug!} />

@@ -11,7 +11,6 @@
     "check": "astro check",
     "fonts:check": "node scripts/check-fonts.mjs",
     "fonts:copy": "node scripts/copy-fonts.mjs",
-    "media:placeholders": "node scripts/gen-placeholders.mjs",
     "docs:process": "node scripts/process-documents.mjs",
     "verify:runtime": "node scripts/verify-static.mjs",
     "contrast": "node scripts/check-contrast.mjs"

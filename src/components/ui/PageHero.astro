@@ -37,6 +37,9 @@ const dict = t(locale);
 
 <style>
   .page-hero { padding-top: clamp(7rem, 5rem + 6vw, 11rem); padding-bottom: clamp(2.5rem, 2rem + 3vw, 5rem); }
+  /* «Гидроколонотерапия» одним словом не должна резаться на узких экранах */
+  .page-hero__title { font-size: min(var(--fs-hero), 8.4vw); }
+  @media (min-width: 1024px) { .page-hero__title { font-size: var(--fs-hero); } }
   .page-hero--dark { color: var(--c-bone); }
   .crumbs { margin-bottom: 2rem; color: var(--c-text-muted-on-light); }
   .page-hero--dark .crumbs { color: var(--c-text-muted-on-dark); }

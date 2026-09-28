@@ -1,0 +1,80 @@
+---
+/**
+ * «Как проходит» — 4 шага компактной лентой, статичная длительность «от 20 до 45 минут» (без счётчика),
+ * и три пункта про стерильность в одном блоке. Без pin и image-sequence: на телефоне читается сверху вниз.
+ */
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import { t, type Locale } from '@/lib/i18n';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const d = t(locale).landing.how;
+const safetyIcons = [
+  '<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 10h16M9 5v14"/>',
+  '<path d="M4 8h16v8a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/>',
+  '<path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/>',
+];
+---
+
+<section class="how theme-light" data-bg="bone" id="how" aria-labelledby="how-title">
+  <div class="container-x">
+    <div class="how__head">
+      <Eyebrow>{d.eyebrow}</Eyebrow>
+      <h2 id="how-title" class="t-d2 how__title" data-split="words">{d.title}</h2>
+      <p class="how__duration" data-reveal>
+        <span class="how__duration-value">{d.duration}</span>
+        <span class="how__duration-label t-caps">{d.durationLabel}</span>
+      </p>
+    </div>
+
+    <ol class="how__steps" data-reveal-group data-reveal-stagger="0.1">
+      {d.steps.map((s, i) => (
+        <li class="how__step" data-reveal>
+          <span class="how__step-num" aria-hidden="true">{i + 1}</span>
+          <div>
+            <h3 class="how__step-title t-h4">{s.title}</h3>
+            <p class="how__step-text muted">{s.text}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+
+    <ul class="how__safety" data-reveal-group data-reveal-stagger="0.08">
+      {d.safety.map((s, i) => (
+        <li class="how__safety-item" data-reveal>
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={safetyIcons[i]} />
+          <span>{s}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .how { position: relative; padding-block: var(--section-y); }
+  .how__head { margin-bottom: 2rem; }
+  .how__title { max-width: 14ch; }
+  .how__duration { display: flex; flex-direction: column; gap: 0.2rem; margin-top: 1.25rem; padding: 1rem 1.25rem; border-radius: var(--r-card); background: rgba(79, 195, 214, 0.12); width: fit-content; }
+  .how__duration-value { font-family: var(--font-display); font-weight: 300; font-size: clamp(1.75rem, 1.3rem + 2vw, 2.75rem); line-height: 1.05; letter-spacing: -0.02em; color: var(--c-deep-700); }
+  .how__duration-label { color: var(--c-aqua-text); }
+
+  .how__steps { display: grid; grid-template-columns: 1fr; gap: 0; counter-reset: step; border-top: 1px solid var(--c-line-on-light); }
+  .how__step { display: grid; grid-template-columns: 3rem 1fr; gap: 1rem; padding: 1.25rem 0; border-bottom: 1px solid var(--c-line-on-light); }
+  .how__step-num { font-family: var(--font-display); font-weight: 300; font-size: 2rem; line-height: 1; letter-spacing: -0.02em; color: var(--c-deep-600); }
+  .how__step-title { margin-bottom: 0.3rem; }
+  .how__step-text { max-width: 44ch; }
+
+  .how__safety { display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin-top: 2rem; }
+  .how__safety-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.9rem 1rem; border-radius: var(--r-card); background: var(--c-porcelain); color: var(--c-text-on-light); font-size: var(--fs-small); }
+  .how__safety-item svg { flex: none; color: var(--c-deep-600); }
+
+  @media (min-width: 768px) {
+    .how__steps { grid-template-columns: repeat(2, 1fr); column-gap: 3rem; }
+    .how__safety { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (min-width: 1024px) {
+    .how__head { display: grid; grid-template-columns: 7fr 5fr; align-items: end; column-gap: 3rem; }
+    .how__duration { justify-self: end; margin-top: 0; }
+    .how__steps { grid-template-columns: repeat(4, 1fr); column-gap: 2rem; border-top: 0; }
+    .how__step { grid-template-columns: 1fr; gap: 1rem; border-bottom: 0; border-top: 1px solid var(--c-line-on-light); padding-top: 1.5rem; }
+  }
+</style>

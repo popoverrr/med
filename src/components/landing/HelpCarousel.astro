@@ -1,0 +1,103 @@
+---
+/**
+ * «С чем помогает» — карусель тем, каждая ведёт на свою статью /help/<slug>.
+ * Нативный горизонтальный скролл со scroll-snap: на телефоне листается пальцем без JS и без лагов,
+ * на десктопе — стрелки (lib/ui/misc.ts → initCarousels) и колесо/трекпад. Карточки крупные, одна
+ * умещается на экране телефона целиком, вторая выглядывает — понятно, что можно листать.
+ */
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import HelpIcon from '@/components/ui/HelpIcon.astro';
+import { t, localePath, type Locale } from '@/lib/i18n';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const dict = t(locale);
+const d = dict.landing.help;
+const items = dict.help.items;
+---
+
+<section class="help theme-light" data-bg="porcelain" id="help" aria-labelledby="help-title">
+  <div class="container-x help__head">
+    <Eyebrow>{d.eyebrow}</Eyebrow>
+    <h2 id="help-title" class="t-d2 help__title" data-split="words">{d.title}</h2>
+    <p class="help__intro muted" data-reveal>{d.intro}</p>
+  </div>
+
+  <div class="help__carousel" data-carousel>
+    <ul class="help__track" data-carousel-track aria-label={d.title}>
+      {items.map((item, i) => (
+        <li class="help__slide" data-carousel-slide>
+          <a class="help__card card card-hover" href={localePath(locale, `/help/${item.slug}`)} data-cursor="link">
+            <span class="help__icon"><HelpIcon name={item.icon} size={30} /></span>
+            <span class="help__num t-caption" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <span class="help__card-title t-d3">{item.title}</span>
+            <span class="help__card-text muted">{item.teaser}</span>
+            <span class="help__more">{d.more}
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <div class="container-x help__controls">
+      <div class="help__dots" data-carousel-dots aria-hidden="true">
+        {items.map((_, i) => <span class:list={['help__dot', { 'is-current': i === 0 }]}></span>)}
+      </div>
+      <div class="help__arrows">
+        <button type="button" class="help__arrow" data-carousel-prev aria-label={dict.a11y.prev} data-cursor="button">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+        </button>
+        <button type="button" class="help__arrow" data-carousel-next aria-label={dict.a11y.next} data-cursor="button">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <p class="container-x help__footnote t-small muted" data-reveal>{d.footnote}</p>
+</section>
+
+<style>
+  .help { position: relative; padding-block: var(--section-y); overflow: hidden; }
+  .help__head { margin-bottom: 1.75rem; }
+  .help__title { max-width: 16ch; }
+  .help__intro { margin-top: 1rem; max-width: 46ch; }
+
+  .help__carousel { position: relative; }
+  .help__track {
+    display: flex; gap: 0.875rem;
+    padding-inline: var(--gutter);
+    overflow-x: auto; overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter);
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    /* запас под тень карточек */
+    padding-block: 0.5rem 1.5rem; margin-block: -0.5rem -1.5rem;
+  }
+  .help__track::-webkit-scrollbar { display: none; }
+  .help__slide { flex: 0 0 min(82vw, 21rem); scroll-snap-align: start; list-style: none; }
+  .help__card {
+    display: flex; flex-direction: column; height: 100%; min-height: 17rem; padding: 1.5rem;
+    color: var(--c-text-on-light); text-decoration: none;
+  }
+  .help__icon { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; color: var(--c-deep-600); background: rgba(79, 195, 214, 0.14); margin-bottom: 1.25rem; }
+  .help__num { position: absolute; top: 1.5rem; right: 1.5rem; color: var(--c-text-muted-on-light); letter-spacing: 0.1em; }
+  .help__card-title { display: block; margin-bottom: 0.5rem; }
+  .help__card-text { display: block; margin-bottom: 1.25rem; font-size: var(--fs-body); line-height: 1.45; }
+  .help__more { display: inline-flex; align-items: center; gap: 0.4rem; margin-top: auto; color: var(--c-deep-700); font-weight: 500; transition: gap var(--d-fast) var(--e-out); }
+  .help__card:hover .help__more { gap: 0.7rem; }
+
+  .help__controls { display: flex; align-items: center; justify-content: space-between; margin-top: 1.5rem; }
+  .help__dots { display: flex; gap: 0.4rem; }
+  .help__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c-ash); transition: background-color var(--d-fast) var(--e-out), transform var(--d-fast) var(--e-out); }
+  .help__dot.is-current { background: var(--c-deep-600); transform: scale(1.25); }
+  .help__arrows { display: flex; gap: 0.5rem; }
+  .help__arrow { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--c-line-on-light); color: var(--c-deep-700); background: var(--c-bone); transition: border-color var(--d-fast) var(--e-out), background-color var(--d-fast) var(--e-out); }
+  .help__arrow:hover { border-color: var(--c-deep-600); }
+  .help__arrow:disabled { opacity: 0.35; }
+  .help__footnote { margin-top: 1.5rem; max-width: 60ch; }
+
+  @media (min-width: 768px) { .help__slide { flex-basis: 20rem; } }
+  @media (min-width: 1024px) {
+    .help__track { padding-inline: max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter))); }
+    .help__slide { flex-basis: 21.5rem; }
+  }
+</style>

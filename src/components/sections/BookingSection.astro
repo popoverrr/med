@@ -4,15 +4,18 @@ import Eyebrow from '@/components/ui/Eyebrow.astro';
 import BookingForm from '@/components/forms/BookingForm';
 import { formStrings } from '@/components/forms/strings';
 import contacts from '@content/config/contacts.json';
+import company from '@content/config/company.json';
 import Placeholder from '@/components/ui/Placeholder.astro';
 import { t, type Locale } from '@/lib/i18n';
 import { real } from '@/lib/utils/placeholders';
 import { telHref, waHref } from '@/lib/utils/format';
 
-interface Props { locale: Locale; heading?: 'h1' | 'h2'; title?: string; text?: string }
-const { locale, heading = 'h2', title, text } = Astro.props;
+interface Props { locale: Locale; heading?: 'h1' | 'h2'; title?: string; text?: string; withContacts?: boolean }
+const { locale, heading = 'h2', title, text, withContacts = false } = Astro.props;
+const hours = real(contacts.hours[locale]);
 const dict = t(locale);
 const d = dict.home.booking;
+const lb = dict.landing.booking;
 const phone = real(contacts.phone);
 const wa = real(contacts.whatsapp);
 const Heading = heading;
@@ -30,6 +33,12 @@ const Heading = heading;
         <p class="book__phone t-d3">{phone ? <a href={telHref(phone)}>{real(contacts.phoneDisplay) ?? phone}</a> : <Placeholder value={contacts.phone} />}</p>
         {wa ? <a class="btn btn-secondary-on-dark" href={waHref(wa)} target="_blank" rel="noopener">WhatsApp</a> : <p class="t-caption muted-dark">WhatsApp: <Placeholder value={contacts.whatsapp} /></p>}
       </div>
+      {withContacts && (
+        <dl class="book__contacts" data-reveal>
+          <div><dt class="t-caps muted-dark">{lb.addressLabel}</dt><dd>{company.address.full[locale]}</dd></div>
+          <div><dt class="t-caps muted-dark">{lb.hoursLabel}</dt><dd>{hours ?? <Placeholder value={contacts.hours[locale]} />}</dd></div>
+        </dl>
+      )}
     </div>
     <div class="book__form" data-reveal="clip">
       <BookingForm client:visible strings={formStrings(locale)} locale={locale} />
@@ -38,6 +47,9 @@ const Heading = heading;
 </section>
 
 <style>
+  .book__contacts { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--c-line-on-dark); color: var(--c-bone); }
+  .book__contacts dt { margin-bottom: 0.25rem; }
+  @media (min-width: 640px) { .book__contacts { grid-template-columns: 1fr 1fr; } }
   .book { position: relative; padding-block: var(--section-y); }
   .book__inner { display: grid; grid-template-columns: 1fr; gap: 3rem; }
   .book__title { color: var(--c-bone); margin-bottom: 1.25rem; max-width: 16ch; }

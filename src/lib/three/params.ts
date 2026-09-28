@@ -46,7 +46,9 @@ export const KEYFRAMES: Record<SceneKey, SceneParams> = {
   fade:      { camZ: 7.5, blobX: -1.5, blobY: -0.9, blobScale: 0.2,  stretch: 0.0, rotZ: 1.5708,  distortion: 0.05, clarity: 1.0, colorMix: 0.4,  spread: 0.6, column: 0.5, noise: 0.1, fog: 1.0, opacity: 0.0, speed: 0.05 },
 };
 
-export const KEY_ORDER: SceneKey[] = ['hero', 'expert', 'what', 'how', 'water', 'equipment', 'fade'];
+// На главной остались три состояния: hero → expert (капля в углу) → fade (гаснет на «С чем помогает»).
+// Кадры what/how/water/equipment сохранены на будущее, но в порядок не входят.
+export const KEY_ORDER: SceneKey[] = ['hero', 'expert', 'fade'];
 
 /** Вертикальный угол камеры (Scene.tsx), половина — для расчёта видимой области в плоскости капли (z = 0). */
 export const CAMERA_FOV = 35;

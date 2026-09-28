@@ -1,0 +1,34 @@
+---
+/** Липкая панель на телефоне: «Записаться» + «Позвонить». Появляется после первого экрана (lib/ui/misc.ts → initStickyCta). */
+import contacts from '@content/config/contacts.json';
+import { t, localePath, type Locale } from '@/lib/i18n';
+import { real } from '@/lib/utils/placeholders';
+import { telHref } from '@/lib/utils/format';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const d = t(locale).landing;
+const phone = real(contacts.phone);
+---
+<div class="sticky-cta" data-sticky-cta>
+  <button type="button" class="btn btn-primary sticky-cta__book" data-open-booking>{d.stickyBook}</button>
+  <a class="btn btn-secondary sticky-cta__call" href={phone ? telHref(phone) : localePath(locale, '/contacts')} aria-label={d.stickyCall}>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>
+    <span>{d.stickyCall}</span>
+  </a>
+</div>
+<style>
+  .sticky-cta {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: calc(var(--z-header) - 1);
+    display: grid; grid-template-columns: 1fr auto; gap: 0.6rem;
+    padding: 0.6rem var(--gutter) calc(0.6rem + env(safe-area-inset-bottom));
+    background: rgba(238, 245, 246, 0.96); border-top: 1px solid var(--c-line-on-light);
+    box-shadow: 0 -8px 30px rgba(7, 49, 59, 0.08);
+    transform: translateY(110%); transition: transform var(--d-base) var(--e-out);
+  }
+  .sticky-cta.is-visible { transform: none; }
+  .sticky-cta__book, .sticky-cta__call { min-height: 3.25rem; font-size: 1rem; }
+  .sticky-cta__call { background: var(--c-bone); color: var(--c-deep-700); border-color: var(--c-deep-600); }
+  .sticky-cta { color: var(--c-text-on-light); }
+  @media (min-width: 1024px) { .sticky-cta { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .sticky-cta { transition: none; } }
+</style>

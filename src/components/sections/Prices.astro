@@ -7,19 +7,20 @@ import { t, type Locale } from '@/lib/i18n';
 import { isPlaceholder } from '@/lib/utils/placeholders';
 import { formatNumber } from '@/lib/utils/format';
 
-interface Props { locale: Locale; heading?: 'h1' | 'h2'; showIntro?: boolean }
-const { locale, heading = 'h2', showIntro = true } = Astro.props;
-const d = t(locale).home.prices;
+interface Props { locale: Locale; heading?: 'h1' | 'h2'; showIntro?: boolean; compact?: boolean }
+const { locale, heading = 'h2', showIntro = true, compact = false } = Astro.props;
+// compact — вариант для главной: короткие тексты из landing.prices, без интро
+const d = compact ? { ...t(locale).landing.prices, intro: '' } : t(locale).home.prices;
 const byId = Object.fromEntries(prices.items.map((p) => [p.id, p]));
 const Heading = heading;
 ---
 
-<section class="prices theme-light" data-bg="porcelain" id="prices" aria-labelledby="prices-title">
+<section class:list={['prices theme-light', { 'prices--compact': compact }]} data-bg="porcelain" id="prices" aria-labelledby="prices-title">
   <div class="container-x">
     <div class="prices__head">
       <Eyebrow>{d.eyebrow}</Eyebrow>
       {heading === 'h2' && <Heading id="prices-title" class="t-d2" data-split="words">{d.title}</Heading>}
-      {showIntro && <p class="t-lead muted prices__intro" data-reveal>{d.intro}</p>}
+      {showIntro && d.intro && <p class="t-lead muted prices__intro" data-reveal>{d.intro}</p>}
     </div>
     <ul class="prices__grid" data-reveal-group data-reveal-stagger="0.12">
       {d.items.map((item, i) => {
@@ -60,5 +61,10 @@ const Heading = heading;
   .prices__text { margin-bottom: 2rem; max-width: 34ch; }
   .prices__cta { margin-top: auto; align-self: flex-start; }
   .prices__note { margin-top: 2rem; max-width: 60ch; }
+  .prices--compact .prices__card { min-height: 0; padding: 1.5rem; }
+  .prices--compact .prices__kind { margin-bottom: 1rem; }
+  .prices--compact .prices__text { margin-bottom: 1.25rem; }
+  .prices--compact .prices__head { margin-bottom: 1.5rem; }
+  .prices--compact .prices__note { margin-top: 1.25rem; }
   @media (min-width: 768px) { .prices__grid { grid-template-columns: repeat(3, 1fr); } }
 </style>

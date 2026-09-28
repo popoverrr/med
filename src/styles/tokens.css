@@ -49,9 +49,9 @@
   --fs-d3: clamp(1.5rem, 1.1rem + 1.25vw, 2.375rem);           /* 24 → 38 */
   --fs-h4: clamp(1.1875rem, 1.05rem + 0.5vw, 1.5rem);          /* 19 → 24 */
   --fs-lead: clamp(1.1875rem, 1.05rem + 0.45vw, 1.5rem);       /* 19 → 24 */
-  --fs-body: clamp(1.0625rem, 1rem + 0.2vw, 1.1875rem);        /* 17 → 19 */
-  --fs-small: 0.9375rem;
-  --fs-caption: 0.8125rem;
+  --fs-body: clamp(1.125rem, 1.05rem + 0.25vw, 1.1875rem);      /* 18 → 19: аудитория 50+, читаемость на телефоне */
+  --fs-small: 1rem;
+  --fs-caption: 0.875rem;
   --fs-num: clamp(2.5rem, 1.5rem + 3.5vw, 5.5rem);             /* показатели */
 
   --lh-tight: 1.02;

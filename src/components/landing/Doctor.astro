@@ -1,0 +1,159 @@
+---
+/**
+ * Врач — второй экран главной и главный аргумент сайта.
+ * Порядок на телефоне: анимированная «капля» (SVG, CSS-анимация) → имя, роль, 20 лет · 1500+ → короткий текст
+ * → видео → сертификаты и лицензия одним блоком → кнопка записи. Текст выше видео (просьба заказчика).
+ * На десктопе: видео слева, текст и документы справа.
+ * Сцена: data-scene="expert" — WebGL-капля уходит в верхний правый угол (lib/three/params.ts).
+ * Скролл-хореография — initExpert() в lib/home/index.ts (раскрытие кадра, счётчик 0 → 20).
+ */
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import Button from '@/components/ui/Button.astro';
+import DocumentThumb from '@/components/ui/DocumentThumb.astro';
+import SpecialistVideo from '@/components/ui/SpecialistVideo.astro';
+import company from '@content/config/company.json';
+import { t, type Locale } from '@/lib/i18n';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const dict = t(locale);
+const d = dict.landing.doctor;
+const sp = company.specialist;
+const lic = company.license;
+const [years, procedures] = d.stats;
+---
+
+<section class="doc theme-dark" data-bg="dark" data-scene="expert" id="expert" aria-labelledby="doc-title">
+  {/* Анимированный фрагмент над блоком: капля падает из hero, по воде расходятся кольца. CSS-only, дешёвый. */}
+  <div class="doc__ripple" aria-hidden="true">
+    <svg viewBox="0 0 320 120" width="320" height="120">
+      <g class="doc__rings">
+        <ellipse cx="160" cy="88" rx="18" ry="6" class="doc__ring doc__ring--1" />
+        <ellipse cx="160" cy="88" rx="18" ry="6" class="doc__ring doc__ring--2" />
+        <ellipse cx="160" cy="88" rx="18" ry="6" class="doc__ring doc__ring--3" />
+      </g>
+      <line x1="160" y1="0" x2="160" y2="70" class="doc__thread" />
+      <circle cx="160" cy="70" r="4" class="doc__drop" />
+    </svg>
+  </div>
+
+  <div class="container-x doc__inner">
+    <header class="doc__head">
+      <Eyebrow>{d.eyebrow}</Eyebrow>
+      <h2 id="doc-title" class="doc__name t-d2" data-split="words">{d.name}</h2>
+      <p class="doc__role t-caps" data-reveal>{d.role}</p>
+      <dl class="doc__stats" data-reveal-group data-reveal-stagger="0.12">
+        <div class="doc__stat" data-reveal>
+          <dt class="doc__stat-label t-caption">{years!.label}</dt>
+          <dd class="doc__stat-value"><span data-expert-counter>{years!.value}</span></dd>
+        </div>
+        <div class="doc__stat" data-reveal>
+          <dt class="doc__stat-label t-caption">{procedures!.label}</dt>
+          <dd class="doc__stat-value">{procedures!.value}</dd>
+        </div>
+      </dl>
+      <p class="doc__text" data-reveal>{d.text}</p>
+    </header>
+
+    <figure class="doc__media" data-expert-portrait>
+      <div class="doc__frame" data-expert-clip>
+        <div class="doc__frame-media" data-expert-media>
+          <SpecialistVideo locale={locale} strings={{ watch: d.videoWatch, soundOn: d.videoSoundOn, soundOff: d.videoSoundOff }} />
+        </div>
+      </div>
+      <figcaption class="doc__caption t-caption"><span class="doc__caption-dot" aria-hidden="true"></span>{sp.name[locale]}</figcaption>
+    </figure>
+
+    <div class="doc__docs" data-reveal>
+      <h3 class="doc__docs-title t-h4">{d.docsTitle}</h3>
+      <p class="doc__docs-text t-small muted-dark">{d.docsText}</p>
+      <ul class="doc__docs-list">
+        <li>
+          <DocumentThumb id={sp.certificate.document} alt={d.certAlt} caption={`${d.docCert} — ${sp.name[locale]}`} group="docs" locale={locale} aspect="3 / 2" label={d.docCert} />
+        </li>
+        <li>
+          <DocumentThumb id={lic.documents.main} alt={d.licenseAlt} caption={`${d.docLicense} · ${lic.issuedDisplay}`} group="docs" locale={locale} aspect="3 / 4" label={d.docLicense} />
+        </li>
+        <li>
+          <DocumentThumb id={lic.documents.appendix} alt={d.appendixAlt} caption={d.docAppendix} group="docs" locale={locale} aspect="3 / 4" label={d.docAppendix} />
+        </li>
+      </ul>
+      <p class="doc__docs-meta t-caption muted-dark">
+        {dict.common.licenseLineFull} · <a class="doc__registry" href={lic.registryUrl} target="_blank" rel="noopener">{d.docRegistry}<span class="sr-only"> ({dict.a11y.openInNewTab})</span></a>
+      </p>
+    </div>
+
+    <div class="doc__cta" data-reveal>
+      <Button onDark data-open-booking class="doc__btn">{d.cta}</Button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .doc { position: relative; padding-block: 0 var(--section-y); }
+  .doc__inner { display: grid; grid-template-columns: 1fr; gap: 1.75rem; }
+
+  /* --- Анимация над блоком --- */
+  .doc__ripple { display: flex; justify-content: center; height: 120px; margin-bottom: 0.5rem; pointer-events: none; }
+  .doc__ripple svg { overflow: visible; }
+  .doc__thread { stroke: var(--c-glow); stroke-width: 1; stroke-linecap: round; opacity: 0.55; stroke-dasharray: 70; animation: doc-thread 3.2s var(--e-out) infinite; }
+  .doc__drop { fill: var(--c-aqua-400); filter: drop-shadow(0 0 8px rgba(79, 195, 214, 0.9)); animation: doc-drop 3.2s var(--e-out) infinite; }
+  .doc__ring { fill: none; stroke: var(--c-glow); stroke-width: 1; opacity: 0; transform-origin: 160px 88px; transform-box: view-box; animation: doc-ring 3.2s ease-out infinite; }
+  .doc__ring--2 { animation-delay: 0.35s; }
+  .doc__ring--3 { animation-delay: 0.7s; }
+  @keyframes doc-thread { 0% { stroke-dashoffset: 70; opacity: 0; } 25% { opacity: 0.55; } 45% { stroke-dashoffset: 0; opacity: 0.55; } 60% { opacity: 0; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+  @keyframes doc-drop { 0%, 30% { transform: translateY(-70px); opacity: 0; } 45% { transform: translateY(0); opacity: 1; } 52% { transform: translateY(16px) scale(0.6); opacity: 0; } 100% { transform: translateY(16px); opacity: 0; } }
+  @keyframes doc-ring { 0%, 48% { transform: scale(0.2); opacity: 0; } 55% { opacity: 0.8; } 100% { transform: scale(4.2); opacity: 0; } }
+
+  /* --- Текст --- */
+  .doc__name { color: var(--c-bone); margin-bottom: 0.5rem; }
+  .doc__role { color: var(--c-glow-text); margin-bottom: 1.5rem; }
+  .doc__stats { display: flex; gap: 2rem; margin-bottom: 1.25rem; }
+  .doc__stat-label { color: var(--c-text-muted-on-dark); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.15rem; }
+  .doc__stat-value {
+    font-family: var(--font-display); font-weight: 200; font-size: clamp(3rem, 2rem + 4vw, 4.5rem); line-height: 1; letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+    background: linear-gradient(180deg, #ffffff 0%, var(--c-aqua-400) 75%, var(--c-glow) 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .doc__text { color: var(--c-bone); font-size: var(--fs-lead); line-height: 1.5; max-width: 40ch; }
+
+  /* --- Видео --- */
+  .doc__media { margin: 0; }
+  .doc__frame { position: relative; overflow: hidden; border-radius: var(--r-media); aspect-ratio: 4 / 5; background: var(--c-deep-800); box-shadow: 0 30px 90px rgba(4, 20, 26, 0.5); outline: 1px solid rgba(143, 214, 226, 0.18); outline-offset: -1px; }
+  .doc__frame-media { position: absolute; inset: 0; will-change: transform; }
+  .doc__caption { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.85rem; color: var(--c-text-muted-on-dark); }
+  .doc__caption-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c-glow); box-shadow: 0 0 12px var(--c-glow); }
+
+  /* --- Документы одним блоком --- */
+  .doc__docs { padding: 1.25rem; border-radius: var(--r-card); background: rgba(251, 253, 253, 0.05); border: 1px solid var(--c-line-on-dark); }
+  .doc__docs-title { color: var(--c-bone); margin-bottom: 0.35rem; }
+  .doc__docs-text { margin-bottom: 1rem; max-width: 50ch; }
+  .doc__docs-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; align-items: start; margin-bottom: 1rem; }
+  .doc__docs-list :global(.doc__label) { font-size: var(--fs-caption); }
+  .doc__docs-meta { line-height: 1.5; }
+  .doc__registry { text-decoration: underline; text-underline-offset: 0.2em; color: var(--c-glow-text); }
+  .doc__registry:hover { color: var(--c-bone); }
+
+  .doc__btn { width: 100%; min-height: 3.25rem; font-size: 1rem; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  @media (min-width: 640px) {
+    .doc__btn { width: auto; }
+  }
+  @media (min-width: 1024px) {
+    .doc { padding-bottom: var(--section-y); }
+    .doc__ripple { height: 140px; }
+    .doc__inner { grid-template-columns: 5fr 7fr; column-gap: clamp(3rem, 1rem + 4vw, 6rem); row-gap: 2rem; grid-template-areas: 'media head' 'media docs' 'media cta'; align-items: start; }
+    .doc__head { grid-area: head; }
+    .doc__media { grid-area: media; position: sticky; top: 6rem; }
+    .doc__docs { grid-area: docs; }
+    .doc__cta { grid-area: cta; }
+    .doc__docs-list { grid-template-columns: 2fr 1.4fr 1.4fr; gap: 1rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .doc__thread, .doc__drop, .doc__ring { animation: none; }
+    .doc__ring { opacity: 0.35; transform: scale(2); }
+    .doc__drop { opacity: 1; }
+    .doc__frame-media { will-change: auto; }
+  }
+</style>

@@ -1,0 +1,65 @@
+---
+/**
+ * «Важно знать» — противопоказания (юридически обязательный блок) в свёрнутом виде: интро и дисклеймер
+ * видны всегда, полный список раскрывается по кнопке. Список берётся из home.contra (общий с /procedure).
+ */
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import { t, type Locale } from '@/lib/i18n';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const dict = t(locale);
+const d = dict.landing.important;
+const contra = dict.home.contra;
+---
+
+<section class="imp theme-dark bg-dark-solid" data-bg="dark" id="contraindications" aria-labelledby="imp-title">
+  <div class="container-x imp__inner">
+    <div class="imp__head">
+      <Eyebrow>{d.eyebrow}</Eyebrow>
+      <h2 id="imp-title" class="t-d2 imp__title" data-split="words">{d.title}</h2>
+      <p class="imp__intro muted-dark" data-reveal>{d.intro}</p>
+      <p class="imp__disclaimer" data-reveal>
+        <span class="imp__age" aria-label={dict.common.ageLabel}>{dict.common.age}</span>{dict.common.disclaimer}
+      </p>
+    </div>
+    <div class="imp__body">
+      <button type="button" class="btn btn-secondary-on-dark imp__toggle" aria-expanded="false" aria-controls="imp-list" data-disclosure-toggle data-label-open={d.toggle} data-label-close={d.toggleClose} data-cursor="button">
+        <span data-disclosure-label>{d.toggle}</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+      </button>
+      <div class="imp__panel" id="imp-list">
+        <div class="imp__panel-inner">
+          {contra.groups.map((g) => (
+            <div class="imp__group">
+              <h3 class="t-caps imp__group-title">{g.title}</h3>
+              <ul class="imp__list">{g.items.map((i) => <li class="imp__item">{i}</li>)}</ul>
+            </div>
+          ))}
+          <p class="t-small muted-dark imp__note">{contra.note}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .imp { position: relative; padding-block: var(--section-y); }
+  .imp__inner { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+  .imp__title { color: var(--c-bone); max-width: 14ch; }
+  .imp__intro { margin-top: 1rem; max-width: 48ch; }
+  .imp__disclaimer { display: flex; align-items: center; gap: 0.75rem; margin-top: 1.25rem; padding: 0.9rem 1rem; border: 1px solid var(--c-line-on-dark); border-radius: var(--r-card); color: var(--c-bone); font-size: var(--fs-small); }
+  .imp__age { flex: none; display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; border: 1px solid var(--c-glow); color: var(--c-glow-text); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.02em; }
+  .imp__toggle { gap: 0.5rem; }
+  .imp__toggle[aria-expanded='true'] svg { transform: rotate(180deg); }
+  .imp__toggle svg { transition: transform var(--d-base) var(--e-out); }
+  .imp__panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--d-slow) var(--e-out); }
+  .imp__panel.is-open { grid-template-rows: 1fr; }
+  .imp__panel-inner { overflow: hidden; }
+  .imp__group { padding-top: 1.5rem; }
+  .imp__group-title { color: var(--c-glow-text); margin-bottom: 0.75rem; }
+  .imp__list { display: grid; gap: 0.5rem; }
+  .imp__item { position: relative; padding-left: 1.1rem; color: var(--c-bone); font-size: var(--fs-small); line-height: 1.45; }
+  .imp__item::before { content: ''; position: absolute; left: 0; top: 0.6em; width: 5px; height: 5px; border-radius: 50%; background: var(--c-glow); }
+  .imp__note { padding-top: 1.5rem; max-width: 56ch; }
+  @media (min-width: 1024px) { .imp__inner { grid-template-columns: 5fr 7fr; column-gap: 5rem; align-items: start; } .imp__group { padding-top: 0; } .imp__panel-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem 3rem; padding-top: 1.5rem; } .imp__note { grid-column: 1 / -1; padding-top: 0; } }
+</style>

@@ -192,7 +192,7 @@
    интерполируется по скроллу (lib/motion/background.ts). */
 html:not(.scene-on) [data-bg='porcelain'] { background-color: var(--c-porcelain); }
 html:not(.scene-on) [data-bg='bone'] { background-color: var(--c-bone); }
-html:not(.scene-on) [data-bg='dark']:not(.hero):not(.trust) { background-color: var(--c-deep-900); } /* hero/trust — прозрачны ради CSS-постера */
+html:not(.scene-on) [data-bg='dark']:not(.hero):not(.doc) { background-color: var(--c-deep-900); } /* hero/врач — прозрачны ради CSS-постера */
 html:not(.scene-on) [data-bg='ink'] { background-color: var(--c-ink); }
 html:not(.scene-on) [data-bg='dark'] + [data-bg='porcelain'],
 html:not(.scene-on) [data-bg='dark'] + [data-bg='bone'] { background-image: linear-gradient(to bottom, var(--c-deep-900), transparent 4rem); }
@@ -205,7 +205,7 @@ html:not(.scene-on) [data-bg='bone'] + [data-bg='dark'] { background-image: line
    за ними капля (дальше сцена паркуется — html.scene-parked). */
 html.lite [data-bg='porcelain'] { background-color: var(--c-porcelain); }
 html.lite [data-bg='bone'] { background-color: var(--c-bone); }
-html.lite [data-bg='dark']:not(.hero):not(.trust):not(.expert) { background-color: var(--c-deep-900); }
+html.lite [data-bg='dark']:not(.hero):not(.doc) { background-color: var(--c-deep-900); }
 html.lite [data-bg='ink'] { background-color: var(--c-ink); }
 html.lite [data-bg='dark'] + [data-bg='porcelain'],
 html.lite [data-bg='dark'] + [data-bg='bone'] { background-image: linear-gradient(to bottom, var(--c-deep-900), transparent 4rem); }
@@ -221,11 +221,11 @@ html.lite [data-bg='bone'] + [data-bg='dark'] { background-image: linear-gradien
   align-items: center;
   justify-content: center;
   gap: 0.6em;
-  min-height: 3rem;
+  min-height: 3.25rem; /* 52px — крупные цели касания */
   padding: 0.85em 1.6em;
   border-radius: var(--r-control);
   font-family: var(--font-text);
-  font-size: 0.9375rem;
+  font-size: 1rem;
   font-weight: 500;
   letter-spacing: 0.01em;
   line-height: 1;

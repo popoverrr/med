@@ -2,10 +2,11 @@
 /** FAQ: аккордеон с плавным раскрытием через grid-template-rows (0fr → 1fr). */
 import Eyebrow from '@/components/ui/Eyebrow.astro';
 import { t, type Locale } from '@/lib/i18n';
-interface Props { locale: Locale }
-const { locale } = Astro.props;
+interface Props { locale: Locale; limit?: number }
+const { locale, limit } = Astro.props;
 const dict = t(locale);
 const d = dict.home.faq;
+const items = limit ? d.items.slice(0, limit) : d.items;
 ---
 
 <section class="faq theme-light" data-bg="bone" id="faq" aria-labelledby="faq-title">
@@ -15,7 +16,7 @@ const d = dict.home.faq;
       <h2 id="faq-title" class="t-d2" data-split="words">{d.title}</h2>
     </div>
     <div class="faq__list" data-reveal-group data-reveal-stagger="0.05">
-      {d.items.map((item, i) => (
+      {items.map((item, i) => (
         <div class="faq__item" data-faq-item data-reveal>
           <h3 class="faq__q">
             <button type="button" class="faq__toggle" aria-expanded="false" aria-controls={`faq-panel-${i}`} id={`faq-btn-${i}`} data-faq-toggle data-cursor="button">

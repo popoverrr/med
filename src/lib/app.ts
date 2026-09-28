@@ -14,7 +14,7 @@ import { initTransitions, curtainOut } from '@/lib/motion/transitions';
 import { initHeader } from '@/lib/ui/header';
 import { initBookingModal } from '@/lib/ui/modal';
 import { initLightbox } from '@/lib/ui/lightbox';
-import { initFaq, initCookieBanner, initMap } from '@/lib/ui/misc';
+import { initFaq, initCookieBanner, initMap, initCarousels, initDisclosures, initStickyCta } from '@/lib/ui/misc';
 
 let pageCleanups: Array<() => void> = [];
 let booted = false;
@@ -49,7 +49,7 @@ async function mountPage() {
   await yieldToMain();
   stage('effects', () => pageCleanups.push(initParallax(), initCounters(), initDrawOnScroll(), initMagnetic()));
   await yieldToMain();
-  stage('ui', () => pageCleanups.push(initBookingModal(), initLightbox(), initFaq(), initCookieBanner(), initMap()));
+  stage('ui', () => pageCleanups.push(initBookingModal(), initLightbox(), initFaq(), initCookieBanner(), initMap(), initCarousels(), initDisclosures(), initStickyCta()));
   const home = html.dataset.page === 'home';
   if (home) {
     const mod = await import('@/lib/home');

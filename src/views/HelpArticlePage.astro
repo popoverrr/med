@@ -1,0 +1,107 @@
+---
+/**
+ * Статья «С чем помогает» (/help/<slug>): крупный текст, 4 коротких раздела, «сколько сеансов»,
+ * призыв записаться и ссылки на другие темы. SEO: title/description из статьи, BreadcrumbList, Article JSON-LD.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/ui/PageHero.astro';
+import HelpIcon from '@/components/ui/HelpIcon.astro';
+import Button from '@/components/ui/Button.astro';
+import BookingSection from '@/components/sections/BookingSection.astro';
+import { t, localePath, type Locale } from '@/lib/i18n';
+import { breadcrumbLd, webPageLd } from '@/lib/seo';
+
+interface Props { locale: Locale; slug: string }
+const { locale, slug } = Astro.props;
+const dict = t(locale);
+const h = dict.help;
+const item = h.items.find((i) => i.slug === slug);
+if (!item) throw new Error(`Статья help/${slug} не найдена в ${locale}.json`);
+const others = h.items.filter((i) => i.slug !== slug);
+const path = `/help/${slug}`;
+const crumbs = [{ name: dict.landing.help.eyebrow, path: '/#help' }, { name: item.title, path }];
+---
+
+<BaseLayout locale={locale} path={path} title={item.seoTitle} description={item.seoDescription} page="help" jsonLd={[webPageLd(locale, path, item.seoTitle, item.seoDescription), breadcrumbLd(locale, crumbs)]}>
+  <PageHero locale={locale} title={item.h1} lead={item.lead} eyebrow={dict.landing.help.eyebrow} crumbs={crumbs} />
+
+  <section class="art theme-light" data-bg="bone" aria-label={item.title}>
+    <div class="container-x art__inner">
+      <aside class="art__aside" data-reveal>
+        <div class="art__fact card">
+          <span class="art__fact-icon"><HelpIcon name={item.icon} size={28} /></span>
+          <p class="t-caps art__fact-label">{h.sessionsLabel}</p>
+          <p class="art__fact-value">{item.sessions}</p>
+          <Button data-open-booking class="art__fact-btn">{h.cta}</Button>
+        </div>
+      </aside>
+      <div class="art__body" data-reveal-group data-reveal-stagger="0.08">
+        {item.sections.map((s) => (
+          <section class="art__section" data-reveal>
+            <h2 class="t-d3 art__h2">{s.title}</h2>
+            <p class="art__p">{s.text}</p>
+          </section>
+        ))}
+        <p class="t-small muted art__disclaimer" data-reveal>{h.disclaimer}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="art-cta theme-light" data-bg="porcelain" aria-labelledby="art-cta-title">
+    <div class="container-x">
+      <h2 id="art-cta-title" class="t-d2 art-cta__title" data-split="words">{h.ctaTitle}</h2>
+      <p class="t-lead muted art-cta__text" data-reveal>{h.ctaText}</p>
+      <div data-reveal><Button data-open-booking>{h.cta}</Button></div>
+    </div>
+  </section>
+
+  <section class="art-more theme-light" data-bg="bone" aria-labelledby="art-more-title">
+    <div class="container-x">
+      <h2 id="art-more-title" class="t-caps art-more__title">{h.otherTopics}</h2>
+      <ul class="art-more__list" data-reveal-group data-reveal-stagger="0.06">
+        {others.map((o) => (
+          <li data-reveal>
+            <a class="art-more__link" href={localePath(locale, `/help/${o.slug}`)} data-cursor="link">
+              <HelpIcon name={o.icon} size={22} />
+              <span>{o.title}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p class="art-more__home"><a href={localePath(locale, '/')} data-cursor="link">← {h.backHome}</a></p>
+    </div>
+  </section>
+
+  <BookingSection locale={locale} withContacts />
+</BaseLayout>
+
+<style>
+  .art { padding-block: clamp(2rem, 1rem + 3vw, 4rem) var(--section-y); }
+  .art__inner { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+  .art__fact { padding: 1.5rem; }
+  .art__fact-icon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; color: var(--c-deep-600); background: rgba(79, 195, 214, 0.14); margin-bottom: 1rem; }
+  .art__fact-label { color: var(--c-aqua-text); margin-bottom: 0.35rem; }
+  .art__fact-value { font-family: var(--font-display); font-size: var(--fs-h4); line-height: 1.35; margin-bottom: 1.25rem; }
+  .art__fact-btn { width: 100%; }
+  .art__section + .art__section { margin-top: 2rem; }
+  .art__h2 { margin-bottom: 0.6rem; }
+  .art__p { font-size: var(--fs-lead); line-height: 1.55; max-width: 60ch; }
+  .art__disclaimer { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--c-line-on-light); max-width: 60ch; }
+  .art-cta { padding-block: var(--section-y); }
+  .art-cta__title { max-width: 20ch; margin-bottom: 1rem; }
+  .art-cta__text { max-width: 52ch; margin-bottom: 1.5rem; }
+  .art-more { padding-block: clamp(2.5rem, 2rem + 3vw, 5rem); }
+  .art-more__title { margin-bottom: 1rem; color: var(--c-text-muted-on-light); }
+  .art-more__list { display: grid; grid-template-columns: 1fr; gap: 0.5rem; }
+  .art-more__link { display: flex; align-items: center; gap: 0.75rem; min-height: 3.25rem; padding: 0.6rem 1rem; border-radius: var(--r-card); background: var(--c-porcelain); color: var(--c-text-on-light); font-weight: 500; transition: background-color var(--d-fast) var(--e-out); }
+  .art-more__link:hover { background: rgba(79, 195, 214, 0.16); }
+  .art-more__link svg { color: var(--c-deep-600); flex: none; }
+  .art-more__home { margin-top: 1.5rem; }
+  .art-more__home a { color: var(--c-deep-700); font-weight: 500; }
+  @media (min-width: 640px) { .art-more__list { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1024px) {
+    .art__inner { grid-template-columns: 4fr 8fr; column-gap: 5rem; align-items: start; }
+    .art__aside { position: sticky; top: 6rem; }
+    .art-more__list { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
